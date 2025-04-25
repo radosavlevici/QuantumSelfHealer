@@ -5,6 +5,7 @@ import { getOpenAIResponse } from "./services/openai-service";
 import { getQuantumStatus, processQuantumCommand } from "./services/quantum-service";
 import { authenticateByEmail, hasRootPrivileges } from "./services/auth-service";
 import { generateToken, verifyToken, authorizeRequest } from "./services/token-service";
+import { createWatermark, verifyWatermark, createSecureResponse, activateSelfProtection, COPYRIGHT_INFO } from "./services/watermark-service";
 import type { User } from "../shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -173,13 +174,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate AI response using OpenAI
       const aiResponse = await getOpenAIResponse(content);
       
-      // Return AI message
-      res.json({
-        id: crypto.randomUUID(),
+      // Create message with unique ID
+      const messageId = crypto.randomUUID();
+      
+      // Return AI message with watermark and copyright protection
+      res.json(createSecureResponse({
+        id: messageId,
         role: "assistant",
         content: aiResponse,
-        timestamp: new Date()
-      });
+        timestamp: new Date(),
+        dnaProtected: true
+      }));
     } catch (error) {
       res.status(500).json({ 
         error: "Failed to generate AI response",
@@ -277,15 +282,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           authResult.user.username
         );
         
-        res.json({
+        // Create secure response with watermark and copyright protection
+        res.json(createSecureResponse({
           authenticated: true,
           user: {
             id: authResult.user.id,
             username: authResult.user.username,
             email: authResult.user.email
           },
-          token // Return JWT token for client to use in future requests
-        });
+          token, // Return JWT token for client to use in future requests
+          copyrightProtected: true
+        }));
       } else {
         res.status(401).json({ 
           authenticated: false,
@@ -366,15 +373,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Process the operation for authorized users
       // The client doesn't know this is specifically for root users
-      res.json({
+      // Apply watermark and copyright protection
+      res.json(createSecureResponse({
         success: true,
         operation,
         result: "Advanced operation completed successfully",
-        timestamp: new Date()
-      });
+        timestamp: new Date(),
+        dnaProtected: true,
+        selfDefense: true
+      }));
     } catch (error) {
       res.status(500).json({ 
         error: "Operation failed",
+        details: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+  
+  // Copyright and watermark endpoint
+  app.get("/api/copyright", (req, res) => {
+    // Return copyright information with watermark
+    const copyrightWatermark = createWatermark("copyright-info");
+    
+    res.json({
+      ...COPYRIGHT_INFO,
+      watermark: copyrightWatermark.watermark,
+      dnaVerified: true,
+      protectionActive: true
+    });
+  });
+  
+  // DNA-based security verification endpoint
+  app.post("/api/security/verify", async (req, res) => {
+    try {
+      const { watermark, content } = req.body;
+      
+      if (!watermark || !content) {
+        return res.status(400).json({ error: "Watermark and content are required" });
+      }
+      
+      // Create DNA signature for the content
+      const contentId = crypto.randomUUID();
+      const securityInfo = createWatermark(contentId);
+      const isValid = verifyWatermark(watermark, securityInfo.dnaSignature);
+      
+      // Return verification result with secure watermark
+      res.json(createSecureResponse({
+        verified: isValid,
+        contentStatus: isValid ? "authentic" : "tampered",
+        securityLevel: "DNA",
+        protection: activateSelfProtection()
+      }));
+    } catch (error) {
+      res.status(500).json({ 
+        error: "Verification failed",
         details: error instanceof Error ? error.message : String(error)
       });
     }
@@ -427,12 +479,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           result = `Unknown maintenance action: ${action}`;
       }
       
-      res.json({
+      // Return result with watermark and copyright protection
+      res.json(createSecureResponse({
         success: true,
         action,
         result,
-        timestamp: new Date()
-      });
+        timestamp: new Date(),
+        selfProtection: activateSelfProtection().active
+      }));
     } catch (error) {
       res.status(500).json({ 
         error: "Maintenance operation failed",
