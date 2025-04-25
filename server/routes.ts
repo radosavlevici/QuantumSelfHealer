@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { getOpenAIResponse } from "./services/openai-service";
 import { getQuantumStatus, processQuantumCommand } from "./services/quantum-service";
+import { authenticateByEmail, hasRootPrivileges } from "./services/auth-service";
 import type { User } from "../shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -250,6 +251,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(500).json({ 
         error: "Failed to get user information",
+        details: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+  
+  // Authenticate user by email (secure, doesn't expose root status in response)
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ error: "Email is required" });
+      }
+      
+      const authResult = await authenticateByEmail(email);
+      
+      // Send back authentication result without exposing root status
+      if (authResult.authenticated && authResult.user) {
+        res.json({
+          authenticated: true,
+          user: {
+            id: authResult.user.id,
+            username: authResult.user.username,
+            email: authResult.user.email
+          }
+        });
+      } else {
+        res.status(401).json({ 
+          authenticated: false,
+          message: "Authentication failed" 
+        });
+      }
+    } catch (error) {
+      res.status(500).json({ 
+        error: "Authentication error",
+        details: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+  
+  // Protected endpoint for advanced quantum operations
+  // Checks for root privileges internally without exposing this information
+  app.post("/api/quantum/advanced", async (req, res) => {
+    try {
+      const { userId, operation } = req.body;
+      
+      if (!userId || !operation) {
+        return res.status(400).json({ error: "User ID and operation are required" });
+      }
+      
+      // Check if user has root privileges (without exposing this to the client)
+      const hasPrivileges = await hasRootPrivileges(Number(userId));
+      
+      if (!hasPrivileges) {
+        // Generic error message doesn't expose existence of root system
+        return res.status(403).json({ 
+          error: "Access denied",
+          message: "You don't have permission to perform this operation"
+        });
+      }
+      
+      // Process the operation for root users
+      res.json({
+        success: true,
+        operation,
+        result: "Advanced quantum operation completed successfully",
+        timestamp: new Date()
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        error: "Operation failed",
         details: error instanceof Error ? error.message : String(error)
       });
     }
