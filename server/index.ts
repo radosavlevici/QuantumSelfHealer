@@ -25,122 +25,137 @@
  * of the codebase.
  */
 
-import express, { Request, Response, NextFunction } from "express";
-import cors from "cors";
-import session from "express-session";
-// Use express's built-in json middleware
-import { registerRoutes } from "./routes";
-import { storage } from "./storage";
-import { setupVite, serveStatic, log } from "./vite";
-import { createHash } from "crypto";
-import { v4 as uuidv4 } from "uuid";
+import express, { Request, Response, NextFunction } from 'express';
+import cors from 'cors';
+import { Server } from 'http';
 
-// Import DNA-based security system
+// Import DNA security system
 import {
-  COPYRIGHT_OWNER,
-  COPYRIGHT_BIRTHDATE,
-  COPYRIGHT_EMAIL,
-  COPYRIGHT_FULL,
-  SYSTEM_VERSION,
-  SYSTEM_ID,
-  generateDNAWatermark,
-  initializeQuantumSecurity
-} from "@shared/quantum-dna-security";
+  IMMUTABLE_COPYRIGHT_OWNER,
+  IMMUTABLE_COPYRIGHT_FULL,
+  IMMUTABLE_SYSTEM_VERSION,
+  generateSecurityWatermark,
+  generateDNASignature,
+  secureData
+} from '@shared/quantum-dna-security';
 
-// Initialize the quantum DNA security system
-initializeQuantumSecurity();
+import {
+  registerProtectedComponent,
+  createVerificationChain,
+  recordSecurityEvent
+} from '@shared/quantum-dna-protection';
 
-// Generate a DNA watermark for this server instance
+// Import storage module
+import { storage, verifyDatabaseIntegrity } from './storage';
+
+// Import routes module
+import { registerRoutes } from './routes';
+
+// Import Vite (for development) or serve static files (for production)
+import { setupVite, serveStatic } from './vite';
+
+// Register this component with the protection system
+const serverComponent = registerProtectedComponent('secure-server-core', 'server-core');
+
+/**
+ * Generate server-specific DNA watermark
+ */
 function generateServerDNAWatermark(): string {
-  const serverId = uuidv4();
-  const timestamp = Date.now().toString();
-  
-  // Create a DNA-like sequence
-  const dnaSequence = Array.from({ length: 12 }, () => {
-    const bases = ['A', 'C', 'G', 'T'];
-    return bases[Math.floor(Math.random() * bases.length)];
-  }).join('');
-  
-  // Generate a hash incorporating copyright info to prevent tampering
-  const securityHash = createHash('sha256')
-    .update(`${serverId}-${COPYRIGHT_OWNER}-${COPYRIGHT_BIRTHDATE}-${timestamp}`)
-    .digest('hex')
-    .substring(0, 16);
-  
-  return `DNA-SERVER-${dnaSequence}-${securityHash}`;
+  return generateSecurityWatermark('server-core');
 }
 
-// Create Express application with security features
+// Application setup
 const app = express();
-const serverWatermark = generateServerDNAWatermark();
+const PORT = process.env.PORT || 5000;
 
-// Session configuration with strong security
-const SESSION_SECRET = process.env.SESSION_SECRET || uuidv4();
-const MAX_AGE = 24 * 60 * 60 * 1000; // 24 hours
-
-// Configure middleware
+// Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(
-  session({
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: storage.sessionStore,
-    cookie: {
-      secure: process.env.NODE_ENV === "production",
-      maxAge: MAX_AGE,
-      sameSite: "lax",
-    },
-  })
-);
 
-// Self-defense middleware - validates request integrity and blocks suspicious activity
+// Define security headers
 app.use((req: Request, res: Response, next: NextFunction) => {
-  // Add security headers
-  res.setHeader("X-DNA-Protection", serverWatermark);
-  res.setHeader("X-Copyright", COPYRIGHT_FULL);
-  res.setHeader("X-Security-Version", SYSTEM_VERSION);
+  // Set security headers
+  res.setHeader('X-DNA-Protected', 'true');
+  res.setHeader('X-Copyright-Owner', IMMUTABLE_COPYRIGHT_OWNER);
+  res.setHeader('X-System-Version', IMMUTABLE_SYSTEM_VERSION);
+  res.setHeader('X-Security-Watermark', generateServerDNAWatermark());
   
-  // Continue to next middleware
+  // Add Content-Security-Policy
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+  );
+  
+  // Prevent clickjacking
+  res.setHeader('X-Frame-Options', 'DENY');
+  
+  // Strict-Transport-Security
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  
+  // XSS protection
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  
+  // MIME type handling
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  
+  // Referrer policy
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  
+  // Permission policy
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  
   next();
 });
 
-// Global error handler with security logging
+// Global error handler
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error("Server error:", err);
+  console.error('Secure server error:', err);
+  
+  // Create secured error response
+  const securedError = secureData({
+    error: true,
+    message: 'An error occurred',
+    systemVersion: IMMUTABLE_SYSTEM_VERSION,
+    timestamp: new Date().toISOString()
+  });
   
   // Log security event
-  storage.logSecurityEvent({
-    eventType: "server_error",
-    userId: null,
-    resourceId: null,
-    ipAddress: null,
-    userAgent: null,
-    details: { message: err.message, stack: err.stack },
-    severity: "critical"
-  }).catch(logErr => {
-    console.error("Failed to log security event:", logErr);
+  recordSecurityEvent('server_error', 'warning', {
+    message: err.message,
+    stack: err.stack,
+    timestamp: new Date().toISOString()
   });
   
-  // Send generic error response to avoid exposing system details
-  res.status(500).json({
-    error: "An error occurred",
-    securityTracking: true,
-    watermark: generateDNAWatermark("error-response")
-  });
+  res.status(500).json(securedError);
 });
 
-// Register API routes
-const httpServer = registerRoutes(app);
+// Register routes
+const httpServer: Server = registerRoutes(app);
 
-// Register Vite in development mode
-setupVite(app, httpServer);
+// Setup development server with Vite or production static file serving
+const isProduction = process.env.NODE_ENV === 'production';
+if (isProduction) {
+  serveStatic(app);
+} else {
+  setupVite(app, httpServer).catch(err => {
+    console.error('Error setting up Vite:', err);
+    process.exit(1);
+  });
+}
 
-// Determine port
-const port = process.env.PORT || 5000;
+// Connect essential verification chains
+createVerificationChain('secure-server-core', 'secure-mem-storage');
 
-// Start server
-httpServer.listen(port, () => {
-  console.log(`${new Date().toLocaleTimeString()} [express] serving on port ${port}`);
+// Verify database integrity on startup
+verifyDatabaseIntegrity().then(integrity => {
+  if (!integrity) {
+    console.error('Database integrity check failed. System may be compromised.');
+    process.exit(1);
+  }
+});
+
+// Start the server
+httpServer.listen(PORT, () => {
+  console.log(IMMUTABLE_COPYRIGHT_FULL);
+  console.log(`${new Date().toLocaleTimeString()} [express] serving on port ${PORT}`);
 });

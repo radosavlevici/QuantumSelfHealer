@@ -33,18 +33,22 @@ import { queryClient } from './lib/queryClient';
 
 // Import the DNA security constants and functions
 import { 
-  COPYRIGHT_OWNER, 
-  COPYRIGHT_BIRTHDATE, 
-  COPYRIGHT_EMAIL, 
-  COPYRIGHT_FULL,
-  SYSTEM_VERSION,
-  SecurityLevel,
-  registerClientComponent
-} from './lib/dna-security-core';
+  IMMUTABLE_COPYRIGHT_OWNER, 
+  IMMUTABLE_COPYRIGHT_BIRTHDATE, 
+  IMMUTABLE_COPYRIGHT_EMAIL, 
+  IMMUTABLE_COPYRIGHT_FULL,
+  IMMUTABLE_SYSTEM_VERSION,
+  generateDNASignature,
+  generateSecurityWatermark,
+  verifySecuritySystemIntegrity
+} from '@shared/quantum-dna-security';
+
+// Import client-side DNA security core
+import { secureSession, verifyClientSecurity } from './lib/dna-security-core';
 
 // Import the DNA Protection Provider 
-import DNAProtectionProvider from './components/DNAProtectionProvider';
-import DNACopyrightWatermark from './components/ui/DNACopyrightWatermark';
+import { DNAProtectionProvider } from './components/DNAProtectionProvider';
+import { DNACopyrightWatermark } from './components/ui/DNACopyrightWatermark';
 
 // Import DNA-protected pages
 import HomePage from './pages/HomePage';
@@ -52,33 +56,36 @@ import TerminalPage from './pages/TerminalPage';
 import QuantumPage from './pages/QuantumPage';
 import NotFoundPage from './pages/not-found';
 
-// Component identity constants (using the same constants from dna-security-core)
+// Component identity constants
 const COMPONENT_ID = 'dna-protected-app';
 const COMPONENT_NAME = 'DNAProtectedApp';
 
-// Register the application with the security system
-const appComponent = registerClientComponent(
-  COMPONENT_ID,
-  COMPONENT_NAME,
-  SecurityLevel.MAXIMUM
-);
+// Generate secure identifiers for the application
+const appDNASignature = generateDNASignature(COMPONENT_ID, COMPONENT_NAME);
+const appWatermark = generateSecurityWatermark(`app-${COMPONENT_ID}`);
 
 // On application load, perform initialization verification
 function initializeApplication() {
   console.log("%c QUANTUM DNA PROTECTED APPLICATION INITIALIZING ", "background: #001a33; color: #00ccff; font-weight: bold;");
-  console.log(`%c ${COPYRIGHT_FULL} `, "background: #001a33; color: #ffffff;");
-  console.log(`%c Quantum DNA Security v${SYSTEM_VERSION} `, "background: #001a33; color: #00ff99;");
+  console.log(`%c ${IMMUTABLE_COPYRIGHT_FULL} `, "background: #001a33; color: #ffffff;");
+  console.log(`%c Quantum DNA Security v${IMMUTABLE_SYSTEM_VERSION} `, "background: #001a33; color: #00ff99;");
   console.log("%c ALL COMPONENTS BUILT AS ONE UNIFIED SYSTEM ", "background: #001a33; color: #ff9900; font-weight: bold;");
   console.log("%c ANTI-THEFT PROTECTION ACTIVE ", "background: #330000; color: #ff6666; font-weight: bold;");
   
+  // Verify security system integrity
+  const securityStatus = verifyClientSecurity();
+  if (!securityStatus.valid) {
+    console.error("%c SECURITY SYSTEM INTEGRITY COMPROMISED ", "background: #990000; color: #ffffff; font-weight: bold;");
+  }
+  
   // Set application metadata in DOM for additional protection layer
   document.documentElement.setAttribute('data-dna-protected', 'true');
-  document.documentElement.setAttribute('data-copyright-owner', COPYRIGHT_OWNER);
-  document.documentElement.setAttribute('data-copyright-birthdate', COPYRIGHT_BIRTHDATE);
-  document.documentElement.setAttribute('data-copyright-email', COPYRIGHT_EMAIL);
-  document.documentElement.setAttribute('data-security-level', SecurityLevel.MAXIMUM);
-  document.documentElement.setAttribute('data-watermark', appComponent.watermark);
-  document.documentElement.setAttribute('data-system-version', SYSTEM_VERSION);
+  document.documentElement.setAttribute('data-copyright-owner', IMMUTABLE_COPYRIGHT_OWNER);
+  document.documentElement.setAttribute('data-copyright-birthdate', IMMUTABLE_COPYRIGHT_BIRTHDATE);
+  document.documentElement.setAttribute('data-copyright-email', IMMUTABLE_COPYRIGHT_EMAIL);
+  document.documentElement.setAttribute('data-security-level', 'maximum');
+  document.documentElement.setAttribute('data-watermark', appWatermark);
+  document.documentElement.setAttribute('data-system-version', IMMUTABLE_SYSTEM_VERSION);
 }
 
 /**
@@ -101,10 +108,10 @@ function App() {
               className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white"
               data-component-id={COMPONENT_ID}
               data-component-name={COMPONENT_NAME}
-              data-copyright-owner={COPYRIGHT_OWNER}
-              data-copyright-full={COPYRIGHT_FULL}
-              data-watermark={appComponent.watermark}
-              data-security-level={SecurityLevel.MAXIMUM}
+              data-copyright-owner={IMMUTABLE_COPYRIGHT_OWNER}
+              data-copyright-full={IMMUTABLE_COPYRIGHT_FULL}
+              data-watermark={appWatermark}
+              data-security-level="maximum"
             >
               <Toaster />
               <main className="container mx-auto py-4 px-4">
@@ -116,7 +123,7 @@ function App() {
                 </Switch>
               </main>
               {/* Visible copyright watermark that cannot be removed */}
-              <DNACopyrightWatermark position="bottom-right" opacity={0.6} size="small" />
+              <DNACopyrightWatermark position="bottom-right" expanded={false} />
             </div>
           </DNAProtectionProvider>
         </TooltipProvider>

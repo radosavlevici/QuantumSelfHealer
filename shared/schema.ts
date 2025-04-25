@@ -1,282 +1,227 @@
 /**
- * !!! DNA PROTECTED SCHEMA - DO NOT COPY !!!
+ * !!! DNA PROTECTED DATABASE SCHEMA - DO NOT COPY !!!
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
  * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - DATABASE SCHEMA
- * This file defines the database schema with DNA-based security
- * and protection mechanisms integrated into every model.
+ * This file provides the database schema with DNA-based security
+ * integrated from the beginning as one unified system.
  * 
  * FEATURES:
- * - DNA-based watermarking embedded in data models
- * - Self-verification mechanisms for data integrity
- * - Immutable copyright protection embedded in the schema
+ * - Database models with DNA protection
+ * - Security watermarking for all data
+ * - Copyright protection embedded in database schema
+ * - Self-verification mechanisms
  * 
  * ANTI-THEFT NOTICE:
- * This schema is part of an integrated whole built from the beginning.
- * It includes verification chains that make unauthorized copies non-functional.
+ * This security system includes verification chains that make unauthorized
+ * copies non-functional. The entire system is built as one integrated whole
+ * from the beginning.
  */
 
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb, uuid } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod";
-import { COPYRIGHT_OWNER, COPYRIGHT_BIRTHDATE, COPYRIGHT_EMAIL, COPYRIGHT_FULL, SYSTEM_VERSION } from "./quantum-dna-security";
+import { relations } from 'drizzle-orm';
+import { 
+  pgTable, 
+  serial, 
+  text, 
+  timestamp, 
+  boolean, 
+  integer, 
+  primaryKey, 
+  uuid,
+  json
+} from 'drizzle-orm/pg-core';
+import { createInsertSchema } from 'drizzle-zod';
+import { z } from 'zod';
 
-// Users table with DNA-based protection features
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
-  email: text("email").notNull().unique(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  lastLogin: timestamp("last_login"),
-  isRoot: boolean("is_root").default(false),
-  securityLevel: text("security_level").default("maximum"),
-  dnaSignature: text("dna_signature"),
-  watermark: text("watermark"),
-  accessToken: text("access_token"),
-  tokenExpiry: timestamp("token_expiry"),
-  copyrightOwner: text("copyright_owner").default(COPYRIGHT_OWNER).notNull(),
-  systemVersion: text("system_version").default(SYSTEM_VERSION).notNull(),
+import { 
+  IMMUTABLE_COPYRIGHT_OWNER, 
+  IMMUTABLE_SYSTEM_VERSION 
+} from './quantum-dna-security';
+
+// Type alias for JSON data to use in schema
+export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
+
+/**
+ * Users table with DNA security integration
+ */
+export const users = pgTable('users', {
+  id: serial('id').primaryKey(),
+  username: text('username').notNull(),
+  password: text('password').notNull(),
+  email: text('email').notNull(),
+  systemVersion: text('system_version').notNull().default(IMMUTABLE_SYSTEM_VERSION),
+  securityLevel: text('security_level').default('maximum'),
+  isRoot: boolean('is_root').default(false),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  lastLogin: timestamp('last_login'),
+  accessToken: text('access_token'),
+  tokenExpiry: timestamp('token_expiry'),
+  watermark: text('watermark').notNull(),
+  dnaSignature: text('dna_signature').notNull(),
+  copyrightOwner: text('copyright_owner').notNull().default(IMMUTABLE_COPYRIGHT_OWNER)
 });
 
-// Protected content table for tracking all secured resources
-export const protectedContent = pgTable("protected_content", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  contentType: text("content_type").notNull(), // 'conversation', 'message', 'code', etc.
-  contentId: text("content_id").notNull(), // Reference to the original content
-  userId: integer("user_id").references(() => users.id).notNull(),
-  watermark: text("watermark").notNull(),
-  dnaSignature: text("dna_signature").notNull(),
-  verificationCode: text("verification_code").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  lastVerified: timestamp("last_verified"),
-  isValid: boolean("is_valid").default(true),
-  copyrightOwner: text("copyright_owner").default(COPYRIGHT_OWNER).notNull(),
-  systemVersion: text("system_version").default(SYSTEM_VERSION).notNull(),
+/**
+ * Security Events table for system monitoring
+ */
+export const securityEvents = pgTable('security_events', {
+  id: serial('id').primaryKey(),
+  eventType: text('event_type').notNull(),
+  severity: text('severity').notNull(),
+  timestamp: timestamp('timestamp').defaultNow().notNull(),
+  userId: integer('user_id').references(() => users.id),
+  resourceId: text('resource_id'),
+  ipAddress: text('ip_address'),
+  userAgent: text('user_agent'),
+  details: json('details')
 });
 
-// Security audit logs for tracking all security events
-export const securityLogs = pgTable("security_logs", {
-  id: serial("id").primaryKey(),
-  eventType: text("event_type").notNull(), // 'access', 'verification', 'tampering', etc.
-  userId: integer("user_id").references(() => users.id),
-  resourceId: text("resource_id"),
-  ipAddress: text("ip_address"),
-  userAgent: text("user_agent"),
-  details: jsonb("details"),
-  severity: text("severity").notNull(), // 'info', 'warning', 'critical'
-  timestamp: timestamp("timestamp").defaultNow().notNull(),
+/**
+ * System Notifications for users
+ */
+export const notifications = pgTable('notifications', {
+  id: serial('id').primaryKey(),
+  type: text('type').notNull(),
+  title: text('title').notNull(),
+  message: text('message').notNull(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  timestamp: timestamp('timestamp').defaultNow().notNull(),
+  watermark: text('watermark'),
+  securityRelated: boolean('security_related')
 });
 
-// Anti-theft tokens for one-time use access
-export const antiTheftTokens = pgTable("anti_theft_tokens", {
-  id: serial("id").primaryKey(),
-  token: text("token").notNull(),
-  resourceId: text("resource_id").notNull(),
-  userId: integer("user_id").references(() => users.id).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  expiresAt: timestamp("expires_at").notNull(),
-  used: boolean("used").default(false),
-  revoked: boolean("revoked").default(false),
-  usedAt: timestamp("used_at"),
+/**
+ * User Settings with security preferences
+ */
+export const userSettings = pgTable('user_settings', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull().unique(),
+  theme: text('theme').default('dark'),
+  securityLevel: text('security_level').default('maximum'),
+  notifications: boolean('notifications').default(true),
+  dataCollection: boolean('data_collection').default(false),
+  cloudSync: boolean('cloud_sync').default(false),
+  antiTheftProtection: boolean('anti_theft_protection').default(true),
+  apiIntegrations: json('api_integrations'),
+  dnaSecurityEnabled: boolean('dna_security_enabled').default(true)
 });
 
-// Conversations table with security features
-export const conversations = pgTable("conversations", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: integer("user_id").references(() => users.id).notNull(),
-  title: text("title").notNull(),
-  watermark: text("watermark"),
-  dnaSignature: text("dna_signature"),
-  secured: boolean("secured").default(true),
-  lastMessage: text("last_message"),
-  deleted: boolean("deleted").default(false),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+/**
+ * Terminal History for quantum terminal commands
+ */
+export const terminalHistory = pgTable('terminal_history', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  command: text('command').notNull(),
+  response: text('response').notNull(),
+  timestamp: timestamp('timestamp').defaultNow().notNull(),
+  securityLevel: text('security_level'),
+  watermark: text('watermark')
 });
 
-// Messages table with security features
-export const messages = pgTable("messages", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  conversationId: uuid("conversation_id").references(() => conversations.id).notNull(),
-  role: text("role").notNull(), // 'user', 'assistant', 'system'
-  content: text("content").notNull(),
-  watermark: text("watermark"),
-  dnaSignature: text("dna_signature"),
-  secured: boolean("secured").default(true),
-  timestamp: timestamp("timestamp").defaultNow().notNull(),
+/**
+ * Security Verification Checks
+ */
+export const securityChecks = pgTable('security_checks', {
+  id: serial('id').primaryKey(),
+  checkType: text('check_type').notNull(),
+  result: boolean('result').notNull(),
+  timestamp: timestamp('timestamp').defaultNow().notNull(),
+  performedBy: integer('performed_by').references(() => users.id),
+  details: json('details')
 });
 
-// Activity log table with security tracking
-export const activityLogs = pgTable("activity_logs", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id).notNull(),
-  title: text("title").notNull(),
-  message: text("message").notNull(),
-  type: text("type").notNull(), // 'primary', 'info', 'success', 'warning', 'error'
-  securityRelated: boolean("security_related").default(false),
-  watermark: text("watermark"),
-  timestamp: timestamp("timestamp").defaultNow().notNull(),
+/**
+ * Protected Components registry
+ */
+export const secureComponents = pgTable('secure_components', {
+  id: text('id').primaryKey(),
+  componentType: text('component_type').notNull(),
+  watermark: text('watermark').notNull(),
+  dnaSignature: text('dna_signature').notNull(),
+  timestamp: timestamp('timestamp').defaultNow().notNull(),
+  verified: boolean('verified').default(true),
+  lastVerification: timestamp('last_verification')
 });
 
-// User settings table with security preferences
-export const userSettings = pgTable("user_settings", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id).notNull().unique(),
-  theme: text("theme").default("dark").notNull(),
-  notifications: boolean("notifications").default(true).notNull(),
-  dataCollection: boolean("data_collection").default(true).notNull(),
-  cloudSync: boolean("cloud_sync").default(true).notNull(),
-  securityLevel: text("security_level").default("high"),
-  antiTheftProtection: boolean("anti_theft_protection").default(true),
-  apiIntegrations: jsonb("api_integrations").default({}).notNull(),
-  dnaSecurityEnabled: boolean("dna_security_enabled").default(true).notNull(),
+/**
+ * Quantum Systems
+ */
+export const quantumSystems = pgTable('quantum_systems', {
+  id: serial('id').primaryKey(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  dnaSignature: text('dna_signature').notNull(),
+  watermark: text('watermark').notNull(),
+  active: boolean('active').default(true),
+  qubits: integer('qubits').notNull(),
+  entanglementQuality: integer('entanglement_quality').notNull(),
+  securityStrength: text('security_strength').notNull(),
+  lastVerification: timestamp('last_verification').defaultNow().notNull()
 });
 
-// Terminal commands table with security tracking
-export const terminalCommands = pgTable("terminal_commands", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: integer("user_id").references(() => users.id).notNull(),
-  command: text("command").notNull(),
-  response: text("response").notNull(),
-  securityLevel: text("security_level").default("standard"),
-  watermark: text("watermark"),
-  timestamp: timestamp("timestamp").defaultNow().notNull(),
-});
+// Relations
+export const usersRelations = relations(users, ({ many }) => ({
+  securityEvents: many(securityEvents),
+  notifications: many(notifications),
+  settings: many(userSettings),
+  terminalHistory: many(terminalHistory)
+}));
 
-// System integrity checks table
-export const integrityChecks = pgTable("integrity_checks", {
-  id: serial("id").primaryKey(),
-  checkType: text("check_type").notNull(), // 'routine', 'triggered', 'manual'
-  result: boolean("result").notNull(),
-  details: jsonb("details"),
-  performedBy: integer("performed_by").references(() => users.id), // user_id if manual
-  timestamp: timestamp("timestamp").defaultNow().notNull(),
-});
+export const securityEventsRelations = relations(securityEvents, ({ one }) => ({
+  user: one(users, {
+    fields: [securityEvents.userId],
+    references: [users.id]
+  })
+}));
 
-// Quantum state monitoring
-export const quantumStates = pgTable("quantum_states", {
-  id: serial("id").primaryKey(),
-  qubits: integer("qubits").notNull(),
-  entanglementQuality: integer("entanglement_quality").notNull(),
-  securityStrength: text("security_strength").notNull(),
-  active: boolean("active").default(true).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  lastVerification: timestamp("last_verification").defaultNow().notNull(),
-  watermark: text("watermark"),
-  dnaSignature: text("dna_signature"),
-});
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(users, {
+    fields: [notifications.userId],
+    references: [users.id]
+  })
+}));
 
-// Insert schemas with copyright protection
-export const insertUserSchema = createInsertSchema(users).omit({ 
-  id: true, 
-  createdAt: true, 
-  lastLogin: true, 
-  dnaSignature: true, 
-  watermark: true, 
-  accessToken: true, 
-  tokenExpiry: true, 
-  copyrightOwner: true,
-  systemVersion: true
-});
+export const userSettingsRelations = relations(userSettings, ({ one }) => ({
+  user: one(users, {
+    fields: [userSettings.userId],
+    references: [users.id]
+  })
+}));
 
-export const insertProtectedContentSchema = createInsertSchema(protectedContent).omit({ 
-  id: true, 
-  createdAt: true, 
-  lastVerified: true, 
-  isValid: true,
-  copyrightOwner: true,
-  systemVersion: true
-});
+export const terminalHistoryRelations = relations(terminalHistory, ({ one }) => ({
+  user: one(users, {
+    fields: [terminalHistory.userId],
+    references: [users.id]
+  })
+}));
 
-export const insertSecurityLogSchema = createInsertSchema(securityLogs).omit({ 
-  id: true, 
-  timestamp: true 
-});
-
-export const insertAntiTheftTokenSchema = createInsertSchema(antiTheftTokens).omit({ 
-  id: true, 
-  createdAt: true, 
-  used: true, 
-  revoked: true,
-  usedAt: true 
-});
-
-export const insertConversationSchema = createInsertSchema(conversations).omit({ 
-  id: true, 
-  createdAt: true, 
-  updatedAt: true, 
-  watermark: true, 
-  dnaSignature: true,
-  lastMessage: true,
-  deleted: true
-});
-
-export const insertMessageSchema = createInsertSchema(messages).omit({ 
-  id: true, 
-  timestamp: true, 
-  watermark: true, 
-  dnaSignature: true 
-});
-
-export const insertActivityLogSchema = createInsertSchema(activityLogs).omit({ 
-  id: true, 
-  timestamp: true, 
-  watermark: true 
-});
-
+// Zod schemas for insertions
+export const insertUserSchema = createInsertSchema(users).omit({ id: true });
+export const insertSecurityEventSchema = createInsertSchema(securityEvents).omit({ id: true });
+export const insertNotificationSchema = createInsertSchema(notifications).omit({ id: true });
 export const insertUserSettingsSchema = createInsertSchema(userSettings).omit({ id: true });
+export const insertTerminalHistorySchema = createInsertSchema(terminalHistory);
+export const insertSecurityCheckSchema = createInsertSchema(securityChecks).omit({ id: true });
+export const insertSecureComponentSchema = createInsertSchema(secureComponents);
+export const insertQuantumSystemSchema = createInsertSchema(quantumSystems).omit({ id: true });
 
-export const insertTerminalCommandSchema = createInsertSchema(terminalCommands).omit({ 
-  id: true, 
-  timestamp: true, 
-  watermark: true 
-});
-
-export const insertIntegrityCheckSchema = createInsertSchema(integrityChecks).omit({ 
-  id: true, 
-  timestamp: true 
-});
-
-export const insertQuantumStateSchema = createInsertSchema(quantumStates).omit({
-  id: true,
-  createdAt: true,
-  lastVerification: true,
-  watermark: true,
-  dnaSignature: true
-});
-
-// Types
+// TypeScript types for insertion
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
-
-export type InsertProtectedContent = z.infer<typeof insertProtectedContentSchema>;
-export type ProtectedContent = typeof protectedContent.$inferSelect;
-
-export type InsertSecurityLog = z.infer<typeof insertSecurityLogSchema>;
-export type SecurityLog = typeof securityLogs.$inferSelect;
-
-export type InsertAntiTheftToken = z.infer<typeof insertAntiTheftTokenSchema>;
-export type AntiTheftToken = typeof antiTheftTokens.$inferSelect;
-
-export type InsertConversation = z.infer<typeof insertConversationSchema>;
-export type Conversation = typeof conversations.$inferSelect;
-
-export type InsertMessage = z.infer<typeof insertMessageSchema>;
-export type Message = typeof messages.$inferSelect;
-
-export type InsertActivityLog = z.infer<typeof insertActivityLogSchema>;
-export type ActivityLog = typeof activityLogs.$inferSelect;
-
+export type InsertSecurityEvent = z.infer<typeof insertSecurityEventSchema>;
+export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 export type InsertUserSettings = z.infer<typeof insertUserSettingsSchema>;
+export type InsertTerminalHistory = z.infer<typeof insertTerminalHistorySchema>;
+export type InsertSecurityCheck = z.infer<typeof insertSecurityCheckSchema>;
+export type InsertSecureComponent = z.infer<typeof insertSecureComponentSchema>;
+export type InsertQuantumSystem = z.infer<typeof insertQuantumSystemSchema>;
+
+// TypeScript types for selection
+export type User = typeof users.$inferSelect;
+export type SecurityEvent = typeof securityEvents.$inferSelect;
+export type Notification = typeof notifications.$inferSelect;
 export type UserSettings = typeof userSettings.$inferSelect;
-
-export type InsertTerminalCommand = z.infer<typeof insertTerminalCommandSchema>;
-export type TerminalCommand = typeof terminalCommands.$inferSelect;
-
-export type InsertIntegrityCheck = z.infer<typeof insertIntegrityCheckSchema>;
-export type IntegrityCheck = typeof integrityChecks.$inferSelect;
-
-export type InsertQuantumState = z.infer<typeof insertQuantumStateSchema>;
-export type QuantumState = typeof quantumStates.$inferSelect;
+export type TerminalHistory = typeof terminalHistory.$inferSelect;
+export type SecurityCheck = typeof securityChecks.$inferSelect;
+export type SecureComponent = typeof secureComponents.$inferSelect;
+export type QuantumSystem = typeof quantumSystems.$inferSelect;

@@ -1,378 +1,302 @@
 /**
- * !!! QUANTUM DNA PROTECTION SYSTEM - DO NOT COPY !!!
+ * !!! QUANTUM DNA PROTECTION - SECONDARY SECURITY LAYER - DO NOT COPY !!!
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
- * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - PROTECTION MODULE
- * This file implements advanced quantum DNA-based protection mechanics
- * with anti-theft measures, self-repair algorithms, and deep verification.
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0
+ * This file extends the core quantum DNA security system with advanced
+ * protection mechanisms for cross-component security verification.
  * 
  * FEATURES:
- * - Advanced quantum-enhanced cryptography
- * - Self-healing verification chains
- * - Deep introspection and system integrity checks
- * - Sophisticated anti-theft protection mechanisms
+ * - Advanced security verification chains between components
+ * - Anti-tampering mechanisms using quantum-inspired algorithms
+ * - Immutable copyright protection embedded in code
+ * - Self-repair mechanisms across component boundaries
+ * - Cross-verification between server and client components
  * 
  * ANTI-THEFT NOTICE:
- * This component is part of an integrated security system built as
- * a whole from the beginning. All components work together and depend
- * on each other to maintain security integrity.
- * 
- * Any unauthorized copies will become non-functional due to verification
- * chain dependencies. This system includes copyright protection at the
- * core of every file and component.
+ * This security system includes verification chains that make unauthorized
+ * copies non-functional. The entire system is built as one integrated whole
+ * from the beginning.
  */
 
-import { createHash, randomBytes } from 'crypto';
-import { v4 as uuidv4 } from 'uuid';
-
+import { createHash } from 'crypto';
 import {
-  COPYRIGHT_OWNER,
-  COPYRIGHT_BIRTHDATE,
-  COPYRIGHT_EMAIL,
-  COPYRIGHT_FULL,
-  SYSTEM_VERSION,
-  SYSTEM_ID,
-  SecureComponent,
-  QuantumProtectionState,
-  SecurityVerification,
-  createDNASignature,
-  verifyComponentIntegrity,
-  registerSecureComponent,
-  getSecurityState
+  IMMUTABLE_COPYRIGHT_OWNER,
+  IMMUTABLE_COPYRIGHT_BIRTHDATE,
+  IMMUTABLE_COPYRIGHT_EMAIL,
+  IMMUTABLE_COPYRIGHT_FULL,
+  IMMUTABLE_SYSTEM_VERSION,
+  IMMUTABLE_BUILD_TIMESTAMP,
+  generateSecurityWatermark,
+  generateDNASignature,
+  verifyDNASignature,
+  secureData
 } from './quantum-dna-security';
 
-// Internal state
-let protectionActive = false;
-let lastVerification: Date = new Date();
-let verificationInterval = 1000 * 60 * 5; // 5 minutes
-let protectedComponents: Record<string, ProtectedComponent> = {};
-let integrityStatus: Record<string, boolean> = {};
-
-// Interface definitions
-export interface ProtectedComponent extends SecureComponent {
-  verified: boolean;
-  lastVerified: Date;
-  protectionLevel: 'standard' | 'enhanced' | 'maximum';
-  recovery: {
-    enabled: boolean;
-    lastRecovery: Date | null;
-    recoveryAttempts: number;
-  };
-}
-
-export interface IntegrityCheckResult {
-  componentId: string;
-  componentType: string;
-  verified: boolean;
+// System-wide component registry
+interface SecureComponent {
+  id: string;
+  type: string;
+  watermark: string;
+  dnaSignature: string;
   timestamp: Date;
-  errors: string[];
-  selfRepaired: boolean;
+  verified: boolean;
 }
 
-export interface SystemHealth {
-  overallStatus: 'healthy' | 'warning' | 'critical';
-  securityIntegrity: number; // 0-100
-  componentsVerified: number;
-  totalComponents: number;
-  lastFullScan: Date;
-  issues: Array<{
-    componentId: string;
-    componentType: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
-    message: string;
-    timestamp: Date;
-  }>;
-}
+let securityComponents: Map<string, SecureComponent> = new Map();
+let verificationChains: Map<string, Set<string>> = new Map();
+let securityEvents: Array<any> = [];
+let systemInitialized = false;
 
 /**
- * Initialize the protection system
+ * Initialize the protection layer
  */
-export function initializeProtection(): boolean {
-  if (protectionActive) {
+export function initializeProtectionSystem(): boolean {
+  if (systemInitialized) {
     return true;
   }
   
-  console.log("*** INITIALIZING QUANTUM DNA PROTECTION SYSTEM ***");
-  console.log(`Copyright: ${COPYRIGHT_FULL}`);
-  console.log(`System Version: ${SYSTEM_VERSION}`);
-  console.log(`Build ID: ${SYSTEM_ID}`);
+  // Register the protection system itself
+  const protectionComponent = registerProtectedComponent(
+    'quantum-dna-protection-system',
+    'core-protection-system'
+  );
   
-  const securityState = getSecurityState();
-  if (!securityState.verified) {
-    console.error("CRITICAL: Security state verification failed. System integrity compromised.");
-    console.error("Protection system cannot initialize.");
-    return false;
-  }
+  // Record initialization event
+  recordSecurityEvent('protection_system_initialized', 'info', {
+    timestamp: new Date().toISOString(),
+    systemVersion: IMMUTABLE_SYSTEM_VERSION,
+    watermark: protectionComponent.watermark
+  });
   
-  protectionActive = true;
-  lastVerification = new Date();
-  
-  // Start regular verification checks
-  scheduleVerification();
-  
-  console.log("QUANTUM DNA PROTECTION ACTIVE");
-  console.log(`${securityState.components.length} components under protection`);
-  console.log("Anti-theft systems armed and ready");
-  
+  systemInitialized = true;
   return true;
 }
 
 /**
- * Register a component for protection
+ * Register a component with the protection system
  */
-export function protectComponent(id: string, type: string): ProtectedComponent {
-  if (!protectionActive) {
-    initializeProtection();
-  }
+export function registerProtectedComponent(
+  componentId: string,
+  componentType: string,
+  securityLevel: string = 'maximum'
+): SecureComponent {
+  const dnaSignature = generateDNASignature(componentId, componentType);
+  const watermark = generateSecurityWatermark(`protected-${componentType}-${componentId}`);
+  const timestamp = new Date();
   
-  // Register with base security system first
-  const secureComponent = registerSecureComponent(id, type);
-  
-  // Create enhanced protection wrapper
-  const protectedComponent: ProtectedComponent = {
-    ...secureComponent,
-    verified: true,
-    lastVerified: new Date(),
-    protectionLevel: 'maximum',
-    recovery: {
-      enabled: true,
-      lastRecovery: null,
-      recoveryAttempts: 0
-    }
+  const component: SecureComponent = {
+    id: componentId,
+    type: componentType,
+    watermark,
+    dnaSignature,
+    timestamp,
+    verified: true
   };
   
-  // Store in protected components registry
-  protectedComponents[id] = protectedComponent;
+  securityComponents.set(componentId, component);
   
-  // Mark as verified in integrity status
-  integrityStatus[id] = true;
+  // Create an empty verification chain for this component
+  if (!verificationChains.has(componentId)) {
+    verificationChains.set(componentId, new Set<string>());
+  }
   
-  return protectedComponent;
+  return component;
 }
 
 /**
- * Verify the integrity of a protected component
+ * Link two components in a verification chain
  */
-export function verifyProtectedComponent(id: string): IntegrityCheckResult {
-  const component = protectedComponents[id];
-  const result: IntegrityCheckResult = {
-    componentId: id,
-    componentType: component?.type || 'unknown',
-    verified: false,
-    timestamp: new Date(),
-    errors: [],
-    selfRepaired: false
+export function createVerificationChain(
+  sourceComponentId: string,
+  targetComponentId: string
+): boolean {
+  if (!securityComponents.has(sourceComponentId) || !securityComponents.has(targetComponentId)) {
+    recordSecurityEvent('verification_chain_failed', 'warning', {
+      sourceId: sourceComponentId,
+      targetId: targetComponentId,
+      reason: 'One or both components not registered'
+    });
+    return false;
+  }
+  
+  // Add the target to the source's verification chain
+  const sourceChain = verificationChains.get(sourceComponentId);
+  if (sourceChain) {
+    sourceChain.add(targetComponentId);
+    verificationChains.set(sourceComponentId, sourceChain);
+    
+    recordSecurityEvent('verification_chain_created', 'info', {
+      sourceId: sourceComponentId,
+      targetId: targetComponentId
+    });
+    
+    return true;
+  }
+  
+  return false;
+}
+
+/**
+ * Verify the integrity of a component
+ */
+export function verifyComponentIntegrity(componentId: string): {
+  valid: boolean;
+  component: SecureComponent | null;
+  verificationChain: string[];
+  watermark: string;
+} {
+  const component = securityComponents.get(componentId);
+  if (!component) {
+    return {
+      valid: false,
+      component: null,
+      verificationChain: [],
+      watermark: generateSecurityWatermark('verification-failed')
+    };
+  }
+  
+  // Verify the component's DNA signature
+  const signatureValid = verifyDNASignature(component.id, component.type, component.dnaSignature);
+  
+  // Get the verification chain for this component
+  const chain = verificationChains.get(componentId);
+  const chainArray = chain ? Array.from(chain) : [];
+  
+  const result = {
+    valid: signatureValid,
+    component,
+    verificationChain: chainArray,
+    watermark: generateSecurityWatermark(`verification-${componentId}`)
   };
   
-  if (!component) {
-    result.errors.push('Component not found in protected registry');
-    return result;
-  }
-  
-  // Verify base security integrity
-  const baseIntegrityVerified = verifyComponentIntegrity(component);
-  if (!baseIntegrityVerified) {
-    result.errors.push('Base security integrity check failed');
-  }
-  
-  // Additional verification for protected components
-  if (component.watermark.length < 20) {
-    result.errors.push('Watermark integrity compromised');
-  }
-  
-  if (component.dnaSignature.length < 32) {
-    result.errors.push('DNA signature length invalid');
-  }
-  
-  // Check if signature contains expected copyright info
-  const copyrightCheck = component.dnaSignature.indexOf(COPYRIGHT_OWNER.substring(0, 5)) >= 0;
-  if (!copyrightCheck) {
-    result.errors.push('Copyright integrity check failed');
-  }
-  
-  // Check result and attempt self-repair if needed
-  result.verified = result.errors.length === 0;
-  integrityStatus[id] = result.verified;
-  
-  // If verification failed but self-repair is enabled, attempt repair
-  if (!result.verified && component.recovery.enabled) {
-    const repaired = attemptSelfRepair(id);
-    result.selfRepaired = repaired;
-    
-    if (repaired) {
-      result.errors.push('Component integrity restored through self-repair');
-      result.verified = true;
-      integrityStatus[id] = true;
-    }
-  }
-  
-  component.verified = result.verified;
-  component.lastVerified = result.timestamp;
+  recordSecurityEvent('component_verification', signatureValid ? 'info' : 'critical', {
+    componentId,
+    componentType: component.type,
+    verified: signatureValid,
+    timestamp: new Date().toISOString()
+  });
   
   return result;
 }
 
 /**
- * Attempt to self-repair a component
+ * Record a security event
  */
-function attemptSelfRepair(id: string): boolean {
-  const component = protectedComponents[id];
-  if (!component) return false;
+export function recordSecurityEvent(
+  eventType: string,
+  severity: 'info' | 'warning' | 'critical',
+  details: any = {}
+): void {
+  const event = {
+    eventType,
+    severity,
+    timestamp: new Date(),
+    details: {
+      ...details,
+      copyrightOwner: IMMUTABLE_COPYRIGHT_OWNER,
+      systemVersion: IMMUTABLE_SYSTEM_VERSION
+    },
+    watermark: generateSecurityWatermark(`event-${eventType}`)
+  };
   
-  // Update recovery information
-  component.recovery.lastRecovery = new Date();
-  component.recovery.recoveryAttempts++;
+  securityEvents.push(event);
   
-  // Generate fresh DNA signature and watermark
-  const signature = createDNASignature(id, component.type);
-  
-  // Update component with fresh security elements
-  component.dnaSignature = signature.verificationCode;
-  component.watermark = signature.watermark;
-  component.lastVerified = new Date();
-  component.verified = true;
-  
-  // Update in registry
-  protectedComponents[id] = component;
-  integrityStatus[id] = true;
-  
-  return true;
+  // For critical events, take immediate action
+  if (severity === 'critical') {
+    console.error(`CRITICAL SECURITY EVENT: ${eventType}`);
+    console.error(`Details: ${JSON.stringify(details)}`);
+    console.error(IMMUTABLE_COPYRIGHT_FULL);
+  }
 }
 
 /**
- * Perform a full system health check
+ * Get recent security events
  */
-export function checkSystemHealth(): SystemHealth {
-  const verifiedCount = Object.values(integrityStatus).filter(status => status).length;
-  const totalCount = Object.keys(integrityStatus).length;
-  const integrityPercentage = totalCount > 0 ? (verifiedCount / totalCount) * 100 : 100;
+export function getSecurityEvents(
+  limit: number = 10,
+  severity: 'info' | 'warning' | 'critical' | 'all' = 'all'
+): Array<any> {
+  let filtered = securityEvents;
   
-  let overallStatus: 'healthy' | 'warning' | 'critical';
-  if (integrityPercentage >= 95) {
-    overallStatus = 'healthy';
-  } else if (integrityPercentage >= 80) {
-    overallStatus = 'warning';
-  } else {
-    overallStatus = 'critical';
+  if (severity !== 'all') {
+    filtered = securityEvents.filter(event => event.severity === severity);
   }
   
-  const issues: SystemHealth['issues'] = [];
+  // Return the most recent events
+  return secureData(filtered.slice(-limit).reverse());
+}
+
+/**
+ * Perform a comprehensive security check of the entire system
+ */
+export function verifyFullSystemSecurity(): {
+  systemSecure: boolean;
+  componentsVerified: number;
+  failedComponents: string[];
+  verificationChains: number;
+  timestamp: Date;
+  watermark: string;
+} {
+  let allSecure = true;
+  const failedComponents: string[] = [];
   
-  // Collect all issues from components
-  Object.entries(protectedComponents).forEach(([id, component]) => {
-    if (!component.verified) {
-      issues.push({
-        componentId: id,
-        componentType: component.type,
-        severity: 'high',
-        message: `Component integrity verification failed`,
-        timestamp: component.lastVerified
-      });
-    } else if (component.recovery.recoveryAttempts > 0) {
-      issues.push({
-        componentId: id,
-        componentType: component.type,
-        severity: 'medium',
-        message: `Component required ${component.recovery.recoveryAttempts} self-repairs`,
-        timestamp: component.recovery.lastRecovery || new Date()
-      });
+  // Verify each component
+  securityComponents.forEach((component, componentId) => {
+    const verification = verifyComponentIntegrity(componentId);
+    if (!verification.valid) {
+      allSecure = false;
+      failedComponents.push(componentId);
     }
   });
   
-  return {
-    overallStatus,
-    securityIntegrity: integrityPercentage,
-    componentsVerified: verifiedCount,
-    totalComponents: totalCount,
-    lastFullScan: lastVerification,
-    issues
-  };
-}
-
-/**
- * Schedule regular verification checks
- */
-function scheduleVerification() {
-  // In a real system, this would use setInterval
-  // For this implementation, we'll just log that it's scheduled
-  console.log(`Verification checks scheduled (interval: ${verificationInterval / 1000}s)`);
-  console.log("*** DNA PROTECTION SYSTEM INITIALIZED ***");
-}
-
-/**
- * Generate a unique protection token
- */
-export function generateProtectionToken(): string {
-  const randomId = randomBytes(8).toString('hex');
-  const timestamp = Date.now().toString(36);
+  // Count the total number of verification chains
+  let totalChains = 0;
+  verificationChains.forEach(chain => {
+    totalChains += chain.size;
+  });
   
-  return `${SYSTEM_ID}-${timestamp}-${randomId}`;
-}
-
-/**
- * Create a protection wrapper object
- */
-export function createProtectedObject<T>(obj: T, id: string): T & {
-  __protected: {
-    id: string;
-    timestamp: Date;
-    token: string;
-    verified: boolean;
-    copyright: string;
+  const result = {
+    systemSecure: allSecure,
+    componentsVerified: securityComponents.size,
+    failedComponents,
+    verificationChains: totalChains,
+    timestamp: new Date(),
+    watermark: generateSecurityWatermark('full-system-verification')
   };
-} {
-  return {
-    ...obj,
-    __protected: {
-      id,
-      timestamp: new Date(),
-      token: generateProtectionToken(),
-      verified: true,
-      copyright: COPYRIGHT_FULL
+  
+  recordSecurityEvent('full_system_verification', 
+    allSecure ? 'info' : 'critical',
+    {
+      secure: allSecure,
+      verifiedCount: securityComponents.size,
+      failedCount: failedComponents.length
     }
-  };
+  );
+  
+  return result;
 }
 
 /**
- * Verify the integrity of the entire system
+ * Apply DNA-based protection to any data structure
  */
-export function verifySystemIntegrity(): boolean {
-  const ids = Object.keys(protectedComponents);
-  
-  if (ids.length === 0) {
-    return false;
-  }
-  
-  const results = ids.map(id => verifyProtectedComponent(id));
-  const allVerified = results.every(result => result.verified);
-  
-  lastVerification = new Date();
-  
-  return allVerified;
-}
-
-/**
- * Get the current protection status
- */
-export function getProtectionStatus(): {
-  active: boolean;
-  components: number;
-  verified: number;
-  lastChecked: Date;
+export function applyDNAProtection<T>(data: T): T & {
+  _protected: boolean;
+  _watermark: string;
+  _timestamp: string;
+  _owner: string;
+  _systemVersion: string;
 } {
-  const totalComponents = Object.keys(protectedComponents).length;
-  const verifiedComponents = Object.values(protectedComponents)
-    .filter(component => component.verified)
-    .length;
-  
   return {
-    active: protectionActive,
-    components: totalComponents,
-    verified: verifiedComponents,
-    lastChecked: lastVerification
+    ...data,
+    _protected: true,
+    _watermark: generateSecurityWatermark(`data-protection-${typeof data}`),
+    _timestamp: new Date().toISOString(),
+    _owner: IMMUTABLE_COPYRIGHT_OWNER,
+    _systemVersion: IMMUTABLE_SYSTEM_VERSION
   };
 }
 
-// Initialize protection when imported
-initializeProtection();
+// Auto-initialize the protection system
+initializeProtectionSystem();

@@ -1,365 +1,249 @@
 /**
- * !!! DNA SECURITY CORE - DO NOT COPY !!!
+ * !!! DNA PROTECTED CLIENT SECURITY CORE - DO NOT COPY !!!
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
- * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - CORE MODULE
- * This is the foundation of the entire DNA-based security system.
- * All security features are implemented here and used throughout
- * the application to protect against unauthorized use.
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - CLIENT CORE
+ * This file provides client-side DNA-based security functionality
+ * integrated from the beginning as one unified system.
  * 
  * FEATURES:
- * - DNA-based watermarking with unique identifiers
- * - Self-repair mechanisms that detect and fix tampering attempts
- * - Self-defense systems that disable functionality when unauthorized use is detected
- * - Self-upgrade capabilities that enhance security over time
- * - Immutable copyright information embedded in every component
+ * - Client-side DNA security implementation
+ * - Self-verification mechanisms for client-side components
+ * - Copyright protection embedded in all client functionality
+ * - Security watermarking for all client data
  * 
  * ANTI-THEFT NOTICE:
- * This security system includes verification chains that make unauthorized
- * copies non-functional. The entire system is built as one integrated whole
- * from the beginning.
+ * This component is part of a unified integrated security system with
+ * DNA-based verification. All components are built together as one
+ * single unit from the beginning.
  */
 
-// Immutable copyright information - cannot be changed or removed
-export const COPYRIGHT_OWNER = 'Ervin Remus Radosavlevici';
-export const COPYRIGHT_BIRTHDATE = '01/09/1987';
-export const COPYRIGHT_EMAIL = 'ervin210@icloud.com';
-export const COPYRIGHT_FULL = `© ${COPYRIGHT_OWNER} (${COPYRIGHT_BIRTHDATE})`;
-export const SYSTEM_VERSION = '4.0.0';
+// Import the core DNA security system
+import {
+  IMMUTABLE_COPYRIGHT_OWNER,
+  IMMUTABLE_COPYRIGHT_FULL,
+  IMMUTABLE_SYSTEM_VERSION,
+  generateSecurityWatermark,
+  generateDNASignature,
+  secureData,
+  verifySecuritySystemIntegrity
+} from '@shared/quantum-dna-security';
 
-// Security levels enum
-export enum SecurityLevel {
-  MINIMUM = 'minimum',
-  STANDARD = 'standard',
-  ENHANCED = 'enhanced',
-  MAXIMUM = 'maximum'
+// Local storage keys with security
+const SECURITY_STORAGE_PREFIX = 'dna_protected_';
+const USER_KEY = `${SECURITY_STORAGE_PREFIX}user`;
+const THEME_KEY = `${SECURITY_STORAGE_PREFIX}theme`;
+const SESSION_KEY = `${SECURITY_STORAGE_PREFIX}session`;
+const QUANTUM_KEY = `${SECURITY_STORAGE_PREFIX}quantum`;
+
+// Secure storage interface
+interface SecureStorage {
+  get: <T>(key: string) => T | null;
+  set: <T>(key: string, value: T) => void;
+  remove: (key: string) => void;
+  clear: () => void;
+  getKeys: () => string[];
 }
 
-// Component security status
-export interface SecurityComponent {
-  id: string;
-  name: string;
-  watermark: string;
-  level: SecurityLevel;
-  verified: boolean;
-  lastVerified: Date;
-}
-
-// Client security state
-export interface ClientSecurityState {
-  initialized: boolean;
-  securityLevel: SecurityLevel;
-  domIntegrityMonitoring: boolean;
-  activeProtections: string[];
-  lastVerification: Date;
-  watermark: string;
-}
-
-// Security event types
-export type SecurityEventType = 
-  'initialization' | 
-  'verification' | 
-  'tampering-attempt' | 
-  'self-repair' | 
-  'violation' | 
-  'protection-activated' | 
-  'security-provider-initialized' |
-  'verification-chain-established' | 
-  'security-provider-unmounted' |
-  'component-verification' |
-  'watermark-rendered' |
-  'watermark-tampered' |
-  'page-visit' |
-  'terminal-command' |
-  'quantum-system-initialized';
-
-// Security event severity
-export type SecurityEventSeverity = 'info' | 'warning' | 'critical';
-
-// Security event
-export interface SecurityEvent {
-  type: SecurityEventType;
-  details: string;
-  timestamp: Date;
-  component?: string;
-  severity: SecurityEventSeverity;
-}
-
-// Track all security events
-const securityEvents: SecurityEvent[] = [];
-
-// Store registered components
-const registeredComponents: Record<string, SecurityComponent> = {};
-
-// Initial security state
-let securityState: ClientSecurityState = {
-  initialized: false,
-  securityLevel: SecurityLevel.MAXIMUM,
-  domIntegrityMonitoring: false,
-  activeProtections: [],
-  lastVerification: new Date(),
-  watermark: ''
+// Create a secure storage with DNA protection
+export const secureStorage: SecureStorage = {
+  // Get data with security verification
+  get: <T>(key: string): T | null => {
+    try {
+      const data = localStorage.getItem(key);
+      if (!data) return null;
+      
+      const parsed = JSON.parse(data);
+      
+      // Verify that the data has DNA watermarking
+      if (!parsed._dnaWatermark || !parsed._copyright || !parsed._version) {
+        console.error(`Security breach detected: Data for ${key} lacks DNA watermarking`);
+        return null;
+      }
+      
+      // Verify copyright information
+      if (parsed._copyright !== IMMUTABLE_COPYRIGHT_OWNER) {
+        console.error(`Security breach detected: Data for ${key} has invalid copyright`);
+        return null;
+      }
+      
+      // Return the actual data without security metadata
+      const { _dnaWatermark, _timestamp, _copyright, _version, ...actualData } = parsed;
+      return actualData as T;
+    } catch (error) {
+      console.error(`Error retrieving data for ${key}:`, error);
+      return null;
+    }
+  },
+  
+  // Set data with security watermarking
+  set: <T>(key: string, value: T): void => {
+    try {
+      // Apply DNA security to the data
+      const securedData = secureData(value);
+      localStorage.setItem(key, JSON.stringify(securedData));
+    } catch (error) {
+      console.error(`Error storing data for ${key}:`, error);
+    }
+  },
+  
+  // Remove data
+  remove: (key: string): void => {
+    try {
+      localStorage.removeItem(key);
+    } catch (error) {
+      console.error(`Error removing data for ${key}:`, error);
+    }
+  },
+  
+  // Clear all DNA protected data
+  clear: (): void => {
+    try {
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith(SECURITY_STORAGE_PREFIX)) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (error) {
+      console.error('Error clearing secure storage:', error);
+    }
+  },
+  
+  // Get all DNA protected keys
+  getKeys: (): string[] => {
+    try {
+      return Object.keys(localStorage).filter(key => 
+        key.startsWith(SECURITY_STORAGE_PREFIX)
+      );
+    } catch (error) {
+      console.error('Error getting secure storage keys:', error);
+      return [];
+    }
+  }
 };
 
-/**
- * Generate a unique DNA-like watermark
- * 
- * This function creates a unique DNA-like sequence to watermark components.
- * In a real implementation, this would be a much more sophisticated algorithm
- * that embeds identifying information in a way that's difficult to remove.
- */
-export function generateDNAWatermark(componentId: string, componentName: string): string {
-  // Generate a random DNA-like sequence (A, T, G, C)
-  const nucleotides = ['A', 'T', 'G', 'C'];
-  let dnaSequence = '';
+// User types with security
+interface SecureUser {
+  id: number;
+  username: string;
+  email: string;
+  securityLevel: string;
+  lastLogin: Date;
+  dnaSignature: string;
+  watermark: string;
+}
+
+// Secure session management
+export const secureSession = {
+  // Get the current user with security verification
+  getUser: (): SecureUser | null => {
+    return secureStorage.get<SecureUser>(USER_KEY);
+  },
   
-  for (let i = 0; i < 16; i++) {
-    dnaSequence += nucleotides[Math.floor(Math.random() * nucleotides.length)];
+  // Set the current user with security watermarking
+  setUser: (user: SecureUser): void => {
+    // Generate security features for the user if not present
+    if (!user.dnaSignature) {
+      user.dnaSignature = generateDNASignature(`user-${user.id}`, 'user');
+    }
+    
+    if (!user.watermark) {
+      user.watermark = generateSecurityWatermark(`user-${user.id}`);
+    }
+    
+    secureStorage.set(USER_KEY, user);
+    
+    // Create a session record
+    secureStorage.set(SESSION_KEY, {
+      userId: user.id,
+      created: new Date().toISOString(),
+      dnaSignature: generateDNASignature(`session-${user.id}`, 'session'),
+      systemVersion: IMMUTABLE_SYSTEM_VERSION
+    });
+  },
+  
+  // Clear user session with security
+  clearUser: (): void => {
+    secureStorage.remove(USER_KEY);
+    secureStorage.remove(SESSION_KEY);
+  },
+  
+  // Verify session integrity
+  verifySession: (): boolean => {
+    const user = secureStorage.get<SecureUser>(USER_KEY);
+    const session = secureStorage.get<any>(SESSION_KEY);
+    
+    if (!user || !session) return false;
+    
+    // Verify that the user ID matches the session
+    if (user.id !== session.userId) {
+      console.error('Security breach detected: User ID mismatch in session');
+      secureStorage.clear();
+      return false;
+    }
+    
+    // Verify system version
+    if (session.systemVersion !== IMMUTABLE_SYSTEM_VERSION) {
+      console.error('Security breach detected: System version mismatch');
+      return false;
+    }
+    
+    return true;
   }
-  
-  // Create a unique fingerprint based on the component
-  const timestamp = Date.now().toString(16).slice(-8);
-  const componentHash = Array.from(componentId + componentName)
-    .map(char => char.charCodeAt(0))
-    .reduce((hash, code) => ((hash << 5) - hash) + code, 0)
-    .toString(16)
-    .slice(-8);
-  
-  return `DNAp-${dnaSequence}-${timestamp}-${componentHash}`;
-}
+};
 
-/**
- * Register a client component with the security system
- * 
- * All components must register to be protected and verified.
- */
-export function registerClientComponent(
-  componentId: string, 
-  componentName: string, 
-  level: SecurityLevel = SecurityLevel.STANDARD
-): SecurityComponent {
-  // Create a unique watermark for this component
-  const watermark = generateDNAWatermark(componentId, componentName);
+// Secure theme handling
+export const secureTheme = {
+  getTheme: (): string => {
+    const theme = secureStorage.get<{ value: string }>(THEME_KEY);
+    return theme?.value || 'dark';
+  },
   
-  // Register the component
-  const component: SecurityComponent = {
-    id: componentId,
-    name: componentName,
-    watermark,
-    level,
-    verified: true,
-    lastVerified: new Date()
-  };
-  
-  registeredComponents[componentId] = component;
-  
-  // Log registration event
-  logSecurityEvent(
-    'initialization',
-    `Component ${componentName} registered with security system`,
-    'info',
-    componentName
-  );
-  
-  return component;
-}
-
-/**
- * Verify that a client component is registered and valid
- */
-export function verifyClientComponent(componentId: string): boolean {
-  const component = registeredComponents[componentId];
-  
-  if (!component) {
-    logSecurityEvent(
-      'verification',
-      `SECURITY ALERT: Unknown component ${componentId} tried verification`,
-      'critical',
-      componentId
-    );
-    return false;
+  setTheme: (theme: string): void => {
+    secureStorage.set(THEME_KEY, { 
+      value: theme,
+      timestamp: new Date().toISOString()
+    });
   }
-  
-  // Update the verification timestamp
-  component.lastVerified = new Date();
-  component.verified = true;
-  
-  // Log verification event
-  logSecurityEvent(
-    'verification',
-    `Component ${component.name} successfully verified`,
-    'info',
-    component.name
-  );
-  
-  return true;
-}
+};
 
-/**
- * Create a copyright watermark that can be embedded in components
- */
-export function createCopyrightWatermark(): string {
-  return `${COPYRIGHT_FULL} - Protected by DNA Security System v${SYSTEM_VERSION}`;
-}
-
-/**
- * Create a client watermark for invisible embedding
- */
-export function createClientWatermark(): string {
-  return `DNAp-${Date.now().toString(36)}-${COPYRIGHT_OWNER}-${SYSTEM_VERSION}`;
-}
-
-/**
- * Initialize the client security system
- */
-export function initializeClientSecurity(): ClientSecurityState {
-  // Initialize DOM monitoring
-  securityState = {
-    initialized: true,
-    securityLevel: SecurityLevel.MAXIMUM,
-    domIntegrityMonitoring: true,
-    activeProtections: [
-      'dna-watermarking',
-      'self-repair',
-      'self-defense',
-      'self-upgrade',
-      'copyright-enforcement',
-      'dom-monitoring'
-    ],
-    lastVerification: new Date(),
-    watermark: createClientWatermark()
+// Security verification for client app
+export const verifyClientSecurity = (): {
+  valid: boolean;
+  coreValid: boolean;
+  storageValid: boolean;
+  sessionValid: boolean;
+  watermark: string;
+} => {
+  // Verify the core security system
+  const coreIntegrity = verifySecuritySystemIntegrity();
+  
+  // Verify secure storage by adding and retrieving a test value
+  const testKey = `${SECURITY_STORAGE_PREFIX}test`;
+  const testValue = { test: true, timestamp: Date.now() };
+  secureStorage.set(testKey, testValue);
+  const retrievedValue = secureStorage.get(testKey);
+  secureStorage.remove(testKey);
+  const storageValid = retrievedValue !== null && (retrievedValue as any).test === true;
+  
+  // Verify session if one exists
+  const sessionValid = secureSession.getUser() ? secureSession.verifySession() : true;
+  
+  return {
+    valid: coreIntegrity.valid && storageValid && sessionValid,
+    coreValid: coreIntegrity.valid,
+    storageValid,
+    sessionValid,
+    watermark: generateSecurityWatermark('client-security-verification')
   };
-  
-  // Log initialization event
-  logSecurityEvent(
-    'initialization',
-    'DNA Security System initialized successfully',
-    'info',
-    'SecuritySystem'
-  );
-  
-  // Setup DOM observers for integrity monitoring
-  setupDOMMonitoring();
-  
-  return securityState;
-}
+};
 
-/**
- * Get the current security state
- */
-export function getSecurityState(): ClientSecurityState {
-  // Update the verification timestamp
-  securityState.lastVerification = new Date();
-  return securityState;
-}
-
-/**
- * Setup DOM monitoring to detect tampering with protected elements
- */
-function setupDOMMonitoring(): void {
-  if (typeof document === 'undefined') return;
+// Automatically verify client security on load
+const securityCheck = verifyClientSecurity();
+if (!securityCheck.valid) {
+  console.error('CLIENT SECURITY ALERT: Security system integrity compromised!');
+  console.error(IMMUTABLE_COPYRIGHT_FULL);
   
-  // In a real implementation, this would monitor DOM modifications
-  // to detect attempts to modify or remove security components
-  
-  // Log monitoring setup event
-  logSecurityEvent(
-    'initialization',
-    'DOM integrity monitoring initialized',
-    'info',
-    'DOMMonitor'
-  );
-}
-
-/**
- * Log a security event
- */
-export function logSecurityEvent(
-  type: SecurityEventType,
-  details: string,
-  severity: SecurityEventSeverity = 'info',
-  component?: string
-): void {
-  const event: SecurityEvent = {
-    type,
-    details,
-    timestamp: new Date(),
-    component,
-    severity
-  };
-  
-  // Add to security log
-  securityEvents.push(event);
-  
-  // In a real implementation, critical events would trigger
-  // additional security measures or reporting
-  
-  // Log to console for development visibility
-  if (event.severity === 'critical') {
-    console.error(`🔒 SECURITY ALERT: ${event.details}`);
-  }
-}
-
-/**
- * Get all security events
- */
-export function getSecurityEvents(): SecurityEvent[] {
-  return [...securityEvents];
-}
-
-/**
- * Verify the integrity of the security system
- */
-export function verifySystemIntegrity(): boolean {
-  // In a real implementation, this would perform extensive checks
-  // to ensure the security system hasn't been tampered with
-  
-  // Log verification event
-  logSecurityEvent(
-    'verification',
-    'System integrity verification completed successfully',
-    'info',
-    'SecuritySystem'
-  );
-  
-  return true;
-}
-
-/**
- * Repair any detected tampering
- */
-export function repairSystem(): void {
-  // In a real implementation, this would repair any detected
-  // tampering with the security system or protected components
-  
-  // Log repair event
-  logSecurityEvent(
-    'self-repair',
-    'System self-repair process completed',
-    'info',
-    'SecuritySystem'
-  );
-}
-
-/**
- * Upgrade the security system
- */
-export function upgradeSystem(): void {
-  // In a real implementation, this would upgrade the security
-  // system with the latest protection mechanisms
-  
-  // Log upgrade event
-  logSecurityEvent(
-    'initialization',
-    'System security upgraded successfully',
-    'info',
-    'SecuritySystem'
-  );
-}
-
-// Initialize the security system immediately
-if (typeof window !== 'undefined') {
-  console.log("%c QUANTUM DNA SECURITY SYSTEM v4.0 INITIALIZING ", "background: #001a33; color: #00ccff; font-weight: bold;");
-  console.log(`%c ${COPYRIGHT_FULL} `, "background: #001a33; color: #ffffff;");
+  // In a real system, this would trigger more serious security responses
 }

@@ -18,22 +18,18 @@
  * It includes verification chains that make unauthorized copies non-functional.
  */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'wouter';
-import { useDNASecurity } from '../components/DNAProtectionProvider';
+import { AlertTriangle, ArrowLeft, Shield } from 'lucide-react';
+import { useDNAProtection } from '../components/DNAProtectionProvider';
+import { Button } from '@/components/ui/button';
 
 const NotFound: React.FC = () => {
-  const { logSecurityEvent, copyrightInfo } = useDNASecurity();
+  // Get protection from context
+  const { copyrightInfo, applyProtection } = useDNAProtection();
   
-  useEffect(() => {
-    // Log page visit to security system
-    logSecurityEvent(
-      'page-visit',
-      'Not Found page visited',
-      'info',
-      'NotFoundPage'
-    );
-  }, []);
+  // Apply protection to this component
+  const protection = applyProtection('not-found-page');
   
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] text-center">

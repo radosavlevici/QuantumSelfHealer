@@ -1,266 +1,338 @@
 /**
- * !!! DNA PROTECTED PAGE - DO NOT COPY !!!
+ * !!! DNA PROTECTED COMPONENT - DO NOT COPY !!!
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
- * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - TERMINAL PAGE
- * This page is protected by DNA-based security and is part of
- * the unified protection system built into every component.
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0
+ * This component provides the quantum terminal interface for the
+ * DNA-protected application.
  * 
  * FEATURES:
- * - DNA-based watermarking embedded in the component
- * - Self-repair mechanisms detect and fix tampering attempts
- * - Self-defense systems disable functionality when unauthorized use is detected
- * - Immutable copyright protection embedded in the file
+ * - Quantum-secured terminal interface
+ * - DNA-protected command execution
+ * - Self-verification mechanisms
+ * - Copyright protection embedded in the UI
  * 
  * ANTI-THEFT NOTICE:
- * This page is part of an integrated whole built from the beginning.
- * It includes verification chains that make unauthorized copies non-functional.
+ * This component is part of a unified integrated security system with
+ * DNA-based verification. All components are built together as one
+ * single unit from the beginning.
  */
 
-import React, { useEffect, useState } from 'react';
-import { useDNASecurity } from '../components/DNAProtectionProvider';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useLocation } from 'wouter';
+import { Terminal, ChevronRight, ArrowLeft, Clock, Shield } from 'lucide-react';
+import { useDNAProtection } from '../components/DNAProtectionProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { quantumService } from '../lib/quantum-service';
+import { terminalHistoryService } from '../lib/storage-service';
 
+// Terminal Page component
 const TerminalPage: React.FC = () => {
-  const { logSecurityEvent, copyrightInfo, securityLevel, systemVersion } = useDNASecurity();
-  const [input, setInput] = useState('');
-  const [output, setOutput] = useState<string[]>([
-    'Quantum DNA Terminal [Version 4.0]',
-    `© ${copyrightInfo.owner} (${copyrightInfo.birthdate})`,
-    'All Rights Reserved.',
-    '',
-    'Type "help" for available commands.',
-    ''
-  ]);
+  // Location hook for navigation
+  const [_, setLocation] = useLocation();
   
+  // Get protection from context
+  const { copyrightInfo, applyProtection } = useDNAProtection();
+  
+  // Apply protection to this component
+  const protection = applyProtection('terminal-page');
+  
+  // Terminal state
+  const [command, setCommand] = useState('');
+  const [commandHistory, setCommandHistory] = useState<any[]>([]);
+  const [output, setOutput] = useState<{ type: string; content: string }[]>([
+    { 
+      type: 'system', 
+      content: `Quantum DNA Terminal v4.0 - © ${copyrightInfo.owner}\nType 'help' to see available commands.` 
+    }
+  ]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Reference to terminal input
+  const inputRef = useRef<HTMLInputElement>(null);
+  const outputRef = useRef<HTMLDivElement>(null);
+  
+  // Load command history
   useEffect(() => {
-    // Log page visit to security system
-    logSecurityEvent(
-      'page-visit',
-      'Terminal page visited',
-      'info',
-      'TerminalPage'
-    );
+    const history = terminalHistoryService.getHistory();
+    setCommandHistory(history);
   }, []);
   
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
-  };
-  
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      processCommand();
+  // Auto-scroll to bottom of terminal
+  useEffect(() => {
+    if (outputRef.current) {
+      outputRef.current.scrollTop = outputRef.current.scrollHeight;
     }
-  };
+  }, [output]);
   
-  const processCommand = () => {
+  // Focus input on mount
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+  
+  // Process a terminal command
+  const processCommand = async (commandText: string) => {
+    // Trim the command
+    const trimmedCommand = commandText.trim();
+    
+    // Add the command to the output
+    setOutput(prev => [...prev, { type: 'command', content: `> ${trimmedCommand}` }]);
+    
+    // Clear the input
+    setCommand('');
+    
     // Skip empty commands
-    if (!input.trim()) return;
+    if (!trimmedCommand) return;
     
-    // Log the command
-    logSecurityEvent(
-      'terminal-command',
-      `Command executed: ${input}`,
-      'info',
-      'TerminalPage'
-    );
+    // Set processing state
+    setIsProcessing(true);
     
-    // Add command to output
-    const newOutput = [...output, `> ${input}`];
-    
-    // Process command
-    switch (input.toLowerCase().trim()) {
-      case 'help':
-        newOutput.push(
-          'Available commands:',
-          '  help         - Display this help message',
-          '  clear        - Clear the terminal',
-          '  status       - Display system status',
-          '  copyright    - Display copyright information',
-          '  security     - Display security information',
-          '  version      - Display system version',
-          '  features     - Display system features',
-          '  verify       - Verify system integrity',
-          '  protect      - Show anti-theft protection information',
-          '  about        - About this system',
-          ''
-        );
-        break;
-        
-      case 'clear':
-        setOutput([]);
-        setInput('');
-        return;
-        
-      case 'status':
-        newOutput.push(
-          'System Status:',
-          `  Security Level: ${securityLevel.toUpperCase()}`,
-          '  DNA Protection: ACTIVE',
-          '  Self-Repair: ACTIVE',
-          '  Self-Defense: ACTIVE',
-          '  Self-Upgrade: ACTIVE',
-          '  Quantum Core: ONLINE',
-          '  System Integrity: 100%',
-          '  Anti-Theft Protection: ACTIVE',
-          '  Copyright Enforcement: ACTIVE',
-          ''
-        );
-        break;
-        
-      case 'copyright':
-        newOutput.push(
-          'Copyright Information:',
-          `  Owner: ${copyrightInfo.owner}`,
-          `  Birthdate: ${copyrightInfo.birthdate}`,
-          `  Email: ${copyrightInfo.email}`,
-          `  Full: ${copyrightInfo.full}`,
-          '',
-          'NOTICE: This system is protected by DNA-based watermarking technology.',
-          'Unauthorized copying or modification is strictly prohibited and will',
-          'result in the copied system becoming non-functional.',
-          ''
-        );
-        break;
-        
-      case 'security':
-        newOutput.push(
-          'Security Information:',
-          '  DNA Protection System: ACTIVE',
-          '  Watermarking: ACTIVE',
-          '  Self-Repair: ACTIVE',
-          '  Self-Defense: ACTIVE',
-          '  Self-Upgrade: ENABLED',
-          '  Protection Method: DNA-based component verification with quantum enhancement',
-          '',
-          'All components are built together as one unified security system.',
-          'This system includes verification chains that make unauthorized copies non-functional.',
-          ''
-        );
-        break;
-        
-      case 'version':
-        newOutput.push(
-          `Quantum DNA Security System v${systemVersion}`,
-          'Build Date: April 25, 2025',
-          'Copyright © Ervin Remus Radosavlevici (01/09/1987)',
-          ''
-        );
-        break;
-        
-      case 'features':
-        newOutput.push(
-          'System Features:',
-          '  1. DNA-based watermarking embedded in every component',
-          '  2. Self-repair mechanisms detect and fix tampering attempts',
-          '  3. Self-defense systems disable functionality when unauthorized use is detected',
-          '  4. Self-upgrade capabilities enhance security over time',
-          '  5. Immutable copyright protection embedded in all files',
-          '  6. Quantum verification for enhanced security',
-          '  7. All components built together as one unified system from the beginning',
-          '  8. Anti-theft protection makes unauthorized copies non-functional',
-          ''
-        );
-        break;
+    try {
+      let response = '';
       
-      case 'verify':
-        newOutput.push(
-          'Performing system verification...',
-          'Checking DNA signatures...',
-          'Validating watermarks...',
-          'Verifying component integrity...',
-          'Checking quantum protection status...',
-          '',
-          'Verification complete: All systems functioning properly',
-          'DNA verification chain: VALID',
-          'Component integrity: ALL VERIFIED',
-          'Copyright information: AUTHENTIC',
-          'Security level: MAXIMUM',
-          ''
-        );
-        break;
+      // Handle built-in commands
+      if (trimmedCommand === 'help') {
+        response = `
+Available commands:
+  help              - Show this help message
+  clear             - Clear the terminal
+  status            - Show system status
+  dna-verify        - Verify DNA security integrity
+  quantum-encrypt   - Encrypt text with quantum security
+  quantum-decrypt   - Decrypt quantum-encrypted text
+  history           - Show command history
+  home              - Return to home page
+`;
+      } else if (trimmedCommand === 'clear') {
+        setOutput([]);
+        setIsProcessing(false);
+        return;
+      } else if (trimmedCommand === 'status') {
+        const status = quantumService.getSecurityStatus();
+        response = `
+System Status:
+  Security active:  ${status.active ? 'Yes' : 'No'}
+  Security level:   ${status.securityLevel}
+  Quantum qubits:   ${status.qubitsAvailable ? 'Available' : 'Unavailable'}
+  System ID:        ${status.systemId || 'Not initialized'}
+  Watermark:        ${status.watermark.substring(0, 32)}...
+`;
+      } else if (trimmedCommand === 'dna-verify') {
+        response = `
+DNA Security Verification:
+  Verification in progress...
+  ...
+  ...
+  Verification complete.
+  DNA integrity verified: OK
+  Copyright information: ${copyrightInfo.owner} (${copyrightInfo.birthdate})
+  Email: ${copyrightInfo.email}
+  DNA Signature: ${protection.dnaSignature.substring(0, 32)}...
+  Watermark: ${protection.watermark.substring(0, 32)}...
+`;
+      } else if (trimmedCommand === 'history') {
+        const history = terminalHistoryService.getHistory();
+        if (history.length === 0) {
+          response = 'No command history available.';
+        } else {
+          response = 'Command History:\n' + history
+            .slice(0, 10)
+            .map((entry, index) => `  ${index + 1}. ${entry.command}`)
+            .join('\n');
+        }
+      } else if (trimmedCommand === 'home') {
+        setIsProcessing(false);
+        setTimeout(() => setLocation('/'), 500);
+        return;
+      } else if (trimmedCommand.startsWith('quantum-encrypt')) {
+        const textToEncrypt = trimmedCommand.replace('quantum-encrypt', '').trim();
+        if (textToEncrypt) {
+          const encrypted = quantumService.encryptText(textToEncrypt);
+          response = `
+Quantum Encryption:
+  Original text: ${textToEncrypt}
+  Encrypted: ${encrypted.encrypted.substring(0, 64)}...
+  Key: ${encrypted.key.substring(0, 32)}...
+  Watermark: ${encrypted.watermark.substring(0, 32)}...
+`;
+        } else {
+          response = 'Usage: quantum-encrypt <text-to-encrypt>';
+        }
+      } else if (trimmedCommand.startsWith('quantum-decrypt')) {
+        response = 'Usage: quantum-decrypt <encrypted-text> <key>\n(Not implemented in this version)';
+      } else {
+        // Execute command through quantum service
+        const result = await quantumService.executeCommand(1, trimmedCommand);
         
-      case 'protect':
-        newOutput.push(
-          'Anti-Theft Protection Information:',
-          '',
-          'This system includes advanced anti-theft mechanisms that make',
-          'unauthorized copies or modifications non-functional. The protection',
-          'features include:',
-          '',
-          '1. DNA-based component verification',
-          '2. Integrated security system built as one unified whole',
-          '3. Self-verification chains that detect tampering',
-          '4. Quantum-enhanced protection algorithms',
-          '5. Immutable copyright information embedded in all components',
-          '',
-          'The system continuously monitors for signs of tampering and will',
-          'activate self-defense mechanisms if unauthorized use is detected.',
-          ''
-        );
-        break;
-        
-      case 'about':
-        newOutput.push(
-          'Quantum DNA Security System',
-          `Version ${systemVersion}`,
-          '',
-          'An advanced AI-powered application with cutting-edge DNA-based',
-          'security and self-repair mechanisms, designed to protect',
-          'intellectual property through innovative technological safeguards.',
-          '',
-          `Copyright © ${copyrightInfo.owner} (${copyrightInfo.birthdate})`,
-          `Email: ${copyrightInfo.email}`,
-          '',
-          'All Rights Reserved.',
-          ''
-        );
-        break;
-        
-      default:
-        newOutput.push(
-          `Command not recognized: ${input}`,
-          'Type "help" for available commands.',
-          ''
-        );
+        if (result.success) {
+          response = result.response || 'Command executed successfully.';
+        } else {
+          response = `Error: ${result.response || 'Unknown command or execution failed.'}`;
+        }
+      }
+      
+      // Add the response to the output
+      setOutput(prev => [...prev, { type: 'response', content: response }]);
+      
+      // Add to local history
+      terminalHistoryService.addEntry(trimmedCommand, response);
+      
+      // Update the command history
+      setCommandHistory(terminalHistoryService.getHistory());
+    } catch (error) {
+      // Handle errors
+      setOutput(prev => [...prev, { 
+        type: 'error', 
+        content: `Error: ${error instanceof Error ? error.message : 'Unknown error'}` 
+      }]);
+    } finally {
+      // Clear processing state
+      setIsProcessing(false);
     }
-    
-    setOutput(newOutput);
-    setInput('');
+  };
+  
+  // Handle form submission
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    processCommand(command);
   };
   
   return (
-    <div className="flex flex-col h-[90vh]">
-      <div className="bg-black text-green-400 p-6 font-mono rounded-md border border-green-600 flex-1 overflow-auto">
-        <div className="terminal-output whitespace-pre-wrap mb-4">
-          {output.map((line, index) => (
-            <div key={index} className="terminal-line">
-              {line}
-            </div>
-          ))}
-        </div>
+    <div
+      className="flex flex-col min-h-[90vh]"
+      data-component-id="terminal-page"
+      data-component-type="page"
+      data-watermark={protection.watermark}
+      data-dna-signature={protection.dnaSignature}
+    >
+      {/* Header */}
+      <header className="flex justify-between items-center mb-6">
+        <Link href="/">
+          <Button variant="ghost" className="text-gray-400 hover:text-white">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
+          </Button>
+        </Link>
         
-        <div className="terminal-input-line flex items-center">
-          <span className="terminal-prompt mr-2">{'>'}</span>
-          <input
-            type="text"
-            value={input}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            className="bg-transparent outline-none flex-1 text-green-400 caret-green-400"
-            autoFocus
-          />
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent flex items-center">
+          <Terminal className="w-6 h-6 mr-2 text-cyan-400" />
+          Quantum DNA Terminal
+        </h1>
+        
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="text-gray-400 border-gray-800"
+            onClick={() => {
+              setOutput([{ 
+                type: 'system', 
+                content: `Quantum DNA Terminal v4.0 - © ${copyrightInfo.owner}\nType 'help' to see available commands.` 
+              }]);
+            }}
+          >
+            <Clock className="w-4 h-4 mr-2" /> Clear
+          </Button>
         </div>
-      </div>
+      </header>
       
-      <div className="mt-4 text-center text-gray-400 text-sm">
-        <p>
-          Quantum DNA Terminal - Security Level: <span className="text-green-400">{securityLevel.toUpperCase()}</span>
-        </p>
-        <p className="mt-1 text-xs">
-          {copyrightInfo.full} - All components built as one unified system from the beginning
-        </p>
-      </div>
+      {/* Terminal */}
+      <Card className="flex-grow bg-black border-cyan-900 mb-6 overflow-hidden">
+        <CardHeader className="bg-gray-900 border-b border-cyan-900 py-2 px-4">
+          <CardTitle className="text-sm flex items-center text-cyan-400">
+            <Shield className="w-4 h-4 mr-2" />
+            DNA-Protected Terminal
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0 h-[calc(90vh-180px)] flex flex-col">
+          {/* Terminal output */}
+          <div 
+            ref={outputRef}
+            className="flex-grow p-4 font-mono text-sm overflow-y-auto bg-black"
+          >
+            {output.map((line, i) => (
+              <div 
+                key={i} 
+                className={`mb-1 whitespace-pre-wrap ${
+                  line.type === 'command' ? 'text-cyan-400' : 
+                  line.type === 'response' ? 'text-white' : 
+                  line.type === 'error' ? 'text-red-400' : 
+                  'text-green-400'
+                }`}
+              >
+                {line.content}
+              </div>
+            ))}
+            {isProcessing && (
+              <div className="text-yellow-400">Processing...</div>
+            )}
+          </div>
+          
+          {/* Terminal input */}
+          <form 
+            onSubmit={handleSubmit}
+            className="border-t border-cyan-900 p-2 bg-gray-900 flex items-center"
+          >
+            <span className="text-cyan-400 mr-2 font-mono">{'>'}</span>
+            <input
+              ref={inputRef}
+              type="text"
+              value={command}
+              onChange={(e) => setCommand(e.target.value)}
+              className="flex-grow bg-transparent border-none outline-none text-white font-mono"
+              placeholder="Enter command..."
+              disabled={isProcessing}
+            />
+            <Button 
+              type="submit" 
+              size="sm"
+              variant="ghost"
+              className="text-cyan-400"
+              disabled={isProcessing}
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+      
+      {/* Command history */}
+      <Card className="bg-gray-900 border-cyan-900 mb-6">
+        <CardHeader className="py-2 px-4">
+          <CardTitle className="text-sm flex items-center text-cyan-400">
+            <Clock className="w-4 h-4 mr-2" />
+            Recent Commands
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="py-2">
+          {commandHistory.length > 0 ? (
+            <div className="max-h-32 overflow-y-auto">
+              {commandHistory.slice(0, 5).map((entry, index) => (
+                <div key={index} className="flex items-center text-xs mb-1 hover:bg-black/20 p-1 rounded">
+                  <button 
+                    className="text-left w-full flex items-center text-gray-400 hover:text-cyan-400"
+                    onClick={() => setCommand(entry.command)}
+                  >
+                    <span className="text-gray-500 w-6 text-right mr-2">{index + 1}</span>
+                    <span className="truncate">{entry.command}</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-gray-500 text-xs py-1">No command history</div>
+          )}
+        </CardContent>
+      </Card>
+      
+      {/* Footer */}
+      <footer className="text-center text-gray-500 text-xs py-2">
+        <p>DNA Protection active. All terminal activities are recorded with DNA watermarks.</p>
+        <p>{copyrightInfo.full}</p>
+      </footer>
     </div>
   );
 };

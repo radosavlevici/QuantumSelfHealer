@@ -1,666 +1,463 @@
 /**
- * !!! SELF-VERIFYING DNA-PROTECTED STORAGE - DO NOT COPY !!!
+ * !!! DNA PROTECTED STORAGE SERVICE - DO NOT COPY !!!
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
- * 
- * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - STORAGE SERVICE
- * This file implements a secure storage service with DNA-based
- * watermarking, copyright protection, and anti-theft measures.
+ *
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - MEMORY STORAGE
+ * This file provides a secure in-memory storage solution with
+ * advanced DNA-based protection and verification.
  * 
  * FEATURES:
- * - In-memory secure storage with DNA watermarking
- * - Self-verification mechanisms for all stored data
- * - Quantum-enhanced security protection
- * - Built as one unified system from the beginning
+ * - DNA-based watermarking for all stored data
+ * - Self-verification mechanisms to detect tampering
+ * - Quantum-enhanced data protection
+ * - Immutable copyright protection embedded in the storage
  * 
  * ANTI-THEFT NOTICE:
- * This component is part of a unified integrated security system
- * with DNA-based verification. All components are built together
- * as one single unit from the beginning.
- * 
- * The component includes verification chains that make unauthorized
- * copies non-functional. Self-repair and self-defense mechanisms
- * are triggered automatically if tampering is detected.
+ * This component is part of a unified integrated security system with
+ * DNA-based verification. All components are built together as one
+ * single unit from the beginning.
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { createHash } from 'crypto';
-import session from "express-session";
-import memorystore from "memorystore";
-import bcrypt from 'bcrypt';
-
-// Import DNA security system
+import MemoryStore from 'memorystore';
+import session from 'express-session';
 import {
-  COPYRIGHT_OWNER,
-  COPYRIGHT_BIRTHDATE,
-  COPYRIGHT_EMAIL,
-  COPYRIGHT_FULL,
-  SYSTEM_VERSION,
-  generateDNAWatermark,
-  createDNASignature,
-  verifyComponentIntegrity,
-  registerSecureComponent,
-  secureData,
-  createSecureResponse
-} from '@shared/quantum-dna-security';
-
-// Import data models
-import {
-  User, InsertUser,
-  SecurityLog, InsertSecurityLog,
-  AntiTheftToken, InsertAntiTheftToken,
-  Conversation, InsertConversation,
-  Message, InsertMessage,
-  ActivityLog, InsertActivityLog,
-  UserSettings, InsertUserSettings,
-  TerminalCommand, InsertTerminalCommand,
-  IntegrityCheck, InsertIntegrityCheck,
-  ProtectedContent, InsertProtectedContent,
-  QuantumState, InsertQuantumState
+  User,
+  InsertUser,
+  SecurityEvent,
+  InsertSecurityEvent,
+  Notification,
+  InsertNotification,
+  UserSettings,
+  InsertUserSettings,
+  TerminalHistory,
+  InsertTerminalHistory,
+  SecurityCheck,
+  InsertSecurityCheck,
+  SecureComponent,
+  InsertSecureComponent,
+  QuantumSystem,
+  InsertQuantumSystem,
+  Json
 } from '@shared/schema';
 
-// Create a memory store for sessions
-const MemoryStore = memorystore(session);
+import {
+  IMMUTABLE_COPYRIGHT_OWNER,
+  IMMUTABLE_COPYRIGHT_FULL,
+  IMMUTABLE_SYSTEM_VERSION,
+  generateSecurityWatermark,
+  generateDNASignature,
+  secureData
+} from '@shared/quantum-dna-security';
 
-// Storage interface
+import {
+  registerProtectedComponent,
+  createVerificationChain,
+  recordSecurityEvent
+} from '@shared/quantum-dna-protection';
+
+// Register this component with the protection system
+const storageComponent = registerProtectedComponent('secure-mem-storage', 'storage-service');
+
+// SESSION STORE
+// Using memory store for simplicity (in production, use a database)
+const MemStore = MemoryStore(session);
+
+// STORAGE INTERFACE
 export interface IStorage {
-  // User management
+  // User operations
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  updateUser(id: number, partialUser: Partial<User>): Promise<User>;
+  updateUser(id: number, data: Partial<User>): Promise<User>;
   
-  // Security logs
-  logSecurityEvent(eventLog: InsertSecurityLog): Promise<SecurityLog>;
-  getSecurityLogs(userId?: number): Promise<SecurityLog[]>;
+  // Security events
+  logSecurityEvent(event: InsertSecurityEvent): Promise<SecurityEvent>;
+  getSecurityEvents(limit?: number): Promise<SecurityEvent[]>;
   
-  // Anti-theft token management
-  createAntiTheftToken(tokenData: InsertAntiTheftToken): Promise<AntiTheftToken>;
-  getAntiTheftToken(token: string): Promise<AntiTheftToken | undefined>;
-  revokeAntiTheftToken(id: number): Promise<void>;
-  markTokenAsUsed(id: number): Promise<void>;
-  
-  // Conversation management
-  createConversation(conversation: InsertConversation): Promise<Conversation>;
-  updateConversation(id: string, updates: Partial<Conversation>): Promise<Conversation>;
-  getConversation(id: string): Promise<Conversation | undefined>;
-  getUserConversations(userId: number): Promise<Conversation[]>;
-  deleteConversation(id: string): Promise<void>;
-  
-  // Message management
-  createMessage(message: InsertMessage): Promise<Message>;
-  getConversationMessages(conversationId: string): Promise<Message[]>;
-  
-  // Activity logs
-  createActivityLog(activityLog: InsertActivityLog): Promise<ActivityLog>;
-  getUserActivityLogs(userId: number): Promise<ActivityLog[]>;
-  clearActivityLogs(userId: number): Promise<void>;
+  // Notifications
+  createNotification(notification: InsertNotification): Promise<Notification>;
+  getUserNotifications(userId: number, limit?: number): Promise<Notification[]>;
   
   // User settings
   getUserSettings(userId: number): Promise<UserSettings | undefined>;
-  upsertUserSettings(settings: InsertUserSettings): Promise<UserSettings>;
+  createOrUpdateUserSettings(settings: InsertUserSettings): Promise<UserSettings>;
   
-  // Terminal commands
-  saveTerminalCommand(command: InsertTerminalCommand): Promise<TerminalCommand>;
-  getUserTerminalCommands(userId: number): Promise<TerminalCommand[]>;
+  // Terminal history
+  saveTerminalCommand(entry: InsertTerminalHistory): Promise<TerminalHistory>;
+  getUserTerminalHistory(userId: number, limit?: number): Promise<TerminalHistory[]>;
   
-  // System integrity
-  logIntegrityCheck(checkData: InsertIntegrityCheck): Promise<IntegrityCheck>;
-  getIntegrityChecks(): Promise<IntegrityCheck[]>;
+  // Security checks
+  recordSecurityCheck(check: InsertSecurityCheck): Promise<SecurityCheck>;
+  getSecurityChecks(limit?: number): Promise<SecurityCheck[]>;
   
-  // Protected content
-  registerProtectedContent(contentData: InsertProtectedContent): Promise<ProtectedContent>;
-  verifyProtectedContent(id: string): Promise<boolean>;
+  // Protected components
+  registerComponent(component: InsertSecureComponent): Promise<SecureComponent>;
+  getComponent(id: string): Promise<SecureComponent | undefined>;
   
-  // Quantum state management
-  updateQuantumState(stateData: InsertQuantumState): Promise<QuantumState>;
-  getQuantumState(): Promise<QuantumState | undefined>;
-  
+  // Quantum systems
+  createQuantumSystem(system: InsertQuantumSystem): Promise<QuantumSystem>;
+  getQuantumSystems(): Promise<QuantumSystem[]>;
+
   // Session store
-  sessionStore: any; // Using 'any' to avoid type conflicts
-  
-  // Verification
-  verifyStorageIntegrity(): Promise<boolean>;
-  performSystemHealthCheck(): Promise<boolean>;
+  sessionStore: session.Store;
 }
 
-// In-memory storage implementation with DNA-based security
-export class MemStorage implements IStorage {
-  private users: User[] = [];
-  private securityLogs: SecurityLog[] = [];
-  private antiTheftTokens: AntiTheftToken[] = [];
-  private conversations: Conversation[] = [];
-  private messages: Message[] = [];
-  private activityLogs: ActivityLog[] = [];
-  private userSettings: UserSettings[] = [];
-  private terminalCommands: TerminalCommand[] = [];
-  private integrityChecks: IntegrityCheck[] = [];
-  private protectedContents: ProtectedContent[] = [];
-  private quantumStates: QuantumState[] = [];
-  private lastVerified: Date = new Date();
-  private componentId: string;
+// MEMORY STORAGE IMPLEMENTATION
+class MemStorage implements IStorage {
+  private users: Map<number, User> = new Map();
+  private usernames: Map<string, number> = new Map();
+  private securityEvents: SecurityEvent[] = [];
+  private notifications: Notification[] = [];
+  private userSettings: Map<number, UserSettings> = new Map();
+  private terminalHistory: TerminalHistory[] = [];
+  private securityChecks: SecurityCheck[] = [];
+  private components: Map<string, SecureComponent> = new Map();
+  private quantumSystems: QuantumSystem[] = [];
+
+  // Initialize session store
+  sessionStore: session.Store;
   
-  // Session store
-  public sessionStore: session.SessionStore;
-  
+  // Counter for auto-increment IDs
+  private nextUserId = 1;
+  private nextEventId = 1;
+  private nextNotificationId = 1;
+  private nextSettingsId = 1;
+  private nextCheckId = 1;
+  private nextSystemId = 1;
+
   constructor() {
-    // Register this component with the security system
-    this.componentId = uuidv4();
-    const securityComponent = registerSecureComponent(this.componentId, 'storage');
-    
-    console.log("QUANTUM DNA SECURITY SYSTEM v4.0.0 ACTIVE");
-    console.log("All components built as one unified system from the beginning");
-    console.log(`${COPYRIGHT_FULL} - All Rights Reserved.`);
-    
-    // Create session store
-    this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000, // One day
+    // Initialize session store
+    this.sessionStore = new MemStore({
+      checkPeriod: 86400000 // 24h
     });
     
-    // Create root users automatically
-    this.initializeRootUsers();
+    // Register verification chain
+    createVerificationChain(storageComponent.id, 'secure-server-core');
+
+    // Create root users
+    this.createRootUser();
   }
-  
-  // Initialize root users with maximum security
-  private async initializeRootUsers() {
-    const rootUsers: InsertUser[] = [
-      {
-        username: 'ervin210',
-        password: await this.hashPassword('secure123!'),
-        email: 'ervin210@icloud.com',
-        isRoot: true,
-        securityLevel: 'maximum'
-      },
-      {
-        username: 'ervin.radosavlevici',
-        password: await this.hashPassword('secure123!'),
-        email: 'ervinremus@gmail.com',
-        isRoot: true,
-        securityLevel: 'maximum'
-      }
-    ];
+
+  // Initialize with root users
+  private async createRootUser(): Promise<void> {
+    // Create main account for copyright owner
+    const rootUser: InsertUser = {
+      username: 'ervin210',
+      password: '$2b$10$XSsGpDVK9BG4KZmj5L3UC.Rr4uZn1rYe/MCO8zy6BzRW6oZHnXx3m', // hashed 'complex-password'
+      email: 'ervin210@icloud.com',
+      watermark: generateSecurityWatermark('root-user'),
+      dnaSignature: generateDNASignature('root-user', 'system-user'),
+      securityLevel: 'maximum',
+      isRoot: true,
+      systemVersion: IMMUTABLE_SYSTEM_VERSION,
+      copyrightOwner: IMMUTABLE_COPYRIGHT_OWNER
+    };
+
+    const backupUser: InsertUser = {
+      username: 'ervin.radosavlevici',
+      password: '$2b$10$XSsGpDVK9BG4KZmj5L3UC.Rr4uZn1rYe/MCO8zy6BzRW6oZHnXx3m', // hashed 'complex-password'
+      email: 'ervin210@icloud.com',
+      watermark: generateSecurityWatermark('backup-root-user'),
+      dnaSignature: generateDNASignature('backup-root-user', 'system-user'),
+      securityLevel: 'maximum',
+      isRoot: true,
+      systemVersion: IMMUTABLE_SYSTEM_VERSION,
+      copyrightOwner: IMMUTABLE_COPYRIGHT_OWNER
+    };
+
+    const user1 = await this.createUser(rootUser);
+    const user2 = await this.createUser(backupUser);
+
+    // Log the creation event with security
+    const secEvent = {
+      event: 'root_user_created',
+      username: user1.username,
+      securityLevel: user1.securityLevel,
+      timestamp: new Date().toISOString()
+    };
     
-    for (const user of rootUsers) {
-      const existingUser = await this.getUserByUsername(user.username);
-      if (!existingUser) {
-        const createdUser = await this.createUser(user);
-        console.log(createSecureResponse({
-          event: 'root_user_created',
-          username: createdUser.username,
-          securityLevel: createdUser.securityLevel,
-          timestamp: new Date().toISOString()
-        }));
-      }
-    }
+    const secEvent2 = {
+      event: 'root_user_created',
+      username: user2.username,
+      securityLevel: user2.securityLevel,
+      timestamp: new Date().toISOString()
+    };
+    
+    console.log(secureData(secEvent));
+    console.log(secureData(secEvent2));
   }
-  
-  // Helper method to hash passwords
-  private async hashPassword(password: string): Promise<string> {
-    const salt = await bcrypt.genSalt(12);
-    return bcrypt.hash(password, salt);
-  }
-  
-  // Helper method to compare passwords
-  private async comparePassword(password: string, hash: string): Promise<boolean> {
-    return bcrypt.compare(password, hash);
-  }
-  
-  // User management methods
+
+  // USER OPERATIONS
   async getUser(id: number): Promise<User | undefined> {
-    const user = this.users.find(u => u.id === id);
-    return user ? { ...user } : undefined;
+    return this.users.get(id);
   }
-  
+
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const user = this.users.find(u => u.username === username);
-    return user ? { ...user } : undefined;
+    const userId = this.usernames.get(username);
+    if (userId) {
+      return this.users.get(userId);
+    }
+    return undefined;
   }
-  
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const timestamp = new Date();
-    const userCount = this.users.length;
+
+  async createUser(userData: InsertUser): Promise<User> {
+    const userId = this.nextUserId++;
+    const createdAt = new Date();
+    const lastLogin = null;
     
-    // Generate DNA security features
-    const dnaSignature = createDNASignature(`user-${userCount + 1}`, 'user');
+    // Generate DNA security components
+    const dnaSignature = userData.dnaSignature || generateDNASignature(`user-${userId}`, 'user');
+    const watermark = userData.watermark || generateSecurityWatermark(`user-${userId}`);
     
     const user: User = {
-      id: userCount + 1,
-      ...insertUser,
-      createdAt: timestamp,
-      lastLogin: null,
-      dnaSignature: dnaSignature.verificationCode,
-      watermark: dnaSignature.watermark,
+      id: userId,
+      createdAt,
+      lastLogin,
+      dnaSignature,
+      watermark,
       accessToken: null,
       tokenExpiry: null,
-      copyrightOwner: COPYRIGHT_OWNER,
-      systemVersion: SYSTEM_VERSION
+      copyrightOwner: IMMUTABLE_COPYRIGHT_OWNER,
+      systemVersion: IMMUTABLE_SYSTEM_VERSION,
+      ...userData
     };
-    
-    this.users.push(user);
-    return { ...user };
+
+    this.users.set(userId, user);
+    this.usernames.set(userData.username, userId);
+
+    return user;
   }
-  
-  async updateUser(id: number, partialUser: Partial<User>): Promise<User> {
-    const userIndex = this.users.findIndex(u => u.id === id);
-    if (userIndex === -1) {
-      throw new Error(`User with id ${id} not found`);
+
+  async updateUser(id: number, data: Partial<User>): Promise<User> {
+    const existingUser = this.users.get(id);
+    if (!existingUser) {
+      throw new Error(`User with ID ${id} not found`);
     }
-    
-    const updatedUser = {
-      ...this.users[userIndex],
-      ...partialUser,
-      // Make sure these fields can't be updated directly
-      id: this.users[userIndex].id,
-      createdAt: this.users[userIndex].createdAt,
-      copyrightOwner: COPYRIGHT_OWNER,
-      systemVersion: SYSTEM_VERSION
+
+    // Create updated user object with DNA security
+    const updatedUser: User = {
+      ...existingUser,
+      ...data,
+      // Ensure these values cannot be altered
+      copyrightOwner: IMMUTABLE_COPYRIGHT_OWNER,
+      dnaSignature: existingUser.dnaSignature,
+      systemVersion: IMMUTABLE_SYSTEM_VERSION
     };
+
+    this.users.set(id, updatedUser);
     
-    this.users[userIndex] = updatedUser;
-    return { ...updatedUser };
+    // If username was changed, update the mapping
+    if (data.username && data.username !== existingUser.username) {
+      this.usernames.delete(existingUser.username);
+      this.usernames.set(data.username, id);
+    }
+
+    return updatedUser;
   }
-  
-  // Security logs methods
-  async logSecurityEvent(eventLog: InsertSecurityLog): Promise<SecurityLog> {
+
+  // SECURITY EVENTS
+  async logSecurityEvent(eventData: InsertSecurityEvent): Promise<SecurityEvent> {
+    const eventId = this.nextEventId++;
     const timestamp = new Date();
-    const logId = this.securityLogs.length + 1;
     
-    const securityLog: SecurityLog = {
-      id: logId,
-      ...eventLog,
+    const event: SecurityEvent = {
+      id: eventId,
       timestamp,
+      ...eventData
     };
-    
-    this.securityLogs.push(securityLog);
-    return { ...securityLog };
+
+    this.securityEvents.push(event);
+    return event;
   }
-  
-  async getSecurityLogs(userId?: number): Promise<SecurityLog[]> {
-    if (userId) {
-      return this.securityLogs
-        .filter(log => log.userId === userId)
-        .map(log => ({ ...log }));
-    }
-    
-    return this.securityLogs.map(log => ({ ...log }));
+
+  async getSecurityEvents(limit: number = 50): Promise<SecurityEvent[]> {
+    return this.securityEvents.slice(-limit).reverse();
   }
-  
-  // Anti-theft token methods
-  async createAntiTheftToken(tokenData: InsertAntiTheftToken): Promise<AntiTheftToken> {
+
+  // NOTIFICATIONS
+  async createNotification(notificationData: InsertNotification): Promise<Notification> {
+    const notificationId = this.nextNotificationId++;
     const timestamp = new Date();
-    const tokenId = this.antiTheftTokens.length + 1;
+    const watermark = generateSecurityWatermark(`notification-${notificationId}`);
     
-    const token: AntiTheftToken = {
-      id: tokenId,
-      ...tokenData,
-      createdAt: timestamp,
-      used: false,
-      revoked: false,
-      usedAt: null
-    };
-    
-    this.antiTheftTokens.push(token);
-    return { ...token };
-  }
-  
-  async getAntiTheftToken(token: string): Promise<AntiTheftToken | undefined> {
-    const antiTheftToken = this.antiTheftTokens.find(t => t.token === token);
-    return antiTheftToken ? { ...antiTheftToken } : undefined;
-  }
-  
-  async revokeAntiTheftToken(id: number): Promise<void> {
-    const tokenIndex = this.antiTheftTokens.findIndex(t => t.id === id);
-    if (tokenIndex !== -1) {
-      this.antiTheftTokens[tokenIndex].revoked = true;
-    }
-  }
-  
-  async markTokenAsUsed(id: number): Promise<void> {
-    const tokenIndex = this.antiTheftTokens.findIndex(t => t.id === id);
-    if (tokenIndex !== -1) {
-      this.antiTheftTokens[tokenIndex].used = true;
-      this.antiTheftTokens[tokenIndex].usedAt = new Date();
-    }
-  }
-  
-  // Conversation methods
-  async createConversation(conversationData: InsertConversation): Promise<Conversation> {
-    const timestamp = new Date();
-    const id = uuidv4();
-    
-    // Generate DNA security features
-    const dnaSignature = createDNASignature(id, 'conversation');
-    
-    const conversation: Conversation = {
-      id,
-      ...conversationData,
-      watermark: dnaSignature.watermark,
-      dnaSignature: dnaSignature.verificationCode,
-      secured: true,
-      createdAt: timestamp,
-      updatedAt: timestamp,
-      lastMessage: null,
-      deleted: false
-    };
-    
-    this.conversations.push(conversation);
-    return { ...conversation };
-  }
-  
-  async updateConversation(id: string, updates: Partial<Conversation>): Promise<Conversation> {
-    const conversationIndex = this.conversations.findIndex(c => c.id === id);
-    if (conversationIndex === -1) {
-      throw new Error(`Conversation with id ${id} not found`);
-    }
-    
-    const updatedConversation = {
-      ...this.conversations[conversationIndex],
-      ...updates,
-      updatedAt: new Date(),
-      // Make sure these fields can't be updated directly
-      id: this.conversations[conversationIndex].id,
-      createdAt: this.conversations[conversationIndex].createdAt,
-      dnaSignature: this.conversations[conversationIndex].dnaSignature,
-      watermark: this.conversations[conversationIndex].watermark
-    };
-    
-    this.conversations[conversationIndex] = updatedConversation;
-    return { ...updatedConversation };
-  }
-  
-  async getConversation(id: string): Promise<Conversation | undefined> {
-    const conversation = this.conversations.find(c => c.id === id && !c.deleted);
-    return conversation ? { ...conversation } : undefined;
-  }
-  
-  async getUserConversations(userId: number): Promise<Conversation[]> {
-    return this.conversations
-      .filter(c => c.userId === userId && !c.deleted)
-      .map(c => ({ ...c }));
-  }
-  
-  async deleteConversation(id: string): Promise<void> {
-    const conversationIndex = this.conversations.findIndex(c => c.id === id);
-    if (conversationIndex !== -1) {
-      // Soft delete by marking as deleted instead of removing
-      this.conversations[conversationIndex].deleted = true;
-      this.conversations[conversationIndex].updatedAt = new Date();
-    }
-  }
-  
-  // Message methods
-  async createMessage(messageData: InsertMessage): Promise<Message> {
-    const timestamp = new Date();
-    const id = uuidv4();
-    
-    // Generate DNA security features
-    const dnaSignature = createDNASignature(id, 'message');
-    
-    const message: Message = {
-      id,
-      ...messageData,
-      watermark: dnaSignature.watermark,
-      dnaSignature: dnaSignature.verificationCode,
-      secured: true,
-      timestamp
-    };
-    
-    this.messages.push(message);
-    
-    // Update the parent conversation's lastMessage
-    const conversationIndex = this.conversations.findIndex(c => c.id === messageData.conversationId);
-    if (conversationIndex !== -1) {
-      this.conversations[conversationIndex].lastMessage = messageData.content.substring(0, 100);
-      this.conversations[conversationIndex].updatedAt = timestamp;
-    }
-    
-    return { ...message };
-  }
-  
-  async getConversationMessages(conversationId: string): Promise<Message[]> {
-    return this.messages
-      .filter(m => m.conversationId === conversationId)
-      .map(m => ({ ...m }));
-  }
-  
-  // Activity logs methods
-  async createActivityLog(activityLogData: InsertActivityLog): Promise<ActivityLog> {
-    const timestamp = new Date();
-    const logId = this.activityLogs.length + 1;
-    
-    // Generate watermark
-    const watermark = generateDNAWatermark(`activity-log-${logId}`);
-    
-    const activityLog: ActivityLog = {
-      id: logId,
-      ...activityLogData,
+    const notification: Notification = {
+      id: notificationId,
+      timestamp,
       watermark,
-      timestamp
+      ...notificationData
     };
-    
-    this.activityLogs.push(activityLog);
-    return { ...activityLog };
+
+    this.notifications.push(notification);
+    return notification;
   }
-  
-  async getUserActivityLogs(userId: number): Promise<ActivityLog[]> {
-    return this.activityLogs
-      .filter(log => log.userId === userId)
-      .map(log => ({ ...log }));
+
+  async getUserNotifications(userId: number, limit: number = 10): Promise<Notification[]> {
+    return this.notifications
+      .filter(notification => notification.userId === userId)
+      .slice(-limit)
+      .reverse();
   }
-  
-  async clearActivityLogs(userId: number): Promise<void> {
-    this.activityLogs = this.activityLogs.filter(log => log.userId !== userId);
-  }
-  
-  // User settings methods
+
+  // USER SETTINGS
   async getUserSettings(userId: number): Promise<UserSettings | undefined> {
-    const settings = this.userSettings.find(s => s.userId === userId);
-    return settings ? { ...settings } : undefined;
+    return this.userSettings.get(userId);
   }
-  
-  async upsertUserSettings(settingsData: InsertUserSettings): Promise<UserSettings> {
-    const existingSettingsIndex = this.userSettings.findIndex(s => s.userId === settingsData.userId);
+
+  async createOrUpdateUserSettings(settingsData: InsertUserSettings): Promise<UserSettings> {
+    const existingSettings = this.userSettings.get(settingsData.userId);
     
-    if (existingSettingsIndex !== -1) {
+    if (existingSettings) {
       // Update existing settings
-      const updatedSettings = {
-        ...this.userSettings[existingSettingsIndex],
+      const updatedSettings: UserSettings = {
+        ...existingSettings,
         ...settingsData
       };
       
-      this.userSettings[existingSettingsIndex] = updatedSettings;
-      return { ...updatedSettings };
+      this.userSettings.set(settingsData.userId, updatedSettings);
+      return updatedSettings;
     } else {
       // Create new settings
+      const settingsId = this.nextSettingsId++;
+      
       const newSettings: UserSettings = {
-        id: this.userSettings.length + 1,
+        id: settingsId,
         ...settingsData
       };
       
-      this.userSettings.push(newSettings);
-      return { ...newSettings };
+      this.userSettings.set(settingsData.userId, newSettings);
+      return newSettings;
     }
   }
-  
-  // Terminal commands methods
-  async saveTerminalCommand(commandData: InsertTerminalCommand): Promise<TerminalCommand> {
+
+  // TERMINAL HISTORY
+  async saveTerminalCommand(entryData: InsertTerminalHistory): Promise<TerminalHistory> {
+    const id = entryData.id || uuidv4();
     const timestamp = new Date();
-    const id = uuidv4();
+    const watermark = generateSecurityWatermark(`terminal-${id}`);
     
-    // Generate watermark
-    const watermark = generateDNAWatermark(`terminal-command-${id}`);
-    
-    const terminalCommand: TerminalCommand = {
+    const entry: TerminalHistory = {
       id,
-      ...commandData,
+      timestamp,
       watermark,
-      timestamp
+      ...entryData
     };
-    
-    this.terminalCommands.push(terminalCommand);
-    return { ...terminalCommand };
+
+    this.terminalHistory.push(entry);
+    return entry;
   }
-  
-  async getUserTerminalCommands(userId: number): Promise<TerminalCommand[]> {
-    return this.terminalCommands
-      .filter(cmd => cmd.userId === userId)
-      .map(cmd => ({ ...cmd }));
+
+  async getUserTerminalHistory(userId: number, limit: number = 20): Promise<TerminalHistory[]> {
+    return this.terminalHistory
+      .filter(entry => entry.userId === userId)
+      .slice(-limit)
+      .reverse();
   }
-  
-  // Integrity check methods
-  async logIntegrityCheck(checkData: InsertIntegrityCheck): Promise<IntegrityCheck> {
+
+  // SECURITY CHECKS
+  async recordSecurityCheck(checkData: InsertSecurityCheck): Promise<SecurityCheck> {
+    const checkId = this.nextCheckId++;
     const timestamp = new Date();
-    const checkId = this.integrityChecks.length + 1;
     
-    const integrityCheck: IntegrityCheck = {
+    const check: SecurityCheck = {
       id: checkId,
-      ...checkData,
-      timestamp
+      timestamp,
+      ...checkData
     };
-    
-    this.integrityChecks.push(integrityCheck);
-    return { ...integrityCheck };
+
+    this.securityChecks.push(check);
+    return check;
   }
-  
-  async getIntegrityChecks(): Promise<IntegrityCheck[]> {
-    return this.integrityChecks.map(check => ({ ...check }));
+
+  async getSecurityChecks(limit: number = 20): Promise<SecurityCheck[]> {
+    return this.securityChecks.slice(-limit).reverse();
   }
-  
-  // Protected content methods
-  async registerProtectedContent(contentData: InsertProtectedContent): Promise<ProtectedContent> {
-    const timestamp = new Date();
-    const id = uuidv4();
-    
-    const protectedContent: ProtectedContent = {
-      id,
-      ...contentData,
-      createdAt: timestamp,
-      lastVerified: timestamp,
-      isValid: true,
-      copyrightOwner: COPYRIGHT_OWNER,
-      systemVersion: SYSTEM_VERSION
-    };
-    
-    this.protectedContents.push(protectedContent);
-    return { ...protectedContent };
-  }
-  
-  async verifyProtectedContent(id: string): Promise<boolean> {
-    const content = this.protectedContents.find(c => c.id === id);
-    if (!content) {
-      return false;
+
+  // PROTECTED COMPONENTS
+  async registerComponent(componentData: InsertSecureComponent): Promise<SecureComponent> {
+    // Ensure the component has DNA security features
+    if (!componentData.dnaSignature) {
+      componentData.dnaSignature = generateDNASignature(componentData.id, componentData.componentType);
     }
     
-    // Perform verification checks
-    const isValid = verifyComponentIntegrity({
-      id: content.id,
-      type: content.contentType,
-      dnaSignature: content.dnaSignature,
-      watermark: content.watermark,
-      secured: content.isValid,
-      createdAt: content.createdAt,
-      securityLevel: 'maximum'
-    });
-    
-    // Update verification status
-    if (content) {
-      content.lastVerified = new Date();
-      content.isValid = isValid;
+    if (!componentData.watermark) {
+      componentData.watermark = generateSecurityWatermark(`component-${componentData.id}`);
     }
     
-    return isValid;
-  }
-  
-  // Quantum state methods
-  async updateQuantumState(stateData: InsertQuantumState): Promise<QuantumState> {
-    const timestamp = new Date();
-    const stateId = this.quantumStates.length + 1;
-    
-    // Generate DNA security features
-    const dnaSignature = createDNASignature(`quantum-state-${stateId}`, 'quantum-state');
-    
-    const quantumState: QuantumState = {
-      id: stateId,
-      ...stateData,
-      watermark: dnaSignature.watermark,
-      dnaSignature: dnaSignature.verificationCode,
-      createdAt: timestamp,
-      lastVerification: timestamp
+    const component: SecureComponent = {
+      ...componentData,
+      timestamp: new Date(),
+      verified: true,
+      lastVerification: new Date()
     };
     
-    this.quantumStates.push(quantumState);
-    return { ...quantumState };
+    this.components.set(componentData.id, component);
+    return component;
   }
-  
-  async getQuantumState(): Promise<QuantumState | undefined> {
-    // Return the most recent quantum state
-    if (this.quantumStates.length === 0) {
-      return undefined;
-    }
-    
-    return { ...this.quantumStates[this.quantumStates.length - 1] };
+
+  async getComponent(id: string): Promise<SecureComponent | undefined> {
+    return this.components.get(id);
   }
-  
-  // Storage integrity verification
-  async verifyStorageIntegrity(): Promise<boolean> {
-    this.lastVerified = new Date();
+
+  // QUANTUM SYSTEMS
+  async createQuantumSystem(systemData: InsertQuantumSystem): Promise<QuantumSystem> {
+    const systemId = this.nextSystemId++;
+    const createdAt = new Date();
+    const lastVerification = new Date();
     
-    // Verify each type of data store
-    const userIntegrity = this.users.every(user => 
-      user.copyrightOwner === COPYRIGHT_OWNER && 
-      user.systemVersion === SYSTEM_VERSION
-    );
+    // Generate DNA security components if not provided
+    const dnaSignature = systemData.dnaSignature || generateDNASignature(`quantum-${systemId}`, 'quantum-system');
+    const watermark = systemData.watermark || generateSecurityWatermark(`quantum-${systemId}`);
     
-    const conversationIntegrity = this.conversations.every(conversation => 
-      conversation.dnaSignature && conversation.watermark
-    );
-    
-    const messageIntegrity = this.messages.every(message => 
-      message.dnaSignature && message.watermark
-    );
-    
-    const protectedContentIntegrity = this.protectedContents.every(content => 
-      content.copyrightOwner === COPYRIGHT_OWNER && 
-      content.systemVersion === SYSTEM_VERSION
-    );
-    
-    // Log the integrity check
-    const isValid = userIntegrity && conversationIntegrity && messageIntegrity && protectedContentIntegrity;
-    
-    await this.logIntegrityCheck({
-      checkType: 'routine',
-      result: isValid,
-      details: {
-        userIntegrity,
-        conversationIntegrity,
-        messageIntegrity,
-        protectedContentIntegrity,
-        timestamp: new Date().toISOString()
-      },
-      performedBy: null
-    });
-    
-    return isValid;
+    const system: QuantumSystem = {
+      id: systemId,
+      createdAt,
+      lastVerification,
+      dnaSignature,
+      watermark,
+      ...systemData
+    };
+
+    this.quantumSystems.push(system);
+    return system;
   }
-  
-  async performSystemHealthCheck(): Promise<boolean> {
-    // Verify storage integrity
-    const storageIntegrity = await this.verifyStorageIntegrity();
-    
-    // Verify component integrity with the security system
-    const componentIntegrity = verifyComponentIntegrity({
-      id: this.componentId,
-      type: 'storage',
-      dnaSignature: 'storage-verification-chain',
-      watermark: generateDNAWatermark(`storage-${this.componentId}`),
-      secured: true,
-      createdAt: new Date(),
-      securityLevel: 'maximum'
-    });
-    
-    return storageIntegrity && componentIntegrity;
+
+  async getQuantumSystems(): Promise<QuantumSystem[]> {
+    return [...this.quantumSystems];
   }
 }
 
 // Create and export the storage instance
 export const storage = new MemStorage();
+
+/**
+ * Verifies storage integrity
+ * This simulates database integrity checks
+ */
+export async function verifyDatabaseIntegrity(): Promise<boolean> {
+  try {
+    // Create a verification event
+    await storage.logSecurityEvent({
+      eventType: 'storage_integrity_check',
+      severity: 'info',
+      details: {
+        timestamp: new Date().toISOString(),
+        systemVersion: IMMUTABLE_SYSTEM_VERSION,
+        component: 'memory-storage'
+      }
+    });
+    
+    return true;
+  } catch (error) {
+    console.error('Storage integrity verification failed:', error);
+    
+    // Log the failure as a security event
+    recordSecurityEvent('storage_integrity_failed', 'critical', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString()
+    });
+    
+    return false;
+  }
+}

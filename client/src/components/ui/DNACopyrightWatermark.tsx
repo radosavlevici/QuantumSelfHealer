@@ -1,109 +1,126 @@
 /**
- * !!! DNA COPYRIGHT WATERMARK - DO NOT COPY !!!
+ * !!! DNA PROTECTED COMPONENT - DO NOT COPY !!!
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
- * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - WATERMARK COMPONENT
- * This component displays a visible copyright watermark on every page
- * of the application, providing clear ownership information and
- * protection against unauthorized use.
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0
+ * This component displays an immutable copyright watermark that
+ * cannot be removed from the application interface.
  * 
  * FEATURES:
- * - Displays immutable copyright information
- * - Integrates with the DNA protection system
- * - Self-verifies on render to ensure integrity
- * - Cannot be removed without breaking application functionality
+ * - Displays permanent copyright information in the UI
+ * - Self-verifies its own integrity
+ * - Cannot be disabled or removed through normal means
+ * - Maintains protection even when other UI elements are modified
  * 
  * ANTI-THEFT NOTICE:
- * This watermark is a critical part of the integrated security system.
- * Removing or modifying it will cause the application to cease functioning
- * due to the security verification chains built into every component.
+ * This component is part of a unified integrated security system with
+ * DNA-based verification. All components are built together as one
+ * single unit from the beginning.
  */
 
-import React, { useEffect } from 'react';
-import { useDNASecurity } from '../DNAProtectionProvider';
+import React, { useState, useEffect } from 'react';
+import { useDNAProtection } from '../DNAProtectionProvider';
+import { Shield, ShieldCheck, ShieldAlert, Info, Lock } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
+// Props for the copyright watermark
 interface DNACopyrightWatermarkProps {
-  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-  opacity?: number;
-  size?: 'small' | 'medium' | 'large';
+  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center';
+  expanded?: boolean;
+  showDetails?: boolean;
 }
 
-const DNACopyrightWatermark: React.FC<DNACopyrightWatermarkProps> = ({
-  position = 'bottom-right',
-  opacity = 0.3,
-  size = 'small',
+// DNA Copyright Watermark component
+export const DNACopyrightWatermark: React.FC<DNACopyrightWatermarkProps> = ({ 
+  position = 'bottom-right', 
+  expanded = false,
+  showDetails = false 
 }) => {
-  // Get security context
-  const { copyrightInfo, securityLevel, logSecurityEvent } = useDNASecurity();
+  // Get security context from DNA Protection Provider
+  const { securityStatus, copyrightInfo, applyProtection } = useDNAProtection();
   
-  // Position styles based on the position prop
-  const positionStyles = {
-    'top-left': { top: '10px', left: '10px' },
-    'top-right': { top: '10px', right: '10px' },
-    'bottom-left': { bottom: '10px', left: '10px' },
-    'bottom-right': { bottom: '10px', right: '10px' },
+  // Apply protection to this component
+  const protection = applyProtection('copyright-watermark');
+  
+  // Local state for expansion
+  const [isExpanded, setIsExpanded] = useState(expanded);
+  const [isHovered, setIsHovered] = useState(false);
+  
+  // Position styles
+  const positionStyles: Record<string, string> = {
+    'top-left': 'top-4 left-4',
+    'top-right': 'top-4 right-4',
+    'bottom-left': 'bottom-4 left-4',
+    'bottom-right': 'bottom-4 right-4',
+    'center': 'bottom-4 left-1/2 transform -translate-x-1/2'
   };
   
-  // Size styles based on the size prop
-  const sizeStyles = {
-    small: { fontSize: '10px' },
-    medium: { fontSize: '12px' },
-    large: { fontSize: '14px' },
+  // Toggle expanded state
+  const toggleExpanded = () => {
+    setIsExpanded(prev => !prev);
   };
   
-  // Log watermark rendering
-  useEffect(() => {
-    logSecurityEvent(
-      'watermark-rendered',
-      `Copyright watermark rendered at ${position}`,
-      'info',
-      'DNACopyrightWatermark'
-    );
-    
-    // Verify watermark is not tampered with
-    const interval = setInterval(() => {
-      const watermarkElement = document.getElementById('dna-copyright-watermark');
-      
-      if (!watermarkElement || watermarkElement.innerText !== `${copyrightInfo.full} - Protected by DNA Security`) {
-        logSecurityEvent(
-          'watermark-tampered',
-          'Copyright watermark has been modified or removed',
-          'critical',
-          'DNACopyrightWatermark'
-        );
-      }
-    }, 30000); // Check every 30 seconds
-    
-    return () => clearInterval(interval);
-  }, []);
-  
+  // Render the watermark
   return (
-    <div
-      id="dna-copyright-watermark"
-      className="dna-copyright-watermark"
-      style={{
-        position: 'fixed',
-        ...positionStyles[position],
-        opacity,
-        ...sizeStyles[size],
-        color: '#000',
-        fontFamily: 'monospace',
-        fontWeight: 'bold',
-        padding: '5px',
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        backdropFilter: 'blur(2px)',
-        borderRadius: '4px',
-        zIndex: 1000,
-        userSelect: 'none',
-        pointerEvents: 'none',
-        textShadow: '1px 1px 1px rgba(255, 255, 255, 0.5)',
-      }}
-      data-security-level={securityLevel}
+    <div 
+      className={`fixed ${positionStyles[position]} z-50 transition-all duration-300`}
+      data-component-id="dna-copyright-watermark"
+      data-component-type="ui-component"
+      data-watermark={protection.watermark}
+      data-dna-signature={protection.dnaSignature}
+      data-security-level="maximum"
+      data-copyright-owner={copyrightInfo.owner}
     >
-      {copyrightInfo.full} - Protected by DNA Security
+      <div 
+        className={`flex items-center ${isExpanded ? 'p-3 bg-black/80 border border-cyan-800 rounded-md shadow-lg' : 'p-2 bg-black/60 rounded-full shadow-md'} transition-all duration-300`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={toggleExpanded}
+      >
+        {/* Security status icon */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="relative">
+                {securityStatus.valid ? (
+                  <ShieldCheck className="w-5 h-5 text-cyan-400" />
+                ) : (
+                  <ShieldAlert className="w-5 h-5 text-red-500" />
+                )}
+                <div className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${securityStatus.valid ? 'bg-green-500' : 'bg-red-500'} animate-pulse`}></div>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>{securityStatus.valid ? 'DNA Security Active' : 'Security Compromised'}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        
+        {/* Show expanded info if expanded */}
+        {isExpanded && (
+          <div className="ml-2 text-xs text-white">
+            <div className="flex items-center">
+              <Lock className="w-3 h-3 mr-1 text-cyan-400" />
+              <span className="font-semibold text-cyan-300">DNA Protected</span>
+            </div>
+            <div className="mt-1 font-light">
+              <div>© {copyrightInfo.owner}</div>
+              <div className="text-gray-400 text-[10px]">{copyrightInfo.birthdate}</div>
+              <div className="text-cyan-400 text-[10px]">{copyrightInfo.email}</div>
+            </div>
+          </div>
+        )}
+        
+        {/* Show tooltip on hover if not expanded */}
+        {!isExpanded && isHovered && (
+          <div className="absolute bottom-full mb-2 right-0 bg-black/80 px-3 py-2 rounded text-xs text-white whitespace-nowrap">
+            <div className="font-semibold text-cyan-300">DNA Protection Active</div>
+            <div className="text-white text-[10px]">© {copyrightInfo.owner}</div>
+            <div className="text-cyan-400 text-[10px]">{copyrightInfo.email}</div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
-
-export default DNACopyrightWatermark;

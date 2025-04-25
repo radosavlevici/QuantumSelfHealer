@@ -1,249 +1,323 @@
 /**
- * !!! DNA PROTECTED PAGE - DO NOT COPY !!!
+ * !!! DNA PROTECTED COMPONENT - DO NOT COPY !!!
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
- * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - QUANTUM PAGE
- * This page is protected by DNA-based security and is part of
- * the unified protection system built into every component.
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0
+ * This component provides the quantum computing interface for the
+ * DNA-protected application.
  * 
  * FEATURES:
- * - DNA-based watermarking embedded in the component
- * - Self-repair mechanisms detect and fix tampering attempts
- * - Self-defense systems disable functionality when unauthorized use is detected
- * - Immutable copyright protection embedded in the file
+ * - Quantum computing capabilities with DNA protection
+ * - Self-verification mechanisms
+ * - Copyright protection embedded in the UI
+ * - Quantum-secured encryption operations
  * 
  * ANTI-THEFT NOTICE:
- * This page is part of an integrated whole built from the beginning.
- * It includes verification chains that make unauthorized copies non-functional.
+ * This component is part of a unified integrated security system with
+ * DNA-based verification. All components are built together as one
+ * single unit from the beginning.
  */
 
-import React, { useEffect, useState } from 'react';
-import { useDNASecurity } from '../components/DNAProtectionProvider';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'wouter';
+import { ArrowLeft, Cpu, Lock, Shield, ShieldCheck, Zap, RefreshCw } from 'lucide-react';
+import { useDNAProtection } from '../components/DNAProtectionProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { quantumService } from '../lib/quantum-service';
+import { quantumSystemsService } from '../lib/storage-service';
 
+// Quantum Page component
 const QuantumPage: React.FC = () => {
-  const { logSecurityEvent, copyrightInfo, securityLevel } = useDNASecurity();
-  const [quantumState, setQuantumState] = useState({
-    initialized: false,
-    qBits: 0,
-    entanglementLevel: 0,
-    securityVerification: 'pending',
-    processingPower: 0
-  });
+  // Get protection from context
+  const { copyrightInfo, applyProtection } = useDNAProtection();
   
+  // Apply protection to this component
+  const protection = applyProtection('quantum-page');
+  
+  // Component state
+  const [textToEncrypt, setTextToEncrypt] = useState('');
+  const [encryptedText, setEncryptedText] = useState('');
+  const [encryptionKey, setEncryptionKey] = useState('');
+  const [systemStatus, setSystemStatus] = useState({
+    active: false,
+    systemId: null as number | null,
+    securityLevel: '',
+    qubitsAvailable: false,
+    watermark: '',
+    copyright: ''
+  });
+  const [quantumSystems, setQuantumSystems] = useState<any[]>([]);
+  const [isInitializing, setIsInitializing] = useState(false);
+  
+  // Load data on mount
   useEffect(() => {
-    // Log page visit to security system
-    logSecurityEvent(
-      'page-visit',
-      'Quantum page visited',
-      'info',
-      'QuantumPage'
-    );
+    // Get system status
+    const status = quantumService.getSecurityStatus();
+    setSystemStatus(status);
     
-    // Simulate quantum system initialization
-    const timer = setTimeout(() => {
-      setQuantumState({
-        initialized: true,
-        qBits: 128,
-        entanglementLevel: 94.7,
-        securityVerification: 'verified',
-        processingPower: 15732.8
-      });
-      
-      logSecurityEvent(
-        'quantum-system-initialized',
-        'Quantum protection system successfully initialized',
-        'info',
-        'QuantumPage'
-      );
-    }, 2000);
-    
-    return () => clearTimeout(timer);
+    // Get quantum systems
+    const systems = quantumSystemsService.getSystems();
+    setQuantumSystems(systems);
   }, []);
   
-  // Generate a random sequence of binary (for visual effect)
-  const generateQuantumSequence = () => {
-    let sequence = '';
-    for (let i = 0; i < 64; i++) {
-      sequence += Math.random() > 0.5 ? '1' : '0';
+  // Initialize a quantum system
+  const initializeQuantumSystem = async () => {
+    setIsInitializing(true);
+    
+    try {
+      // Initialize the quantum system
+      const success = await quantumService.initializeQuantumSystem(64, 95);
+      
+      if (success) {
+        // Update system status
+        const status = quantumService.getSecurityStatus();
+        setSystemStatus(status);
+        
+        // Get updated quantum systems
+        const systems = quantumSystemsService.getSystems();
+        setQuantumSystems(systems);
+      }
+    } catch (error) {
+      console.error('Failed to initialize quantum system:', error);
+    } finally {
+      setIsInitializing(false);
     }
-    return sequence;
+  };
+  
+  // Encrypt text with quantum security
+  const encryptText = () => {
+    if (!textToEncrypt) return;
+    
+    try {
+      // Encrypt the text
+      const result = quantumService.encryptText(textToEncrypt);
+      
+      // Update state
+      setEncryptedText(result.encrypted);
+      setEncryptionKey(result.key);
+    } catch (error) {
+      console.error('Encryption failed:', error);
+    }
   };
   
   return (
-    <div className="flex flex-col min-h-[85vh]">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
-          Quantum DNA Protection System
+    <div
+      className="flex flex-col min-h-[90vh]"
+      data-component-id="quantum-page"
+      data-component-type="page"
+      data-watermark={protection.watermark}
+      data-dna-signature={protection.dnaSignature}
+    >
+      {/* Header */}
+      <header className="flex justify-between items-center mb-6">
+        <Link href="/">
+          <Button variant="ghost" className="text-gray-400 hover:text-white">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
+          </Button>
+        </Link>
+        
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent flex items-center">
+          <Cpu className="w-6 h-6 mr-2 text-cyan-400" />
+          Quantum Computing Interface
         </h1>
-        <p className="text-gray-400 mt-2">
-          Advanced security through quantum entanglement and DNA-based verification
-        </p>
+        
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={initializeQuantumSystem}
+          disabled={isInitializing}
+          className="text-cyan-400 border-cyan-900"
+        >
+          <RefreshCw className={`w-4 h-4 mr-2 ${isInitializing ? 'animate-spin' : ''}`} />
+          {isInitializing ? 'Initializing...' : 'Initialize Quantum System'}
+        </Button>
+      </header>
+      
+      {/* Main content */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left column - Quantum status */}
+        <Card className="bg-gray-900 border-cyan-900 shadow-lg col-span-1">
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-xl text-cyan-400">Quantum Status</CardTitle>
+              <Badge variant="outline" className={`${systemStatus.active ? 'bg-green-900/20 text-green-400' : 'bg-red-900/20 text-red-400'}`}>
+                {systemStatus.active ? 'Active' : 'Inactive'}
+              </Badge>
+            </div>
+            <CardDescription>
+              Current quantum system status and information
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">System ID:</span>
+                <span className="text-white">{systemStatus.systemId || 'Not initialized'}</span>
+              </div>
+              
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Security Level:</span>
+                <span className="text-white">{systemStatus.securityLevel}</span>
+              </div>
+              
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Qubits:</span>
+                <span className="text-white">{systemStatus.qubitsAvailable ? 'Available' : 'Unavailable'}</span>
+              </div>
+              
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Owner:</span>
+                <span className="text-white">{systemStatus.copyright || copyrightInfo.owner}</span>
+              </div>
+            </div>
+            
+            <div className="pt-2 border-t border-gray-800">
+              <h3 className="text-sm font-medium text-cyan-400 mb-2">Quantum Security</h3>
+              <div className="flex items-center">
+                <ShieldCheck className="w-4 h-4 text-green-400 mr-2" />
+                <span className="text-sm text-gray-300">DNA-protected quantum operations</span>
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                All quantum operations are secured with DNA watermarking and verification chains.
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <div className="text-xs text-gray-500 w-full">
+              <div className="truncate">
+                <span className="text-gray-400">Watermark: </span>
+                {systemStatus.watermark}
+              </div>
+            </div>
+          </CardFooter>
+        </Card>
+        
+        {/* Middle column - Quantum encryption */}
+        <Card className="bg-gray-900 border-cyan-900 shadow-lg col-span-1 lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-xl text-cyan-400 flex items-center">
+              <Lock className="w-5 h-5 mr-2" />
+              Quantum Encryption
+            </CardTitle>
+            <CardDescription>
+              Encrypt text with quantum-secured algorithms
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-1">
+                Text to Encrypt
+              </label>
+              <Input
+                value={textToEncrypt}
+                onChange={(e) => setTextToEncrypt(e.target.value)}
+                placeholder="Enter text to encrypt with quantum security..."
+                className="bg-black/50 border-gray-800 placeholder:text-gray-600"
+              />
+            </div>
+            
+            <Button 
+              onClick={encryptText}
+              disabled={!textToEncrypt || !systemStatus.qubitsAvailable}
+              className="w-full bg-cyan-900/50 text-cyan-400 hover:bg-cyan-800/50"
+            >
+              <Zap className="w-4 h-4 mr-2" />
+              Encrypt with Quantum Security
+            </Button>
+            
+            {encryptedText && (
+              <div className="space-y-3 pt-3 border-t border-gray-800">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">
+                    Encrypted Text
+                  </label>
+                  <div className="bg-black/70 p-2 rounded border border-gray-800 text-sm text-green-400 font-mono overflow-auto max-h-20">
+                    {encryptedText}
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">
+                    Quantum Key (Keep Secure)
+                  </label>
+                  <div className="bg-black/70 p-2 rounded border border-gray-800 text-sm text-yellow-400 font-mono overflow-auto max-h-20">
+                    {encryptionKey}
+                  </div>
+                </div>
+                
+                <div className="flex items-start pt-2">
+                  <Shield className="w-4 h-4 text-cyan-400 mr-2 mt-0.5" />
+                  <div className="text-xs text-gray-400">
+                    This text is now protected with DNA-secured quantum encryption.
+                    The original text cannot be recovered without both the encrypted text and the quantum key.
+                  </div>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
       
-      {/* Quantum Visualization */}
-      <div className="bg-black p-6 rounded-lg border border-purple-600 mb-8">
-        <div className="flex justify-between mb-4">
-          <span className="text-purple-400">Quantum Core Status: {quantumState.initialized ? 'ONLINE' : 'INITIALIZING...'}</span>
-          <span className="text-blue-400">Security Level: {securityLevel.toUpperCase()}</span>
-        </div>
-        
-        <div className="font-mono text-xs text-green-500 bg-black p-4 rounded h-40 overflow-auto">
-          {quantumState.initialized ? (
-            <>
-              {Array(10).fill(0).map((_, i) => (
-                <div key={i} className="mb-1">
-                  {generateQuantumSequence()}
+      {/* Quantum systems list */}
+      <Card className="bg-gray-900 border-cyan-900 shadow-lg mt-6">
+        <CardHeader className="py-3">
+          <CardTitle className="text-lg text-cyan-400">Quantum Systems</CardTitle>
+          <CardDescription>
+            Initialized quantum systems with DNA protection
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {quantumSystems.length > 0 ? (
+            <div className="divide-y divide-gray-800">
+              {quantumSystems.map((system) => (
+                <div key={system.id} className="py-3 flex justify-between items-center">
+                  <div>
+                    <div className="flex items-center">
+                      <Cpu className="w-4 h-4 text-cyan-400 mr-2" />
+                      <span className="font-medium text-white">Quantum System {system.id}</span>
+                      <Badge variant="outline" className="ml-2 bg-green-900/20 text-green-400 text-xs">
+                        {system.active ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {system.qubits} qubits • {system.entanglementQuality}% entanglement • {system.securityStrength} security
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    Last verified: {new Date(system.lastVerification).toLocaleString()}
+                  </div>
                 </div>
               ))}
-            </>
+            </div>
           ) : (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <div className="text-xl mb-2">Initializing Quantum System...</div>
-                <div className="text-sm text-purple-400">Please wait while quantum states are being prepared</div>
+            <div className="text-center py-6 text-gray-500">
+              No quantum systems initialized.
+              <div className="mt-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={initializeQuantumSystem}
+                  disabled={isInitializing}
+                  className="text-cyan-400 border-cyan-900"
+                >
+                  <RefreshCw className={`w-4 h-4 mr-2 ${isInitializing ? 'animate-spin' : ''}`} />
+                  {isInitializing ? 'Initializing...' : 'Initialize Quantum System'}
+                </Button>
               </div>
             </div>
           )}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
       
-      {/* Quantum System Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-gray-900 p-6 rounded-lg">
-          <h2 className="text-xl font-bold mb-4 text-purple-400">Quantum System Status</h2>
-          
-          <div className="space-y-4">
-            <div>
-              <div className="flex justify-between mb-1">
-                <span className="text-gray-300">Quantum Bits</span>
-                <span className="text-blue-400">{quantumState.qBits} qBits</span>
-              </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
-                <div 
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full" 
-                  style={{ width: quantumState.initialized ? '100%' : '30%' }}
-                ></div>
-              </div>
-            </div>
-            
-            <div>
-              <div className="flex justify-between mb-1">
-                <span className="text-gray-300">Entanglement Level</span>
-                <span className="text-blue-400">{quantumState.entanglementLevel}%</span>
-              </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
-                <div 
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full" 
-                  style={{ width: `${quantumState.entanglementLevel}%` }}
-                ></div>
-              </div>
-            </div>
-            
-            <div>
-              <div className="flex justify-between mb-1">
-                <span className="text-gray-300">Processing Power</span>
-                <span className="text-blue-400">{quantumState.processingPower.toFixed(1)} QPS</span>
-              </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
-                <div 
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full" 
-                  style={{ width: quantumState.initialized ? '85%' : '20%' }}
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-gray-900 p-6 rounded-lg">
-          <h2 className="text-xl font-bold mb-4 text-purple-400">DNA Security Status</h2>
-          
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-300">Security Verification</span>
-              <span className={`text-sm ${quantumState.securityVerification === 'verified' ? 'text-green-400' : 'text-orange-400'}`}>
-                {quantumState.securityVerification.toUpperCase()}
-              </span>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <span className="text-gray-300">DNA Watermarking</span>
-              <span className="text-green-400">ACTIVE</span>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <span className="text-gray-300">Self-Repair System</span>
-              <span className="text-green-400">OPERATIONAL</span>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <span className="text-gray-300">Anti-Theft Protection</span>
-              <span className="text-green-400">ENFORCED</span>
-            </div>
-            
-            <div className="text-xs text-gray-500 mt-4">
-              <p>All security components are built together as one unified system.</p>
-              <p>Modified: April 25, 2025</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Quantum Protection Description */}
-      <div className="bg-gray-900 p-6 rounded-lg mb-8">
-        <h2 className="text-xl font-bold mb-4 text-purple-400">Quantum DNA Protection Explanation</h2>
-        
-        <p className="text-gray-300 mb-4">
-          This system employs advanced quantum computing principles to enhance the DNA-based
-          security mechanisms. The quantum elements create an additional layer of protection
-          that makes unauthorized modification or copying practically impossible.
-        </p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-          <div className="bg-gray-800 p-4 rounded-lg">
-            <h3 className="text-blue-400 font-semibold mb-2">Quantum Entanglement</h3>
-            <p className="text-gray-400 text-sm">
-              Components of the system are quantum-entangled, meaning that changes to one part
-              will instantly affect all other parts, creating a unified security environment.
-            </p>
-          </div>
-          
-          <div className="bg-gray-800 p-4 rounded-lg">
-            <h3 className="text-blue-400 font-semibold mb-2">Superposition States</h3>
-            <p className="text-gray-400 text-sm">
-              Security tokens exist in multiple states simultaneously until observed,
-              making prediction or tampering attempts impossible.
-            </p>
-          </div>
-          
-          <div className="bg-gray-800 p-4 rounded-lg">
-            <h3 className="text-blue-400 font-semibold mb-2">DNA Digital Signatures</h3>
-            <p className="text-gray-400 text-sm">
-              Every component carries a unique DNA-like digital signature that
-              verifies its authenticity and origin.
-            </p>
-          </div>
-          
-          <div className="bg-gray-800 p-4 rounded-lg">
-            <h3 className="text-blue-400 font-semibold mb-2">Self-Healing Technology</h3>
-            <p className="text-gray-400 text-sm">
-              Quantum algorithms constantly monitor and repair any detected tampering,
-              ensuring system integrity at all times.
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      {/* Copyright Section */}
-      <div className="mt-auto py-6 text-center text-gray-400 text-sm">
-        <p className="text-xs">
-          {copyrightInfo.full} - Protected by Quantum DNA Security System v4.0
-        </p>
-        <p className="mt-1 text-xs">
-          All components built as one unified system from the beginning with self-repair,
-          self-defense, and self-upgrade capabilities.
-        </p>
-      </div>
+      {/* Footer */}
+      <footer className="mt-12 text-center text-gray-500 text-sm py-4">
+        <p className="mb-1">{copyrightInfo.full}</p>
+        <p>Quantum DNA Security System v4.0 - All Rights Reserved</p>
+      </footer>
     </div>
   );
 };
