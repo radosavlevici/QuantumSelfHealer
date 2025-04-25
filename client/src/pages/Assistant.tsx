@@ -2,9 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { AIAssistantMessage, AIAssistantConversation } from "@/types";
 import { createConversation, sendMessage, getConversation } from "@/lib/ai-service";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Assistant() {
   const [conversation, setConversation] = useState<AIAssistantConversation | null>(null);
@@ -12,6 +14,21 @@ export default function Assistant() {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  
+  // Define type for root users data
+  interface RootUsersResponse {
+    rootUsers: Array<{
+      id: number;
+      username: string;
+      email: string;
+    }>;
+  }
+  
+  // Query to fetch root users
+  const { data: rootUsersData, isLoading: loadingUsers } = useQuery<RootUsersResponse>({
+    queryKey: ["/api/users"],
+    refetchOnWindowFocus: false,
+  });
 
   // Initialize or load existing conversation
   useEffect(() => {
@@ -116,7 +133,19 @@ export default function Assistant() {
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)]">
       <div className="p-4">
-        <h1 className="text-2xl font-bold mb-2">Quantum AI Assistant</h1>
+        <div className="flex justify-between items-center mb-2">
+          <h1 className="text-2xl font-bold">Quantum AI Assistant</h1>
+          {rootUsersData && rootUsersData.rootUsers && (
+            <div className="flex items-center space-x-1">
+              <span className="text-xs text-gray-500">Root Users:</span>
+              {rootUsersData.rootUsers.map((user: any) => (
+                <Badge key={user.id} variant="outline" className="ml-1">
+                  {user.email}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           Interact with your quantum-powered AI assistant to get help, answers, and insights.
         </p>

@@ -16,6 +16,37 @@ export class MemStorage implements IStorage {
   constructor() {
     this.users = new Map();
     this.currentId = 1;
+    
+    // Initialize with root users
+    this.initializeRootUsers();
+  }
+  
+  private initializeRootUsers() {
+    // Add the specified root users
+    const rootUsers: InsertUser[] = [
+      {
+        username: "ervin210",
+        password: "quantum-secure-password", // Should be properly hashed in a real app
+        email: "ervin210@icloud.com"
+      },
+      {
+        username: "ervin.radosavlevici",
+        password: "quantum-secure-password", // Should be properly hashed in a real app
+        email: "radosavlevici.ervin@gmail.com"
+      }
+    ];
+    
+    // Add each root user to the storage
+    rootUsers.forEach(user => {
+      const id = this.currentId++;
+      const createdUser: User = { 
+        ...user, 
+        id,
+        createdAt: new Date(),
+        lastLogin: null
+      };
+      this.users.set(id, createdUser);
+    });
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -30,7 +61,12 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id,
+      createdAt: new Date(),
+      lastLogin: null
+    };
     this.users.set(id, user);
     return user;
   }

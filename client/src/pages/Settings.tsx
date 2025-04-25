@@ -289,9 +289,13 @@ export default function Settings() {
           <CardContent>
             <div className="text-sm text-gray-600 dark:text-gray-400">
               <p>Quantum AI Assistant v1.0.0</p>
-              <p className="mt-1">User ID: ervin210@icloud.com</p>
-              <p className="mt-1">Quantum Processing: Advanced</p>
-              <p className="mt-4 text-xs">© 2023 Quantum AI Technologies</p>
+              <p className="mt-1">Root Users:</p>
+              <ul className="list-disc list-inside ml-2 mt-1">
+                <li>ervin210@icloud.com</li>
+                <li>radosavlevici.ervin@gmail.com</li>
+              </ul>
+              <p className="mt-2">Quantum Processing: Advanced</p>
+              <p className="mt-4 text-xs">© 2025 Quantum AI Technologies</p>
             </div>
           </CardContent>
         </Card>

@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { getOpenAIResponse } from "./services/openai-service";
 import { getQuantumStatus, processQuantumCommand } from "./services/quantum-service";
+import type { User } from "../shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // System status endpoint
@@ -205,6 +206,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(500).json({ 
         error: "Failed to restore storage",
+        details: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+  
+  // User endpoints
+  app.get("/api/users/current", async (req, res) => {
+    try {
+      // In a real app, we would use session/authentication to determine the current user
+      // For demo purposes, we'll return the first root user
+      const user = await storage.getUser(1);
+      
+      if (user) {
+        // Don't send the password in the response
+        const { password, ...userWithoutPassword } = user;
+        res.json({ 
+          user: userWithoutPassword,
+          isRoot: true
+        });
+      } else {
+        res.status(404).json({ error: "User not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ 
+        error: "Failed to get current user",
+        details: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+  
+  app.get("/api/users", async (req, res) => {
+    try {
+      // In a real app, this would be secured and only accessible to admins
+      // Here we're returning all root users for the assistant
+      const rootUsers = [];
+      
+      // Get users with IDs 1 and 2 (our root users)
+      const user1 = await storage.getUser(1);
+      const user2 = await storage.getUser(2);
+      
+      if (user1) {
+        const { password: _p1, ...userWithoutPassword1 } = user1;
+        rootUsers.push(userWithoutPassword1);
+      }
+      
+      if (user2) {
+        const { password: _p2, ...userWithoutPassword2 } = user2;
+        rootUsers.push(userWithoutPassword2);
+      }
+      
+      res.json({ rootUsers });
+    } catch (error) {
+      res.status(500).json({ 
+        error: "Failed to get root users",
         details: error instanceof Error ? error.message : String(error)
       });
     }
