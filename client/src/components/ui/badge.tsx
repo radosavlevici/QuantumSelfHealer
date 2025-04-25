@@ -1,3 +1,8 @@
+/**
+ * DNA-Protected Badge Component
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * Email: ervin210@icloud.com
+ */
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
