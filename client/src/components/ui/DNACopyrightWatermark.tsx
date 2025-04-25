@@ -3,15 +3,14 @@
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
- * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0
- * This component displays an immutable copyright watermark that
- * cannot be removed from the application interface.
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - COPYRIGHT WATERMARK
+ * This component displays a visible copyright watermark with DNA-based security.
  * 
  * FEATURES:
- * - Displays permanent copyright information in the UI
- * - Self-verifies its own integrity
- * - Cannot be disabled or removed through normal means
- * - Maintains protection even when other UI elements are modified
+ * - Visible copyright watermark that cannot be removed
+ * - DNA-based security signatures embedded in the component
+ * - Self-verification mechanisms
+ * - Anti-tampering protections
  * 
  * ANTI-THEFT NOTICE:
  * This component is part of a unified integrated security system with
@@ -20,104 +19,103 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { Shield, Copy, ChevronDown, ChevronUp, AlertTriangle } from 'lucide-react';
+import { IMMUTABLE_COPYRIGHT_OWNER, IMMUTABLE_COPYRIGHT_BIRTHDATE, IMMUTABLE_COPYRIGHT_EMAIL, IMMUTABLE_COPYRIGHT_FULL, IMMUTABLE_SYSTEM_VERSION } from '@shared/quantum-dna-security';
 import { useDNAProtection } from '../DNAProtectionProvider';
-import { Shield, ShieldCheck, ShieldAlert, Info, Lock } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-// Props for the copyright watermark
 interface DNACopyrightWatermarkProps {
-  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center';
+  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
   expanded?: boolean;
-  showDetails?: boolean;
 }
 
-// DNA Copyright Watermark component
 export const DNACopyrightWatermark: React.FC<DNACopyrightWatermarkProps> = ({ 
-  position = 'bottom-right', 
-  expanded = false,
-  showDetails = false 
+  position = 'bottom-right',
+  expanded: initialExpanded = false
 }) => {
-  // Get security context from DNA Protection Provider
-  const { securityStatus, copyrightInfo, applyProtection } = useDNAProtection();
+  // Get protection from context
+  const { copyrightInfo, applyProtection } = useDNAProtection();
   
   // Apply protection to this component
-  const protection = applyProtection('copyright-watermark');
+  const protection = applyProtection('dna-copyright-watermark', 'ui-component');
   
-  // Local state for expansion
-  const [isExpanded, setIsExpanded] = useState(expanded);
-  const [isHovered, setIsHovered] = useState(false);
+  // State for expanded/collapsed view
+  const [expanded, setExpanded] = useState(initialExpanded);
   
-  // Position styles
-  const positionStyles: Record<string, string> = {
-    'top-left': 'top-4 left-4',
-    'top-right': 'top-4 right-4',
-    'bottom-left': 'bottom-4 left-4',
-    'bottom-right': 'bottom-4 right-4',
-    'center': 'bottom-4 left-1/2 transform -translate-x-1/2'
+  // Generate position classes
+  const getPositionClasses = () => {
+    switch (position) {
+      case 'top-left':
+        return 'top-0 left-0';
+      case 'top-right':
+        return 'top-0 right-0';
+      case 'bottom-left':
+        return 'bottom-0 left-0';
+      case 'bottom-right':
+      default:
+        return 'bottom-0 right-0';
+    }
   };
   
-  // Toggle expanded state
-  const toggleExpanded = () => {
-    setIsExpanded(prev => !prev);
-  };
-  
-  // Render the watermark
   return (
     <div 
-      className={`fixed ${positionStyles[position]} z-50 transition-all duration-300`}
+      className={`fixed ${getPositionClasses()} z-50 m-4 transition-all duration-300 ease-in-out`}
       data-component-id="dna-copyright-watermark"
       data-component-type="ui-component"
       data-watermark={protection.watermark}
       data-dna-signature={protection.dnaSignature}
-      data-security-level="maximum"
-      data-copyright-owner={copyrightInfo.owner}
     >
       <div 
-        className={`flex items-center ${isExpanded ? 'p-3 bg-black/80 border border-cyan-800 rounded-md shadow-lg' : 'p-2 bg-black/60 rounded-full shadow-md'} transition-all duration-300`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={toggleExpanded}
+        className={`flex flex-col bg-black/80 backdrop-blur-sm border border-cyan-900/30 rounded-lg shadow-lg overflow-hidden transition-all duration-300 ${
+          expanded ? 'w-80' : 'w-auto'
+        }`}
       >
-        {/* Security status icon */}
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="relative">
-                {securityStatus.valid ? (
-                  <ShieldCheck className="w-5 h-5 text-cyan-400" />
-                ) : (
-                  <ShieldAlert className="w-5 h-5 text-red-500" />
-                )}
-                <div className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${securityStatus.valid ? 'bg-green-500' : 'bg-red-500'} animate-pulse`}></div>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <p>{securityStatus.valid ? 'DNA Security Active' : 'Security Compromised'}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        
-        {/* Show expanded info if expanded */}
-        {isExpanded && (
-          <div className="ml-2 text-xs text-white">
-            <div className="flex items-center">
-              <Lock className="w-3 h-3 mr-1 text-cyan-400" />
-              <span className="font-semibold text-cyan-300">DNA Protected</span>
-            </div>
-            <div className="mt-1 font-light">
-              <div>© {copyrightInfo.owner}</div>
-              <div className="text-gray-400 text-[10px]">{copyrightInfo.birthdate}</div>
-              <div className="text-cyan-400 text-[10px]">{copyrightInfo.email}</div>
-            </div>
+        {/* Header with toggle */}
+        <div 
+          className="flex justify-between items-center p-2 cursor-pointer"
+          onClick={() => setExpanded(prev => !prev)}
+        >
+          <div className="flex items-center text-cyan-400">
+            <Shield className="w-4 h-4 mr-1.5" />
+            <span className="text-xs font-medium">DNA-Protected</span>
           </div>
-        )}
+          <button 
+            className="text-gray-400 hover:text-white p-1 rounded"
+            aria-label={expanded ? 'Collapse watermark' : 'Expand watermark'}
+          >
+            {expanded ? (
+              <ChevronDown className="w-3 h-3" />
+            ) : (
+              <ChevronUp className="w-3 h-3" />
+            )}
+          </button>
+        </div>
         
-        {/* Show tooltip on hover if not expanded */}
-        {!isExpanded && isHovered && (
-          <div className="absolute bottom-full mb-2 right-0 bg-black/80 px-3 py-2 rounded text-xs text-white whitespace-nowrap">
-            <div className="font-semibold text-cyan-300">DNA Protection Active</div>
-            <div className="text-white text-[10px]">© {copyrightInfo.owner}</div>
-            <div className="text-cyan-400 text-[10px]">{copyrightInfo.email}</div>
+        {/* Expanded content */}
+        {expanded && (
+          <div className="px-3 py-2 border-t border-cyan-900/30 text-xs text-gray-300">
+            <div className="flex items-start mb-2">
+              <AlertTriangle className="w-4 h-4 text-amber-500 mr-1.5 mt-0.5 flex-shrink-0" />
+              <p className="text-amber-300">
+                This application is protected by DNA-based security systems.
+                Unauthorized use, copying, or modification is strictly prohibited.
+              </p>
+            </div>
+            
+            <div className="bg-black/40 p-2.5 rounded mt-2 mb-1.5">
+              <p className="font-semibold text-cyan-400">Copyright Information:</p>
+              <p className="text-gray-300 mt-1">{copyrightInfo.full}</p>
+              <p className="text-gray-400 mt-1">{`Owner: ${copyrightInfo.owner}`}</p>
+              <p className="text-gray-400">{`DOB: ${copyrightInfo.birthdate}`}</p>
+              <p className="text-gray-400">{`Email: ${copyrightInfo.email}`}</p>
+              <p className="text-gray-400 mt-1">{`System Version: ${copyrightInfo.version}`}</p>
+              <div className="text-gray-500 mt-1.5 text-2xs border-t border-gray-800 pt-1.5">
+                <p className="break-all">DNA: {protection.dnaSignature.substring(0, 24)}...</p>
+              </div>
+            </div>
+            
+            <p className="text-xs text-gray-500 mb-1">
+              All components built as one unified security system.
+            </p>
           </div>
         )}
       </div>

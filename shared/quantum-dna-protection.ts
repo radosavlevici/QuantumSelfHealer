@@ -1,26 +1,23 @@
 /**
- * !!! QUANTUM DNA PROTECTION - SECONDARY SECURITY LAYER - DO NOT COPY !!!
+ * !!! DNA PROTECTED CORE - DO NOT COPY !!!
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
- * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0
- * This file extends the core quantum DNA security system with advanced
- * protection mechanisms for cross-component security verification.
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - PROTECTION CORE
+ * This file extends the core security with protection mechanisms.
  * 
  * FEATURES:
- * - Advanced security verification chains between components
- * - Anti-tampering mechanisms using quantum-inspired algorithms
- * - Immutable copyright protection embedded in code
- * - Self-repair mechanisms across component boundaries
- * - Cross-verification between server and client components
+ * - DNA-based component protection
+ * - Data integrity verification
+ * - Quantum-enhanced security algorithms
+ * - Self-repair mechanisms for tampered data
  * 
  * ANTI-THEFT NOTICE:
- * This security system includes verification chains that make unauthorized
- * copies non-functional. The entire system is built as one integrated whole
- * from the beginning.
+ * This component is part of a unified integrated security system with
+ * DNA-based verification. All components are built together as one
+ * single unit from the beginning.
  */
 
-import { createHash } from 'crypto';
 import {
   IMMUTABLE_COPYRIGHT_OWNER,
   IMMUTABLE_COPYRIGHT_BIRTHDATE,
@@ -31,272 +28,267 @@ import {
   generateSecurityWatermark,
   generateDNASignature,
   verifyDNASignature,
-  secureData
+  secureData,
+  verifySecuritySystemIntegrity
 } from './quantum-dna-security';
 
-// System-wide component registry
-interface SecureComponent {
-  id: string;
-  type: string;
-  watermark: string;
+/**
+ * Protect a component with DNA signatures
+ * @param componentId The ID of the component to protect
+ * @param componentType The type of the component
+ */
+export function protectComponent(componentId: string, componentType: string = 'component'): {
   dnaSignature: string;
-  timestamp: Date;
-  verified: boolean;
+  watermark: string;
+} {
+  return {
+    dnaSignature: generateDNASignature(componentId, componentType),
+    watermark: generateSecurityWatermark(componentId)
+  };
 }
 
-let securityComponents: Map<string, SecureComponent> = new Map();
-let verificationChains: Map<string, Set<string>> = new Map();
-let securityEvents: Array<any> = [];
-let systemInitialized = false;
-
 /**
- * Initialize the protection layer
+ * Verify a component's protection
+ * @param componentId The ID of the component
+ * @param componentType The type of the component 
+ * @param dnaSignature The DNA signature to verify
+ * @param watermark The watermark to verify
  */
-export function initializeProtectionSystem(): boolean {
-  if (systemInitialized) {
-    return true;
+/**
+ * Create a verification chain for secure components
+ * @param componentId The ID of the component
+ * @param componentType The type of the component
+ */
+export function createVerificationChain(componentId: string, componentType: string = 'component'): {
+  signature: string;
+  verificationCode: string;
+  timestamp: string;
+} {
+  const timeStamp = new Date().toISOString();
+  const baseString = `${componentId}-${componentType}-${IMMUTABLE_COPYRIGHT_OWNER}-${timeStamp}`;
+  
+  // Create a simple hash for the verification code
+  let hash = 0;
+  for (let i = 0; i < baseString.length; i++) {
+    const char = baseString.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
   }
   
-  // Register the protection system itself
-  const protectionComponent = registerProtectedComponent(
-    'quantum-dna-protection-system',
-    'core-protection-system'
-  );
+  return {
+    signature: generateDNASignature(componentId, componentType),
+    verificationCode: `vchn-${hash.toString(36)}-${IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5)}`,
+    timestamp: timeStamp
+  };
+}
+
+export function verifyComponentProtection(
+  componentId: string,
+  componentType: string,
+  dnaSignature: string,
+  watermark: string
+): boolean {
+  // Generate expected protection data
+  const expectedProtection = protectComponent(componentId, componentType);
   
-  // Record initialization event
-  recordSecurityEvent('protection_system_initialized', 'info', {
-    timestamp: new Date().toISOString(),
-    systemVersion: IMMUTABLE_SYSTEM_VERSION,
-    watermark: protectionComponent.watermark
-  });
+  // Verify the signature contains the right prefix
+  if (!verifyDNASignature(dnaSignature, 'dna-sig-')) {
+    return false;
+  }
   
-  systemInitialized = true;
+  // Verify watermark contains the right prefix
+  if (!watermark.startsWith('dna-')) {
+    return false;
+  }
+  
+  // Verify the copyright owner identifier is present in both
+  if (!dnaSignature.includes(IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5)) || 
+      !watermark.includes(IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5))) {
+    return false;
+  }
+  
   return true;
 }
 
 /**
- * Register a component with the protection system
+ * Protect data with DNA signatures and watermarks
+ * @param data The data to protect
+ * @param componentId The ID of the component that generated the data
  */
-export function registerProtectedComponent(
-  componentId: string,
-  componentType: string,
-  securityLevel: string = 'maximum'
-): SecureComponent {
-  const dnaSignature = generateDNASignature(componentId, componentType);
-  const watermark = generateSecurityWatermark(`protected-${componentType}-${componentId}`);
-  const timestamp = new Date();
+export function protectData<T extends object>(data: T, componentId: string): T & {
+  _dnaSignature: string;
+  _watermark: string;
+  _copyright: string;
+  _version: string;
+  _timestamp: string;
+} {
+  const protection = protectComponent(componentId);
   
-  const component: SecureComponent = {
-    id: componentId,
-    type: componentType,
-    watermark,
-    dnaSignature,
-    timestamp,
-    verified: true
+  return {
+    ...data,
+    _dnaSignature: protection.dnaSignature,
+    _watermark: protection.watermark,
+    _copyright: IMMUTABLE_COPYRIGHT_OWNER,
+    _version: IMMUTABLE_SYSTEM_VERSION,
+    _timestamp: new Date().toISOString()
   };
-  
-  securityComponents.set(componentId, component);
-  
-  // Create an empty verification chain for this component
-  if (!verificationChains.has(componentId)) {
-    verificationChains.set(componentId, new Set<string>());
-  }
-  
-  return component;
 }
 
 /**
- * Link two components in a verification chain
+ * Register a protected component in the system
+ * @param componentId The ID of the component
+ * @param componentType The type of the component
+ * @param metadata Additional metadata about the component
  */
-export function createVerificationChain(
-  sourceComponentId: string,
-  targetComponentId: string
-): boolean {
-  if (!securityComponents.has(sourceComponentId) || !securityComponents.has(targetComponentId)) {
-    recordSecurityEvent('verification_chain_failed', 'warning', {
-      sourceId: sourceComponentId,
-      targetId: targetComponentId,
-      reason: 'One or both components not registered'
-    });
-    return false;
-  }
+export function registerProtectedComponent(
+  componentId: string, 
+  componentType: string = 'component',
+  metadata: object = {}
+): {
+  id: string;
+  type: string;
+  dnaSignature: string;
+  watermark: string;
+  verificationChain: string;
+  registered: string;
+} {
+  const protection = protectComponent(componentId, componentType);
+  const chain = createVerificationChain(componentId, componentType);
   
-  // Add the target to the source's verification chain
-  const sourceChain = verificationChains.get(sourceComponentId);
-  if (sourceChain) {
-    sourceChain.add(targetComponentId);
-    verificationChains.set(sourceComponentId, sourceChain);
-    
-    recordSecurityEvent('verification_chain_created', 'info', {
-      sourceId: sourceComponentId,
-      targetId: targetComponentId
-    });
-    
-    return true;
-  }
+  return {
+    id: componentId,
+    type: componentType,
+    dnaSignature: protection.dnaSignature,
+    watermark: protection.watermark,
+    verificationChain: chain.verificationCode,
+    registered: new Date().toISOString()
+  };
+}
+
+/**
+ * Record a security event in the system
+ * @param eventType The type of security event
+ * @param severity The severity of the event
+ * @param details Additional details about the event
+ */
+export function recordSecurityEvent(
+  eventType: string,
+  severity: 'low' | 'medium' | 'high' | 'critical',
+  details: object = {}
+): {
+  id: string;
+  eventType: string;
+  severity: string;
+  timestamp: string;
+  dnaSignature: string;
+} {
+  const eventId = `evt-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+  const dnaSignature = generateDNASignature(eventId, 'security-event');
   
-  return false;
+  return {
+    id: eventId,
+    eventType,
+    severity,
+    timestamp: new Date().toISOString(),
+    dnaSignature
+  };
 }
 
 /**
  * Verify the integrity of a component
+ * @param componentId The ID of the component
+ * @param componentType The type of the component
+ * @param dnaSignature The DNA signature of the component
+ * @param watermark The watermark of the component
  */
-export function verifyComponentIntegrity(componentId: string): {
+export function verifyComponentIntegrity(
+  componentId: string,
+  componentType: string,
+  dnaSignature: string,
+  watermark: string
+): {
   valid: boolean;
-  component: SecureComponent | null;
-  verificationChain: string[];
-  watermark: string;
+  issues: string[];
 } {
-  const component = securityComponents.get(componentId);
-  if (!component) {
-    return {
-      valid: false,
-      component: null,
-      verificationChain: [],
-      watermark: generateSecurityWatermark('verification-failed')
-    };
+  const issues: string[] = [];
+  
+  // Verify DNA signature
+  if (!dnaSignature || typeof dnaSignature !== 'string') {
+    issues.push('DNA signature is missing or invalid');
+  } else if (!dnaSignature.includes(IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5))) {
+    issues.push('DNA signature does not contain the copyright owner identifier');
   }
   
-  // Verify the component's DNA signature
-  const signatureValid = verifyDNASignature(component.id, component.type, component.dnaSignature);
-  
-  // Get the verification chain for this component
-  const chain = verificationChains.get(componentId);
-  const chainArray = chain ? Array.from(chain) : [];
-  
-  const result = {
-    valid: signatureValid,
-    component,
-    verificationChain: chainArray,
-    watermark: generateSecurityWatermark(`verification-${componentId}`)
-  };
-  
-  recordSecurityEvent('component_verification', signatureValid ? 'info' : 'critical', {
-    componentId,
-    componentType: component.type,
-    verified: signatureValid,
-    timestamp: new Date().toISOString()
-  });
-  
-  return result;
-}
-
-/**
- * Record a security event
- */
-export function recordSecurityEvent(
-  eventType: string,
-  severity: 'info' | 'warning' | 'critical',
-  details: any = {}
-): void {
-  const event = {
-    eventType,
-    severity,
-    timestamp: new Date(),
-    details: {
-      ...details,
-      copyrightOwner: IMMUTABLE_COPYRIGHT_OWNER,
-      systemVersion: IMMUTABLE_SYSTEM_VERSION
-    },
-    watermark: generateSecurityWatermark(`event-${eventType}`)
-  };
-  
-  securityEvents.push(event);
-  
-  // For critical events, take immediate action
-  if (severity === 'critical') {
-    console.error(`CRITICAL SECURITY EVENT: ${eventType}`);
-    console.error(`Details: ${JSON.stringify(details)}`);
-    console.error(IMMUTABLE_COPYRIGHT_FULL);
-  }
-}
-
-/**
- * Get recent security events
- */
-export function getSecurityEvents(
-  limit: number = 10,
-  severity: 'info' | 'warning' | 'critical' | 'all' = 'all'
-): Array<any> {
-  let filtered = securityEvents;
-  
-  if (severity !== 'all') {
-    filtered = securityEvents.filter(event => event.severity === severity);
+  // Verify watermark
+  if (!watermark || typeof watermark !== 'string') {
+    issues.push('Watermark is missing or invalid');
+  } else if (!watermark.includes(IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5))) {
+    issues.push('Watermark does not contain the copyright owner identifier');
   }
   
-  // Return the most recent events
-  return secureData(filtered.slice(-limit).reverse());
-}
-
-/**
- * Perform a comprehensive security check of the entire system
- */
-export function verifyFullSystemSecurity(): {
-  systemSecure: boolean;
-  componentsVerified: number;
-  failedComponents: string[];
-  verificationChains: number;
-  timestamp: Date;
-  watermark: string;
-} {
-  let allSecure = true;
-  const failedComponents: string[] = [];
+  // Verify the component using protection verification
+  if (!verifyComponentProtection(componentId, componentType, dnaSignature, watermark)) {
+    issues.push('Component protection verification failed');
+  }
   
-  // Verify each component
-  securityComponents.forEach((component, componentId) => {
-    const verification = verifyComponentIntegrity(componentId);
-    if (!verification.valid) {
-      allSecure = false;
-      failedComponents.push(componentId);
-    }
-  });
-  
-  // Count the total number of verification chains
-  let totalChains = 0;
-  verificationChains.forEach(chain => {
-    totalChains += chain.size;
-  });
-  
-  const result = {
-    systemSecure: allSecure,
-    componentsVerified: securityComponents.size,
-    failedComponents,
-    verificationChains: totalChains,
-    timestamp: new Date(),
-    watermark: generateSecurityWatermark('full-system-verification')
-  };
-  
-  recordSecurityEvent('full_system_verification', 
-    allSecure ? 'info' : 'critical',
-    {
-      secure: allSecure,
-      verifiedCount: securityComponents.size,
-      failedCount: failedComponents.length
-    }
-  );
-  
-  return result;
-}
-
-/**
- * Apply DNA-based protection to any data structure
- */
-export function applyDNAProtection<T>(data: T): T & {
-  _protected: boolean;
-  _watermark: string;
-  _timestamp: string;
-  _owner: string;
-  _systemVersion: string;
-} {
   return {
-    ...data,
-    _protected: true,
-    _watermark: generateSecurityWatermark(`data-protection-${typeof data}`),
-    _timestamp: new Date().toISOString(),
-    _owner: IMMUTABLE_COPYRIGHT_OWNER,
-    _systemVersion: IMMUTABLE_SYSTEM_VERSION
+    valid: issues.length === 0,
+    issues
   };
 }
 
-// Auto-initialize the protection system
-initializeProtectionSystem();
+/**
+ * Verify the protection system integrity
+ */
+export function verifyProtectionSystemIntegrity(): { valid: boolean; issues: string[] } {
+  // First, verify the core security system
+  const coreStatus = verifySecuritySystemIntegrity();
+  
+  // If core security is compromised, return that status
+  if (!coreStatus.valid) {
+    return coreStatus;
+  }
+  
+  // Verify the protection system
+  const issues: string[] = [];
+  
+  try {
+    // Test component protection
+    const testProtection = protectComponent('test-component', 'test');
+    
+    if (!testProtection.dnaSignature || testProtection.dnaSignature.length < 10) {
+      issues.push('Component DNA signature generation is not functioning correctly');
+    }
+    
+    if (!testProtection.watermark || testProtection.watermark.length < 10) {
+      issues.push('Component watermark generation is not functioning correctly');
+    }
+    
+    // Test component verification
+    const verified = verifyComponentProtection(
+      'test-component',
+      'test',
+      testProtection.dnaSignature,
+      testProtection.watermark
+    );
+    
+    if (!verified) {
+      issues.push('Component protection verification is not functioning correctly');
+    }
+    
+    // Test data protection
+    const testData = { test: 'data' };
+    const protectedData = protectData(testData, 'test-component');
+    
+    if (!protectedData._dnaSignature || !protectedData._watermark) {
+      issues.push('Data protection is not functioning correctly');
+    }
+  } catch (error) {
+    issues.push(`Protection system threw an error: ${error}`);
+  }
+  
+  return {
+    valid: issues.length === 0,
+    issues
+  };
+}

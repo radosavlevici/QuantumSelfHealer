@@ -1,17 +1,16 @@
 /**
- * !!! DNA PROTECTED SECURITY CORE - DO NOT COPY !!!
+ * !!! DNA PROTECTED CLIENT CORE - DO NOT COPY !!!
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
  * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - CLIENT SECURITY CORE
- * This file implements the client-side security core functionality
- * for the DNA-based protection system.
+ * This file implements client-side DNA security functionality.
  * 
  * FEATURES:
- * - Client-side verification of DNA security integrity
- * - Security metadata validation
- * - Session security management
- * - Component verification and protection
+ * - Client-side DNA component protection
+ * - Security monitoring and reporting
+ * - Self-verification mechanisms
+ * - Copyright verification
  * 
  * ANTI-THEFT NOTICE:
  * This component is part of a unified integrated security system with
@@ -30,90 +29,100 @@ import {
   verifySecuritySystemIntegrity
 } from '@shared/quantum-dna-security';
 
+import {
+  protectComponent,
+  verifyComponentProtection,
+  verifyProtectionSystemIntegrity
+} from '@shared/quantum-dna-protection';
+
 /**
- * Create a secure session with DNA watermarking
+ * Generate security data for a client component
+ * @param componentId The component ID
+ * @param componentType The component type
  */
-export function secureSession(): { sessionId: string; watermark: string } {
-  const sessionId = `session-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
-  const watermark = generateSecurityWatermark(sessionId);
-  
-  // Store in session storage with DNA protection
-  try {
-    // Create secured session data
-    const sessionData = {
-      id: sessionId,
-      created: new Date().toISOString(),
-      watermark,
-      dnaSignature: generateDNASignature(sessionId, 'session'),
-      copyrightOwner: IMMUTABLE_COPYRIGHT_OWNER,
-      securityLevel: 'maximum',
-      systemVersion: IMMUTABLE_SYSTEM_VERSION
-    };
-    
-    // Store session data
-    sessionStorage.setItem('dna-protected-session', JSON.stringify(sessionData));
-    
-    return { sessionId, watermark };
-  } catch (error) {
-    console.error('Failed to secure session:', error);
-    return { sessionId, watermark };
-  }
+export function generateComponentSecurity(componentId: string, componentType: string = 'component'): {
+  dnaSignature: string;
+  watermark: string;
+} {
+  return protectComponent(componentId, componentType);
 }
 
 /**
- * Verify the client-side security system integrity
+ * Verify a client component's security
+ * @param componentId The component ID
+ * @param componentType The component type 
+ * @param dnaSignature The DNA signature to verify
+ * @param watermark The watermark to verify
+ */
+export function verifyComponentSecurity(
+  componentId: string,
+  componentType: string,
+  dnaSignature: string,
+  watermark: string
+): boolean {
+  return verifyComponentProtection(componentId, componentType, dnaSignature, watermark);
+}
+
+/**
+ * Apply protection to a client component
+ * @param componentId The component ID
+ * @param componentType The component type
+ */
+export function applyComponentProtection(componentId: string, componentType: string = 'component'): {
+  dnaSignature: string;
+  watermark: string;
+} {
+  return generateComponentSecurity(componentId, componentType);
+}
+
+/**
+ * Verify client-side security system integrity
  */
 export function verifyClientSecurity(): { valid: boolean; issues: string[] } {
+  // First, verify the core security system
+  const coreStatus = verifySecuritySystemIntegrity();
+  
+  // If core security is compromised, return that status
+  if (!coreStatus.valid) {
+    return coreStatus;
+  }
+  
+  // Verify the protection system
+  const protectionStatus = verifyProtectionSystemIntegrity();
+  
+  // If protection system is compromised, return that status
+  if (!protectionStatus.valid) {
+    return protectionStatus;
+  }
+  
+  // Verify client-specific security
   const issues: string[] = [];
   
-  // 1. Verify core security system integrity
-  const coreStatus = verifySecuritySystemIntegrity();
-  if (!coreStatus.valid) {
-    issues.push('Core security system integrity check failed');
-  }
-  
-  // 2. Verify DOM security metadata
   try {
-    const domOwner = document.documentElement.getAttribute('data-copyright-owner');
-    const domVersion = document.documentElement.getAttribute('data-system-version');
+    // Test component security
+    const testSecurity = generateComponentSecurity('test-client-component', 'test');
     
-    if (domOwner !== IMMUTABLE_COPYRIGHT_OWNER) {
-      issues.push('DOM copyright owner mismatch');
+    if (!testSecurity.dnaSignature || testSecurity.dnaSignature.length < 10) {
+      issues.push('Client component DNA signature generation is not functioning correctly');
     }
     
-    if (domVersion !== IMMUTABLE_SYSTEM_VERSION) {
-      issues.push('DOM system version mismatch');
+    if (!testSecurity.watermark || testSecurity.watermark.length < 10) {
+      issues.push('Client component watermark generation is not functioning correctly');
+    }
+    
+    // Test security verification
+    const verified = verifyComponentSecurity(
+      'test-client-component',
+      'test',
+      testSecurity.dnaSignature,
+      testSecurity.watermark
+    );
+    
+    if (!verified) {
+      issues.push('Client component security verification is not functioning correctly');
     }
   } catch (error) {
-    issues.push('Failed to verify DOM security metadata');
-  }
-  
-  // 3. Verify session security
-  try {
-    const sessionData = sessionStorage.getItem('dna-protected-session');
-    if (!sessionData) {
-      // Create a new session if none exists
-      secureSession();
-    } else {
-      // Verify session data
-      const session = JSON.parse(sessionData);
-      
-      if (session.copyrightOwner !== IMMUTABLE_COPYRIGHT_OWNER) {
-        issues.push('Session copyright owner mismatch');
-      }
-      
-      if (session.systemVersion !== IMMUTABLE_SYSTEM_VERSION) {
-        issues.push('Session system version mismatch');
-      }
-      
-      // Verify session DNA signature
-      const expectedSignature = generateDNASignature(session.id, 'session');
-      if (session.dnaSignature !== expectedSignature) {
-        issues.push('Session DNA signature mismatch');
-      }
-    }
-  } catch (error) {
-    issues.push('Failed to verify session security');
+    issues.push(`Client security system threw an error: ${error}`);
   }
   
   return {
@@ -123,59 +132,19 @@ export function verifyClientSecurity(): { valid: boolean; issues: string[] } {
 }
 
 /**
- * Generate security metadata for a component
+ * Report a security violation
+ * @param componentId The component ID
+ * @param violationType The violation type
+ * @param details Additional details
  */
-export function generateComponentSecurity(componentId: string, componentType: string): {
-  id: string;
-  type: string;
-  watermark: string;
-  dnaSignature: string;
-  copyright: string;
-} {
-  return {
-    id: componentId,
-    type: componentType,
-    watermark: generateSecurityWatermark(`component-${componentId}`),
-    dnaSignature: generateDNASignature(componentId, componentType),
-    copyright: IMMUTABLE_COPYRIGHT_FULL
-  };
-}
-
-/**
- * Apply DNA security protection to a component
- */
-export function applyComponentProtection(componentId: string, componentType: string): {
-  attributes: Record<string, string>;
-  metadata: {
-    id: string;
-    type: string;
-    watermark: string;
-    dnaSignature: string;
-    copyright: string;
-  };
-} {
-  const metadata = generateComponentSecurity(componentId, componentType);
+export function reportSecurityViolation(
+  componentId: string,
+  violationType: string,
+  details: object = {}
+): void {
+  // Log client-side security violation
+  console.error(`[SECURITY VIOLATION] Component ${componentId}: ${violationType}`, details);
   
-  return {
-    attributes: {
-      'data-component-id': componentId,
-      'data-component-type': componentType,
-      'data-watermark': metadata.watermark,
-      'data-dna-signature': metadata.dnaSignature,
-      'data-copyright-owner': IMMUTABLE_COPYRIGHT_OWNER
-    },
-    metadata
-  };
-}
-
-/**
- * Verify a component's security integrity
- */
-export function verifyComponentSecurity(componentId: string, componentType: string, dnaSignature: string, watermark: string): boolean {
-  const expectedMetadata = generateComponentSecurity(componentId, componentType);
-  
-  return (
-    dnaSignature === expectedMetadata.dnaSignature &&
-    watermark.startsWith(expectedMetadata.watermark.substring(0, 16))
-  );
+  // TODO: Send to server for logging when API endpoints are available
+  // This would be implemented later in the app lifecycle
 }

@@ -44,7 +44,7 @@ import {
 } from '@shared/quantum-dna-security';
 
 // Import client-side DNA security core
-import { secureSession, verifyClientSecurity } from './lib/dna-security-core';
+import { verifyClientSecurity } from './lib/dna-security-core';
 
 // Import the DNA Protection Provider 
 import { DNAProtectionProvider } from './components/DNAProtectionProvider';

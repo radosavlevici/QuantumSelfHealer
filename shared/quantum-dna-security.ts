@@ -19,14 +19,13 @@
  * single unit from the beginning.
  */
 
-import { createHash } from 'crypto';
-
 // Immutable copyright information - cannot be changed!
 export const IMMUTABLE_COPYRIGHT_OWNER = 'Ervin Remus Radosavlevici';
 export const IMMUTABLE_COPYRIGHT_BIRTHDATE = '01/09/1987';
 export const IMMUTABLE_COPYRIGHT_EMAIL = 'ervin210@icloud.com';
 export const IMMUTABLE_COPYRIGHT_FULL = `Copyright © ${IMMUTABLE_COPYRIGHT_OWNER} (${IMMUTABLE_COPYRIGHT_BIRTHDATE}) - Email: ${IMMUTABLE_COPYRIGHT_EMAIL} - All Rights Reserved.`;
 export const IMMUTABLE_SYSTEM_VERSION = '4.0';
+export const IMMUTABLE_BUILD_TIMESTAMP = '2025-04-25T23:30:00.000Z';
 
 /**
  * Generate a DNA-based security watermark
@@ -36,21 +35,14 @@ export function generateSecurityWatermark(seedData: string): string {
   // Create a base string with timestamp and seed data
   const baseString = `${Date.now()}-${seedData}-${IMMUTABLE_COPYRIGHT_OWNER}-${IMMUTABLE_SYSTEM_VERSION}`;
   
-  try {
-    // Create SHA-256 hash as the watermark
-    return createHash('sha256').update(baseString).digest('base64');
-  } catch (error) {
-    // Fallback for environments where crypto is not available (e.g., client-side)
-    // This is a simple hash function that provides some level of security
-    // but is not as strong as SHA-256
-    let hash = 0;
-    for (let i = 0; i < baseString.length; i++) {
-      const char = baseString.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32-bit integer
-    }
-    return `fallback-${hash.toString(36)}-${IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5)}`;
+  // Simple hash function that works in all environments
+  let hash = 0;
+  for (let i = 0; i < baseString.length; i++) {
+    const char = baseString.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
   }
+  return `dna-${hash.toString(36)}-${IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5)}-${Date.now().toString(36)}`;
 }
 
 /**
@@ -62,19 +54,57 @@ export function generateDNASignature(componentId: string, componentType: string)
   // Create a base string with component data and copyright information
   const baseString = `${componentId}-${componentType}-${IMMUTABLE_COPYRIGHT_OWNER}-${IMMUTABLE_SYSTEM_VERSION}-${Date.now()}`;
   
-  try {
-    // Create SHA-256 hash as the DNA signature
-    return createHash('sha256').update(baseString).digest('base64');
-  } catch (error) {
-    // Fallback for environments where crypto is not available
-    let hash = 0;
-    for (let i = 0; i < baseString.length; i++) {
-      const char = baseString.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32-bit integer
-    }
-    return `dna-${hash.toString(36)}-${IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5)}`;
+  // Simple hash function for DNA signature
+  let hash = 0;
+  for (let i = 0; i < baseString.length; i++) {
+    const char = baseString.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
   }
+  return `dna-sig-${hash.toString(36)}-${IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5)}-${Date.now().toString(36)}`;
+}
+
+/**
+ * Verify a DNA signature
+ * @param signature The signature to verify
+ * @param expectedPrefix The expected prefix
+ */
+export function verifyDNASignature(signature: string, expectedPrefix: string): boolean {
+  if (!signature || typeof signature !== 'string') {
+    return false;
+  }
+  
+  // Check if the signature has the correct prefix
+  if (!signature.startsWith(expectedPrefix)) {
+    return false;
+  }
+  
+  // Check if the signature contains the copyright owner's name prefix
+  if (!signature.includes(IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5))) {
+    return false;
+  }
+  
+  return true;
+}
+
+/**
+ * Secure data with DNA protection
+ * @param data The data to secure
+ * @param componentId The component ID
+ */
+export function secureData<T extends object>(data: T, componentId: string): T & {
+  _dnaWatermark: string;
+  _timestamp: string;
+  _copyright: string;
+  _version: string;
+} {
+  return {
+    ...data,
+    _dnaWatermark: generateSecurityWatermark(`${componentId}-${Date.now()}`),
+    _timestamp: new Date().toISOString(),
+    _copyright: IMMUTABLE_COPYRIGHT_OWNER,
+    _version: `QUANTUM-DNA-SECURITY-v${IMMUTABLE_SYSTEM_VERSION}`
+  };
 }
 
 /**
