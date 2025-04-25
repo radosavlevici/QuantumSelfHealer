@@ -10,7 +10,7 @@
  * FEATURES:
  * - DNA-based watermarking embedded in data models
  * - Self-verification mechanisms for data integrity
- * - Immutable copyright protection embedded in the file
+ * - Immutable copyright protection embedded in the schema
  * 
  * ANTI-THEFT NOTICE:
  * This schema is part of an integrated whole built from the beginning.
@@ -20,13 +20,7 @@
 import { pgTable, text, serial, integer, boolean, timestamp, jsonb, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
-
-// Immutable copyright constants - cannot be changed or removed
-export const COPYRIGHT_OWNER = 'Ervin Remus Radosavlevici';
-export const COPYRIGHT_BIRTHDATE = '01/09/1987';
-export const COPYRIGHT_EMAIL = 'ervin210@icloud.com';
-export const COPYRIGHT_FULL = `© ${COPYRIGHT_OWNER} (${COPYRIGHT_BIRTHDATE})`;
-export const SYSTEM_VERSION = '4.0.0';
+import { COPYRIGHT_OWNER, COPYRIGHT_BIRTHDATE, COPYRIGHT_EMAIL, COPYRIGHT_FULL, SYSTEM_VERSION } from "./quantum-dna-security";
 
 // Users table with DNA-based protection features
 export const users = pgTable("users", {
@@ -161,6 +155,19 @@ export const integrityChecks = pgTable("integrity_checks", {
   timestamp: timestamp("timestamp").defaultNow().notNull(),
 });
 
+// Quantum state monitoring
+export const quantumStates = pgTable("quantum_states", {
+  id: serial("id").primaryKey(),
+  qubits: integer("qubits").notNull(),
+  entanglementQuality: integer("entanglement_quality").notNull(),
+  securityStrength: text("security_strength").notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastVerification: timestamp("last_verification").defaultNow().notNull(),
+  watermark: text("watermark"),
+  dnaSignature: text("dna_signature"),
+});
+
 // Insert schemas with copyright protection
 export const insertUserSchema = createInsertSchema(users).omit({ 
   id: true, 
@@ -201,7 +208,9 @@ export const insertConversationSchema = createInsertSchema(conversations).omit({
   createdAt: true, 
   updatedAt: true, 
   watermark: true, 
-  dnaSignature: true 
+  dnaSignature: true,
+  lastMessage: true,
+  deleted: true
 });
 
 export const insertMessageSchema = createInsertSchema(messages).omit({ 
@@ -228,6 +237,14 @@ export const insertTerminalCommandSchema = createInsertSchema(terminalCommands).
 export const insertIntegrityCheckSchema = createInsertSchema(integrityChecks).omit({ 
   id: true, 
   timestamp: true 
+});
+
+export const insertQuantumStateSchema = createInsertSchema(quantumStates).omit({
+  id: true,
+  createdAt: true,
+  lastVerification: true,
+  watermark: true,
+  dnaSignature: true
 });
 
 // Types
@@ -260,3 +277,6 @@ export type TerminalCommand = typeof terminalCommands.$inferSelect;
 
 export type InsertIntegrityCheck = z.infer<typeof insertIntegrityCheckSchema>;
 export type IntegrityCheck = typeof integrityChecks.$inferSelect;
+
+export type InsertQuantumState = z.infer<typeof insertQuantumStateSchema>;
+export type QuantumState = typeof quantumStates.$inferSelect;
