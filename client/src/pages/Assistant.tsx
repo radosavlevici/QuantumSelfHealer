@@ -133,7 +133,11 @@ export default function Assistant() {
                     {message.role === "user" ? "You" : "Quantum AI"}
                   </span>
                   <span className="ml-auto text-xs text-gray-500">
-                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {typeof message.timestamp === 'string' 
+                      ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                      : message.timestamp instanceof Date 
+                        ? message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                        : 'Just now'}
                   </span>
                 </div>
                 <p className="text-sm whitespace-pre-wrap">{message.content}</p>
