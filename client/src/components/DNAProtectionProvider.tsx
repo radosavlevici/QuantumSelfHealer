@@ -27,7 +27,7 @@ import {
   registerSecurityComponent,
   attemptSelfRepair,
   activateSelfDefense
-} from '@/shared/quantum-dna-protection';
+} from '../../shared/quantum-dna-protection';
 
 // Component identity for DNA verification
 const COMPONENT_ID = 'dna-protection-provider';
@@ -230,7 +230,7 @@ export default function DNAProtectionProvider({ children }: DNAProtectionProvide
     
     verifyComponent,
     registerComponent,
-    createWatermark,
+    createDNAWatermark,
     reportTampering,
     selfRepair,
     selfDefense

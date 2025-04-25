@@ -10,6 +10,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import { Link } from 'wouter';
 import { useDNAProtection } from '@/components/DNAProtectionProvider';
 
 // Component identity for DNA verification
@@ -61,17 +62,17 @@ export default function HomePage() {
       data-verified={isVerified}
       data-copyright-owner={dnaProtection.copyright.owner}
     >
-      <header className="text-center mb-10">
+      <div className="text-center mb-10">
         <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text">
           Quantum DNA Protected System
         </h1>
         <p className="text-gray-400">{securityStatus}</p>
-      </header>
+      </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-gray-900 p-6 rounded-lg border border-gray-800">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-lg border border-gray-700 shadow-lg">
           <h2 className="text-2xl font-bold mb-4 text-blue-400">DNA Security Features</h2>
-          <ul className="space-y-2">
+          <ul className="space-y-3">
             <li className="flex items-center">
               <span className="text-green-400 mr-2">✓</span> 
               Immutable Copyright Protection
@@ -99,7 +100,7 @@ export default function HomePage() {
           </ul>
         </div>
         
-        <div className="bg-gray-900 p-6 rounded-lg border border-gray-800">
+        <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-lg border border-gray-700 shadow-lg">
           <h2 className="text-2xl font-bold mb-4 text-purple-400">Copyright Information</h2>
           <div className="space-y-3">
             <div>
@@ -120,7 +121,47 @@ export default function HomePage() {
             </div>
             <div>
               <h3 className="text-sm text-gray-400">Component Watermark</h3>
-              <p className="font-mono text-xs">{watermark}</p>
+              <p className="font-mono text-xs truncate" title={watermark}>{watermark}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Link to="/terminal">
+          <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/30 p-6 rounded-lg border border-blue-800/50 shadow-lg hover:from-blue-900/40 hover:to-blue-800/40 transition-colors cursor-pointer">
+            <h3 className="text-xl font-bold mb-2 text-blue-400">Quantum Terminal</h3>
+            <p className="text-gray-400">Access the secure quantum terminal interface with advanced command capabilities.</p>
+          </div>
+        </Link>
+        
+        <Link to="/quantum">
+          <div className="bg-gradient-to-br from-purple-900/30 to-purple-800/30 p-6 rounded-lg border border-purple-800/50 shadow-lg hover:from-purple-900/40 hover:to-purple-800/40 transition-colors cursor-pointer">
+            <h3 className="text-xl font-bold mb-2 text-purple-400">Quantum Computing</h3>
+            <p className="text-gray-400">Execute quantum algorithms with DNA-based security protection and verification.</p>
+          </div>
+        </Link>
+        
+        <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 p-6 rounded-lg border border-gray-700 shadow-lg">
+          <h3 className="text-xl font-bold mb-2 text-green-400">System Status</h3>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-gray-400">Security Level:</span>
+              <span className="text-green-400">Maximum</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-400">DNA Protection:</span>
+              <span className="text-green-400">Active</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-400">Watermark Status:</span>
+              <span className="text-green-400">Verified</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-400">Component Status:</span>
+              <span className={isVerified ? "text-green-400" : "text-red-400"}>
+                {isVerified ? "Verified" : "Error"}
+              </span>
             </div>
           </div>
         </div>
