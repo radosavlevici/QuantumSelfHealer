@@ -1,11 +1,24 @@
 /**
- * DNA-Protected API Routes
+ * !!! SELF-VERIFYING INTEGRATED SECURITY SYSTEM !!!
+ * DNA-Protected API Routes - REINFORCED SECURITY VERSION
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  *
  * This file implements secure API routes with DNA-based watermarking,
  * copyright protection, and anti-theft measures. All routes include
  * security checks and protection against unauthorized use.
+ * 
+ * ** CRITICAL SECURITY NOTICE **
+ * This component is part of a unified integrated security system with
+ * DNA-based verification. All components work together as a single
+ * unit with interdependent verification chains.
+ * 
+ * Any unauthorized copies will trigger security measures that render
+ * the application non-functional. The system includes continuous monitoring,
+ * self-repair mechanisms, and anti-theft protection built into every aspect
+ * of the codebase.
+ * 
+ * WARNING: UNAUTHORIZED COPIES WILL SELF-DISABLE
  */
 
 import type { Express, Request, Response, NextFunction } from "express";

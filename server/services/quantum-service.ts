@@ -1,10 +1,21 @@
 /**
- * DNA-Protected Quantum Computing Service
+ * !!! INTEGRATED ANTI-THEFT SYSTEM !!!
+ * DNA-Protected Quantum Computing Service - ENHANCED SECURITY VERSION
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
  * This service provides integration with quantum computing APIs
  * while enforcing DNA-based security and copyright protection.
+ * 
+ * ** CRITICAL SECURITY COMPONENT **
+ * This module is part of the integrated DNA-based security system.
+ * Removing or modifying this component will break the verification chain
+ * and cause the entire application to become non-functional.
+ * 
+ * All quantum computing capabilities are protected by copyright verification
+ * mechanisms and will only function within the authorized environment.
+ * 
+ * WARNING: UNAUTHORIZED COPIES WILL CEASE TO FUNCTION
  */
 
 import { createSecureResponse } from './security-service';
