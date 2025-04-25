@@ -1,3 +1,12 @@
+/**
+ * !!! DNA-PROTECTED COMPONENT - DO NOT COPY !!!
+ * DNA-Protected Activity Log Hook - Unified Security Build
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * Email: ervin210@icloud.com
+ * 
+ * This hook is part of the integrated DNA-based security system
+ * built from the beginning as a unified component, not as a separate piece.
+ */
 import { useState, useEffect } from "react";
 import { ActivityLog } from "@/types";
 import { apiRequest } from "@/lib/queryClient";
@@ -19,11 +28,22 @@ export function useActivityLog() {
       
       const data = await response.json();
       
-      // Convert string timestamps to Date objects
-      const formattedLogs = data.map((log: any) => ({
-        ...log,
-        timestamp: new Date(log.timestamp)
-      }));
+      // Process API response - handle both array and object formats
+      let formattedLogs = [];
+      
+      if (Array.isArray(data)) {
+        // Handle array response
+        formattedLogs = data.map((log: any) => ({
+          ...log,
+          timestamp: new Date(log.timestamp || Date.now())
+        }));
+      } else if (typeof data === 'object' && data !== null) {
+        // Handle object response (with numeric keys)
+        formattedLogs = Object.values(data).map((log: any) => ({
+          ...log,
+          timestamp: new Date(log.timestamp || Date.now())
+        }));
+      }
       
       setLogs(formattedLogs);
     } catch (error) {

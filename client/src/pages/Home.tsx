@@ -1,3 +1,12 @@
+/**
+ * !!! DNA-PROTECTED COMPONENT - DO NOT COPY !!!
+ * DNA-Protected Home Page - Unified Security Build
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * Email: ervin210@icloud.com
+ * 
+ * This component is part of the integrated DNA-based security system
+ * built from the beginning as a unified component, not as a separate piece.
+ */
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StatusCard } from "@/components/ui/status-card";
@@ -9,6 +18,10 @@ import { useFeatures } from "@/hooks/use-features";
 import { useActivityLog } from "@/hooks/use-activity-log";
 import { commandHelpReference } from "@/lib/quantum-service";
 
+// Verification constants - must match system values
+const DNA_SIGNATURE = "dna-protected-home-v2-QV2-DNAFull-20250425";
+const COPYRIGHT = "© Ervin Remus Radosavlevici (01/09/1987)";
+
 export default function Home() {
   const { statusCards, refreshStatus, loading } = useQuantumStatus();
   const { features, toggleFeature } = useFeatures();
@@ -18,7 +31,11 @@ export default function Home() {
   return (
     <>
       {/* Status Section */}
-      <section className="px-4 py-3 bg-surface dark:bg-surface-dark shadow-sm">
+      <section 
+        className="px-4 py-3 bg-surface dark:bg-surface-dark shadow-sm"
+        data-dna-signature={DNA_SIGNATURE}
+        data-copyright={COPYRIGHT}
+      >
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-lg font-medium">System Status</h2>
           <Button
@@ -33,9 +50,16 @@ export default function Home() {
         </div>
         
         <div className="grid grid-cols-2 gap-3">
-          {statusCards.map((card) => (
-            <StatusCard key={card.id} card={card} />
-          ))}
+          {statusCards && Array.isArray(statusCards) ? (
+            statusCards.map((card) => (
+              <StatusCard key={card.id} card={card} />
+            ))
+          ) : (
+            // Fallback status cards if data is not available
+            <div className="col-span-2 p-4 text-center">
+              <div className="animate-pulse">Loading status data...</div>
+            </div>
+          )}
         </div>
       </section>
       

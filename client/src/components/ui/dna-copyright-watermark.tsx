@@ -1,185 +1,84 @@
 /**
- * !! ENHANCED SECURITY VERSION !!
- * DNA-Protected Watermark Component with Anti-Theft Measures
+ * !!! DNA-PROTECTED COMPONENT - DO NOT COPY !!!
+ * DNA-Protected Copyright Watermark - Unified Security Build
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
- *
- * This component displays a DNA-protected watermark with copyright information.
- * It includes tamper detection, self-repair capabilities, and anti-theft protections
- * that make unauthorized copies non-functional.
  * 
- * ** THIS CODE IS PART OF AN INTEGRATED SECURITY SYSTEM **
- * Removing or modifying it will cause related components to fail.
+ * This component is part of the integrated DNA-based security system
+ * built from the beginning as a unified component, not as a separate piece.
+ * 
+ * This watermark component is displayed throughout the application to
+ * ensure copyright information is visible and protected. It is integrated
+ * with the DNA verification system to detect tampering attempts.
  */
 
-import { useEffect, useState, useRef } from 'react';
-import { Badge } from './badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
-import { Lock, Shield, CheckCircle, AlertTriangle } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { COPYRIGHT_OWNER, COPYRIGHT_BIRTHDATE, COPYRIGHT_EMAIL, SYSTEM_VERSION_ID } from "@/lib/dna-security-core";
 
-interface DNAProtectedCopyrightInfo {
-  owner: string;
-  birthDate: string;
-  email: string;
-  created: string;
-  rights: string;
-  watermark?: string;
-  dnaVerified?: boolean;
-  protectionActive?: boolean;
-}
+// DNA signature generation
+const DNA_SIGNATURE = `dna-protected-watermark-v2-${SYSTEM_VERSION_ID}`;
+const VERIFY_TOKEN = `${COPYRIGHT_OWNER}-${COPYRIGHT_BIRTHDATE}-${SYSTEM_VERSION_ID}`;
 
-/**
- * Component that displays a discrete watermark with DNA-based copyright information
- * The watermark is semi-transparent and positioned at the bottom right of the screen
- */
 export function DNACopyrightWatermark() {
-  const [copyright, setCopyright] = useState<DNAProtectedCopyrightInfo | null>(null);
-  const [watermarkVisible, setWatermarkVisible] = useState<boolean>(true);
-  const [loading, setLoading] = useState(true);
-  const [securityVerified, setSecurityVerified] = useState(false);
-
-  // Reference to track original deployment environment
-  const originalEnvironment = useRef<string>(btoa(`${window.location.hostname}|${navigator.userAgent}`));
+  const [isVerified, setIsVerified] = useState(false);
   
+  // Verify watermark integrity on mount
   useEffect(() => {
-    // Anti-theft verification - checks if code is running in original environment
-    const verifyEnvironment = () => {
-      const currentEnv = btoa(`${window.location.hostname}|${navigator.userAgent}`);
-      return currentEnv === originalEnvironment.current;
-    };
-    
-    // DNA verification and anti-theft function
-    const verifyDNAIntegrity = () => {
-      // If environment changed, this would disable functionality
-      if (!verifyEnvironment()) {
-        console.warn('⚠️ Security alert: Execution environment changed');
-        setSecurityVerified(false);
-        setWatermarkVisible(false);
-        return false;
-      }
-      return true;
-    };
-    
-    // Fetch copyright information from the server
-    const fetchCopyright = async () => {
+    const verifyWatermark = async () => {
       try {
-        // Only proceed if DNA verification passes
-        if (!verifyDNAIntegrity()) {
-          // In a real app, this would trigger self-protection mechanisms
-          setLoading(false);
-          return;
-        }
-        
-        // Securely fetch copyright information
+        // In a real system, this would perform an actual verification
+        // with the server to confirm the watermark hasn't been tampered with
         const response = await fetch('/api/copyright');
+        const data = await response.json();
         
-        if (response.ok) {
-          const data = await response.json();
-          setCopyright(data);
+        const verified = 
+          data.owner === COPYRIGHT_OWNER &&
+          data.birthDate === COPYRIGHT_BIRTHDATE &&
+          data.email === COPYRIGHT_EMAIL;
           
-          // Verify watermark integrity with enhanced security
-          setSecurityVerified(!!data.watermark && !!data.dnaVerified);
-          
-          // Log verification to server (in background)
-          fetch('/api/security/integrity').catch(console.error);
-        } else {
-          console.error('Failed to fetch copyright information');
-          
-          // Try to recover with fallback (simulate self-repair)
-          setTimeout(fetchCopyright, 5000);
-        }
+        setIsVerified(verified);
+        
+        // Log verification attempt
+        fetch('/api/security/log', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: 'watermark_verification',
+            status: verified ? 'success' : 'failure',
+            timestamp: new Date().toISOString(),
+            details: `Watermark verification ${verified ? 'succeeded' : 'failed'}`
+          })
+        }).catch(error => {
+          console.error('Failed to log watermark verification:', error);
+        });
+        
       } catch (error) {
-        console.error('Error fetching copyright:', error);
-        
-        // Try to recover with fallback (simulate self-repair)
-        setTimeout(fetchCopyright, 5000);
-      } finally {
-        setLoading(false);
+        console.error('Error verifying watermark:', error);
+        setIsVerified(false);
       }
     };
-
-    fetchCopyright();
     
-    // Periodically verify watermark integrity and environment
-    const verificationInterval = setInterval(() => {
-      if (copyright && copyright.watermark) {
-        // Comprehensive security verification
-        const envVerified = verifyEnvironment();
-        const dnaVerified = verifyDNAIntegrity();
-        
-        setSecurityVerified(envVerified && dnaVerified);
-        
-        // If verification fails, security measures would activate here
-        if (!envVerified || !dnaVerified) {
-          // In a real system, this would trigger more aggressive protection
-          setWatermarkVisible(false);
-        }
-      }
-    }, 30000); // Every 30 seconds - increased frequency for better protection
-    
-    return () => {
-      clearInterval(verificationInterval);
-    };
-  }, [copyright]);
-
-  // Don't render if loading or no copyright info
-  if (loading || !copyright || !watermarkVisible) {
-    return null;
-  }
-
+    verifyWatermark();
+  }, []);
+  
   return (
-    <div className="fixed bottom-2 right-2 z-50 opacity-70 hover:opacity-100 transition-opacity">
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="flex flex-col items-end">
-              <Badge 
-                variant="outline" 
-                className="text-xs bg-black/20 dark:bg-white/10 backdrop-blur-sm border-primary/30"
-              >
-                <div className="flex items-center space-x-1">
-                  {securityVerified && <CheckCircle className="h-3 w-3 text-green-500" />}
-                  <Shield className="h-3 w-3 mr-1 text-primary" />
-                  <span className="mr-1">© {copyright.created}</span>
-                  <span className="font-semibold">{copyright.owner}</span>
-                  <Lock className="h-3 w-3 ml-1 text-primary" />
-                </div>
-              </Badge>
-              {copyright.watermark && (
-                <div className="text-[6px] text-gray-500 mt-0.5 font-mono overflow-hidden max-w-[200px] truncate">
-                  {copyright.watermark}
-                </div>
-              )}
-            </div>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="max-w-[300px] bg-slate-900/90 backdrop-blur-sm">
-            <div className="text-xs">
-              <div className="flex items-center space-x-2 mb-1">
-                <Shield className="h-4 w-4 text-primary" />
-                <p className="font-bold">DNA-Protected Content</p>
-              </div>
-              <p className="font-bold">Copyright © {copyright.created}</p>
-              <p className="mb-1">{copyright.owner} ({copyright.birthDate})</p>
-              <p className="text-gray-400">{copyright.email}</p>
-              <p className="mt-1 text-[10px] italic text-gray-400">{copyright.rights}</p>
-              
-              {copyright.dnaVerified && (
-                <div className="mt-2 flex items-center">
-                  <CheckCircle className="h-3 w-3 text-green-500 mr-1" />
-                  <span className="text-green-500 text-[9px]">DNA-Verified</span>
-                </div>
-              )}
-              
-              {copyright.protectionActive && (
-                <div className="mt-1 flex items-center">
-                  <Lock className="h-3 w-3 text-blue-500 mr-1" />
-                  <span className="text-blue-500 text-[9px]">Anti-Theft Protection Active</span>
-                </div>
-              )}
-            </div>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+    <div
+      className="fixed bottom-0 right-0 bg-black/70 text-white text-xs px-2 py-1 z-50 pointer-events-none select-none"
+      data-dna-signature={DNA_SIGNATURE}
+      data-verify-token={VERIFY_TOKEN}
+      data-protection="immutable"
+    >
+      © {COPYRIGHT_OWNER} ({COPYRIGHT_BIRTHDATE})
+      {isVerified && (
+        <span
+          className="ml-1 text-emerald-400 text-[8px] uppercase tracking-wide"
+          data-verified="true"
+        >
+          ★ DNA Protected ★
+        </span>
+      )}
     </div>
   );
 }
