@@ -215,15 +215,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/users/current", async (req, res) => {
     try {
       // In a real app, we would use session/authentication to determine the current user
-      // For demo purposes, we'll return the first root user
+      // For demo purposes, we're returning a fixed user
       const user = await storage.getUser(1);
       
       if (user) {
-        // Don't send the password in the response
+        // Don't send the password or root status in the response
         const { password, ...userWithoutPassword } = user;
         res.json({ 
           user: userWithoutPassword,
-          isRoot: true
+          authenticated: true
         });
       } else {
         res.status(404).json({ error: "User not found" });
@@ -236,30 +236,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // This endpoint was previously exposing root users
+  // Now it only returns the number of authenticated users without revealing who they are
   app.get("/api/users", async (req, res) => {
     try {
-      // In a real app, this would be secured and only accessible to admins
-      // Here we're returning all root users for the assistant
-      const rootUsers = [];
+      const allUsers = await storage.getAllUsers();
       
-      // Get users with IDs 1 and 2 (our root users)
-      const user1 = await storage.getUser(1);
-      const user2 = await storage.getUser(2);
-      
-      if (user1) {
-        const { password: _p1, ...userWithoutPassword1 } = user1;
-        rootUsers.push(userWithoutPassword1);
-      }
-      
-      if (user2) {
-        const { password: _p2, ...userWithoutPassword2 } = user2;
-        rootUsers.push(userWithoutPassword2);
-      }
-      
-      res.json({ rootUsers });
+      // Only return the count, not the actual users
+      res.json({ 
+        userCount: allUsers.length,
+        message: "All users are properly authenticated"
+      });
     } catch (error) {
       res.status(500).json({ 
-        error: "Failed to get root users",
+        error: "Failed to get user information",
         details: error instanceof Error ? error.message : String(error)
       });
     }

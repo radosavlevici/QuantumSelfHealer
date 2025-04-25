@@ -133,19 +133,7 @@ export default function Assistant() {
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)]">
       <div className="p-4">
-        <div className="flex justify-between items-center mb-2">
-          <h1 className="text-2xl font-bold">Quantum AI Assistant</h1>
-          {rootUsersData && rootUsersData.rootUsers && (
-            <div className="flex items-center space-x-1">
-              <span className="text-xs text-gray-500">Root Users:</span>
-              {rootUsersData.rootUsers.map((user: any) => (
-                <Badge key={user.id} variant="outline" className="ml-1">
-                  {user.email}
-                </Badge>
-              ))}
-            </div>
-          )}
-        </div>
+        <h1 className="text-2xl font-bold mb-2">Quantum AI Assistant</h1>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           Interact with your quantum-powered AI assistant to get help, answers, and insights.
         </p>
