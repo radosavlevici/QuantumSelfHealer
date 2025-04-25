@@ -1,11 +1,20 @@
-import { useState } from "react";
+/**
+ * DNA-Protected Application Component
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * Email: ervin210@icloud.com
+ * 
+ * This is the main application component with integrated security features
+ * and DNA-based watermarking protection.
+ */
+
+import { useState, useEffect } from "react";
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ui/theme-provider";
-import { CopyrightWatermark } from "@/components/ui/copyright-watermark";
+import { DNACopyrightWatermark } from "@/components/ui/dna-copyright-watermark";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Terminal from "@/pages/Terminal";
@@ -41,7 +50,7 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Router />
-          <CopyrightWatermark />
+          <DNACopyrightWatermark />
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
