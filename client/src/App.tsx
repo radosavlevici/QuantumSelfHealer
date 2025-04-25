@@ -54,7 +54,7 @@ import { DNACopyrightWatermark } from './components/ui/DNACopyrightWatermark';
 import HomePage from './pages/HomePage';
 import TerminalPage from './pages/TerminalPage';
 import QuantumPage from './pages/QuantumPage';
-import NotFoundPage from './pages/not-found';
+import NotFound from './pages/not-found';
 
 // Component identity constants
 const COMPONENT_ID = 'dna-protected-app';
@@ -119,7 +119,7 @@ function App() {
                   <Route path="/" component={HomePage} />
                   <Route path="/terminal" component={TerminalPage} />
                   <Route path="/quantum" component={QuantumPage} />
-                  <Route component={NotFoundPage} />
+                  <Route component={NotFound} />
                 </Switch>
               </main>
               {/* Visible copyright watermark that cannot be removed */}

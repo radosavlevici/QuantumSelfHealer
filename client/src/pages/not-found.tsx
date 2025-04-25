@@ -32,27 +32,42 @@ const NotFound: React.FC = () => {
   const protection = applyProtection('not-found-page');
   
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] text-center">
-      <div className="bg-gradient-to-r from-purple-500 to-blue-600 bg-clip-text text-transparent text-5xl font-bold mb-6">
-        404: Page Not Found
+    <div
+      className="flex flex-col items-center justify-center min-h-[90vh] px-4"
+      data-component-id="not-found-page"
+      data-component-type="page"
+      data-watermark={protection.watermark}
+      data-dna-signature={protection.dnaSignature}
+    >
+      <div className="text-red-400 mb-6">
+        <AlertTriangle className="w-20 h-20" />
       </div>
       
-      <div className="max-w-md mb-8 text-gray-400">
-        <p>The requested page does not exist or has been moved.</p>
-        <p className="mt-2">This system is protected by DNA-based security technology.</p>
-        <p className="mt-2 text-xs text-gray-500">{copyrightInfo.full}</p>
+      <h1 className="text-4xl font-bold bg-gradient-to-r from-red-400 to-purple-600 bg-clip-text text-transparent mb-4">
+        404 - Page Not Found
+      </h1>
+      
+      <p className="text-xl text-gray-400 text-center max-w-lg mb-8">
+        The requested page does not exist or has been secured by the DNA protection system.
+      </p>
+      
+      <div className="flex items-center justify-center mb-8 p-4 bg-black/30 rounded-lg border border-red-900/50">
+        <Shield className="w-5 h-5 text-cyan-400 mr-3" />
+        <div className="text-sm text-gray-300">
+          DNA Security Perimeter Active - Unauthorized access prevented
+        </div>
       </div>
       
       <Link href="/">
-        <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md text-white font-medium hover:from-blue-700 hover:to-purple-700 transition-all">
-          Return to Homepage
-        </button>
+        <Button variant="default" className="bg-cyan-900 hover:bg-cyan-800">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Return to Secure Area
+        </Button>
       </Link>
       
-      <div className="absolute bottom-10 w-full max-w-md text-center text-xs text-gray-600">
-        <p>Quantum DNA Security System v4.0</p>
-        <p>All components built as one unified system from the beginning with</p>
-        <p>self-repair, self-defense, and self-upgrade capabilities</p>
+      <div className="mt-12 text-center text-xs text-gray-600">
+        <p>{copyrightInfo.full}</p>
+        <p className="mt-1">DNA Signature: {protection.dnaSignature.substring(0, 16)}...</p>
       </div>
     </div>
   );

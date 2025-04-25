@@ -4,14 +4,14 @@
  * Email: ervin210@icloud.com
  * 
  * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - CLIENT STORAGE
- * This file provides secure client-side storage with DNA-based
- * security integrated from the beginning as one unified system.
+ * This file implements the client-side storage services
+ * for the DNA-based protection system.
  * 
  * FEATURES:
- * - Secure storage with DNA protection for client data
- * - Self-verification mechanisms to detect tampering
- * - Copyright protection embedded in all storage operations
- * - Security watermarking for all stored data
+ * - Secure local storage with DNA watermarking
+ * - Terminal command history management
+ * - Quantum systems management
+ * - Self-verifying storage operations
  * 
  * ANTI-THEFT NOTICE:
  * This component is part of a unified integrated security system with
@@ -19,400 +19,259 @@
  * single unit from the beginning.
  */
 
-// Import the client security core
-import { secureStorage, secureSession } from './dna-security-core';
-
-// Import DNA security
 import {
   IMMUTABLE_COPYRIGHT_OWNER,
-  IMMUTABLE_COPYRIGHT_FULL,
   IMMUTABLE_SYSTEM_VERSION,
   generateSecurityWatermark,
-  generateDNASignature,
-  secureData
+  generateDNASignature
 } from '@shared/quantum-dna-security';
+import { secureSession } from './dna-security-core';
 
-// Storage constants
-const TERMINAL_HISTORY_KEY = 'dna_protected_terminal_history';
-const QUANTUM_SYSTEMS_KEY = 'dna_protected_quantum_systems';
-const SETTINGS_KEY = 'dna_protected_user_settings';
-const NOTIFICATIONS_KEY = 'dna_protected_notifications';
+// Create a unique identifier for this service instance
+const SERVICE_ID = 'dna-storage-service';
+const SERVICE_TYPE = 'storage-service';
 
-// Terminal history entry interface
-interface TerminalHistoryEntry {
-  id: string;
-  command: string;
-  response: string;
-  timestamp: Date;
-  userId: number;
-  watermark: string;
-}
-
-// Quantum system interface
-interface QuantumSystem {
-  id: number;
-  qubits: number;
-  entanglementQuality: number;
-  securityStrength: string;
-  dnaSignature: string;
-  watermark: string;
-  active: boolean;
-  lastVerification: Date;
-}
-
-// User settings interface
-interface UserSettings {
-  userId: number;
-  theme: string;
-  securityLevel: string;
-  notifications: boolean;
-  cloudSync: boolean;
-  dataCollection: boolean;
-  antiTheftProtection: boolean;
-  dnaSecurityEnabled: boolean;
-}
-
-// Notification interface
-interface Notification {
-  id: number;
-  userId: number;
-  type: string;
-  title: string;
-  message: string;
-  timestamp: Date;
-  watermark: string;
-  securityRelated: boolean;
-  read: boolean;
-}
+// Initialize secure session
+const session = secureSession();
 
 /**
- * Terminal history storage service
+ * Terminal History Service
+ * Manages command history with DNA watermarks
  */
-export const terminalHistoryService = {
-  // Get all terminal history entries for current user
-  getHistory: (): TerminalHistoryEntry[] => {
+const terminalHistoryService = {
+  /**
+   * Get command history from local storage
+   */
+  getHistory: () => {
     try {
-      const user = secureSession.getUser();
-      if (!user) return [];
+      const history = localStorage.getItem('dna-terminal-history');
+      if (!history) return [];
       
-      const history = secureStorage.get<TerminalHistoryEntry[]>(TERMINAL_HISTORY_KEY) || [];
+      const parsedHistory = JSON.parse(history);
       
-      // Filter by user ID for security
-      return history
-        .filter(entry => entry.userId === user.id)
-        .map(entry => ({
-          ...entry,
-          timestamp: new Date(entry.timestamp)
-        }))
-        .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-    } catch (error) {
-      console.error('Error retrieving terminal history:', error);
-      return [];
-    }
-  },
-  
-  // Add a new terminal history entry
-  addEntry: (command: string, response: string): TerminalHistoryEntry | null => {
-    try {
-      const user = secureSession.getUser();
-      if (!user) return null;
-      
-      const history = secureStorage.get<TerminalHistoryEntry[]>(TERMINAL_HISTORY_KEY) || [];
-      
-      // Create a secure entry
-      const entry: TerminalHistoryEntry = {
-        id: `term-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-        command,
-        response,
-        timestamp: new Date(),
-        userId: user.id,
-        watermark: generateSecurityWatermark(`terminal-${command}`)
-      };
-      
-      // Add to history and save
-      history.push(entry);
-      secureStorage.set(TERMINAL_HISTORY_KEY, history);
-      
-      return entry;
-    } catch (error) {
-      console.error('Error adding terminal history entry:', error);
-      return null;
-    }
-  },
-  
-  // Clear history for current user
-  clearHistory: (): boolean => {
-    try {
-      const user = secureSession.getUser();
-      if (!user) return false;
-      
-      const history = secureStorage.get<TerminalHistoryEntry[]>(TERMINAL_HISTORY_KEY) || [];
-      
-      // Filter out current user's entries
-      const filteredHistory = history.filter(entry => entry.userId !== user.id);
-      secureStorage.set(TERMINAL_HISTORY_KEY, filteredHistory);
-      
-      return true;
-    } catch (error) {
-      console.error('Error clearing terminal history:', error);
-      return false;
-    }
-  }
-};
-
-/**
- * Quantum systems storage service
- */
-export const quantumSystemsService = {
-  // Get all quantum systems
-  getSystems: (): QuantumSystem[] => {
-    try {
-      return secureStorage.get<QuantumSystem[]>(QUANTUM_SYSTEMS_KEY) || [];
-    } catch (error) {
-      console.error('Error retrieving quantum systems:', error);
-      return [];
-    }
-  },
-  
-  // Add a new quantum system
-  addSystem: (system: Omit<QuantumSystem, 'id' | 'watermark' | 'dnaSignature'>): QuantumSystem | null => {
-    try {
-      const systems = secureStorage.get<QuantumSystem[]>(QUANTUM_SYSTEMS_KEY) || [];
-      
-      // Create a secure system
-      const newSystem: QuantumSystem = {
-        ...system,
-        id: Date.now(),
-        watermark: generateSecurityWatermark(`quantum-system-${Date.now()}`),
-        dnaSignature: generateDNASignature(`quantum-system-${Date.now()}`, 'quantum-system')
-      };
-      
-      // Add to systems and save
-      systems.push(newSystem);
-      secureStorage.set(QUANTUM_SYSTEMS_KEY, systems);
-      
-      return newSystem;
-    } catch (error) {
-      console.error('Error adding quantum system:', error);
-      return null;
-    }
-  },
-  
-  // Update a quantum system
-  updateSystem: (id: number, updates: Partial<QuantumSystem>): QuantumSystem | null => {
-    try {
-      const systems = secureStorage.get<QuantumSystem[]>(QUANTUM_SYSTEMS_KEY) || [];
-      
-      // Find the system
-      const index = systems.findIndex(system => system.id === id);
-      if (index === -1) return null;
-      
-      // Create a secure updated system
-      const updatedSystem: QuantumSystem = {
-        ...systems[index],
-        ...updates,
-        // Preserve security fields
-        watermark: systems[index].watermark,
-        dnaSignature: systems[index].dnaSignature,
-        id: systems[index].id,
-        lastVerification: new Date()
-      };
-      
-      // Update systems and save
-      systems[index] = updatedSystem;
-      secureStorage.set(QUANTUM_SYSTEMS_KEY, systems);
-      
-      return updatedSystem;
-    } catch (error) {
-      console.error('Error updating quantum system:', error);
-      return null;
-    }
-  },
-  
-  // Delete a quantum system
-  deleteSystem: (id: number): boolean => {
-    try {
-      const systems = secureStorage.get<QuantumSystem[]>(QUANTUM_SYSTEMS_KEY) || [];
-      
-      // Filter out the system
-      const filteredSystems = systems.filter(system => system.id !== id);
-      secureStorage.set(QUANTUM_SYSTEMS_KEY, filteredSystems);
-      
-      return true;
-    } catch (error) {
-      console.error('Error deleting quantum system:', error);
-      return false;
-    }
-  }
-};
-
-/**
- * User settings storage service
- */
-export const userSettingsService = {
-  // Get user settings
-  getSettings: (): UserSettings | null => {
-    try {
-      const user = secureSession.getUser();
-      if (!user) return null;
-      
-      const settings = secureStorage.get<UserSettings>(SETTINGS_KEY);
-      
-      if (settings && settings.userId === user.id) {
-        return settings;
+      // Verify the history data has DNA watermarks
+      if (!parsedHistory.watermark || !parsedHistory.dnaSignature) {
+        console.warn('Terminal history lacks DNA security markers');
+        return [];
       }
       
-      // Create default settings
-      const defaultSettings: UserSettings = {
-        userId: user.id,
-        theme: 'dark',
-        securityLevel: 'maximum',
-        notifications: true,
-        cloudSync: false,
-        dataCollection: false,
-        antiTheftProtection: true,
-        dnaSecurityEnabled: true
+      // Verify the copyright information
+      if (parsedHistory.copyrightOwner !== IMMUTABLE_COPYRIGHT_OWNER) {
+        console.error('Terminal history copyright mismatch');
+        return [];
+      }
+      
+      return parsedHistory.entries || [];
+    } catch (error) {
+      console.error('Failed to load terminal history:', error);
+      return [];
+    }
+  },
+  
+  /**
+   * Add a new command entry to history
+   * @param command The command to add
+   * @param response The command response
+   */
+  addEntry: (command: string, response: string) => {
+    try {
+      // Get existing history
+      let history = terminalHistoryService.getHistory();
+      
+      // Add the new entry
+      const newEntry = {
+        id: `cmd-${Date.now()}`,
+        command,
+        response,
+        timestamp: new Date().toISOString(),
+        watermark: generateSecurityWatermark(`cmd-${Date.now()}`),
+        userId: 1 // Default user ID
       };
       
-      secureStorage.set(SETTINGS_KEY, defaultSettings);
-      return defaultSettings;
+      // Add to beginning of history
+      history = [newEntry, ...history];
+      
+      // Only keep the last 50 entries
+      if (history.length > 50) {
+        history = history.slice(0, 50);
+      }
+      
+      // Create a secure history object with DNA protection
+      const secureHistory = {
+        entries: history,
+        watermark: generateSecurityWatermark('terminal-history'),
+        dnaSignature: generateDNASignature(SERVICE_ID, 'terminal-history'),
+        timestamp: new Date().toISOString(),
+        copyrightOwner: IMMUTABLE_COPYRIGHT_OWNER,
+        systemVersion: IMMUTABLE_SYSTEM_VERSION
+      };
+      
+      // Save to local storage
+      localStorage.setItem('dna-terminal-history', JSON.stringify(secureHistory));
+      
+      return newEntry;
     } catch (error) {
-      console.error('Error retrieving user settings:', error);
+      console.error('Failed to save terminal history:', error);
       return null;
     }
   },
   
-  // Update user settings
-  updateSettings: (updates: Partial<UserSettings>): UserSettings | null => {
+  /**
+   * Clear the command history
+   */
+  clearHistory: () => {
     try {
-      const user = secureSession.getUser();
-      if (!user) return null;
-      
-      const settings = secureStorage.get<UserSettings>(SETTINGS_KEY);
-      
-      // Create updated settings
-      const updatedSettings: UserSettings = {
-        ...(settings || {
-          userId: user.id,
-          theme: 'dark',
-          securityLevel: 'maximum',
-          notifications: true,
-          cloudSync: false,
-          dataCollection: false,
-          antiTheftProtection: true,
-          dnaSecurityEnabled: true
-        }),
-        ...updates,
-        // Ensure user ID can't be changed
-        userId: user.id
+      // Create an empty secure history object
+      const secureHistory = {
+        entries: [],
+        watermark: generateSecurityWatermark('terminal-history'),
+        dnaSignature: generateDNASignature(SERVICE_ID, 'terminal-history'),
+        timestamp: new Date().toISOString(),
+        copyrightOwner: IMMUTABLE_COPYRIGHT_OWNER,
+        systemVersion: IMMUTABLE_SYSTEM_VERSION
       };
       
-      secureStorage.set(SETTINGS_KEY, updatedSettings);
-      return updatedSettings;
+      // Save to local storage
+      localStorage.setItem('dna-terminal-history', JSON.stringify(secureHistory));
+      
+      return true;
     } catch (error) {
-      console.error('Error updating user settings:', error);
-      return null;
+      console.error('Failed to clear terminal history:', error);
+      return false;
     }
   }
 };
 
 /**
- * Notifications storage service
+ * Quantum Systems Service
+ * Manages quantum systems with DNA watermarks
  */
-export const notificationsService = {
-  // Get all notifications for current user
-  getNotifications: (): Notification[] => {
+const quantumSystemsService = {
+  /**
+   * Get quantum systems from local storage
+   */
+  getSystems: () => {
     try {
-      const user = secureSession.getUser();
-      if (!user) return [];
+      const systems = localStorage.getItem('dna-quantum-systems');
+      if (!systems) return [];
       
-      const notifications = secureStorage.get<Notification[]>(NOTIFICATIONS_KEY) || [];
+      const parsedSystems = JSON.parse(systems);
       
-      // Filter by user ID for security
-      return notifications
-        .filter(notification => notification.userId === user.id)
-        .map(notification => ({
-          ...notification,
-          timestamp: new Date(notification.timestamp)
-        }))
-        .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+      // Verify the systems data has DNA watermarks
+      if (!parsedSystems.watermark || !parsedSystems.dnaSignature) {
+        console.warn('Quantum systems lack DNA security markers');
+        return [];
+      }
+      
+      // Verify the copyright information
+      if (parsedSystems.copyrightOwner !== IMMUTABLE_COPYRIGHT_OWNER) {
+        console.error('Quantum systems copyright mismatch');
+        return [];
+      }
+      
+      return parsedSystems.entries || [];
     } catch (error) {
-      console.error('Error retrieving notifications:', error);
+      console.error('Failed to load quantum systems:', error);
       return [];
     }
   },
   
-  // Add a new notification
-  addNotification: (type: string, title: string, message: string, securityRelated: boolean = false): Notification | null => {
+  /**
+   * Add a new quantum system
+   * @param system The quantum system to add
+   */
+  addSystem: (system: any) => {
     try {
-      const user = secureSession.getUser();
-      if (!user) return null;
+      // Get existing systems
+      let systems = quantumSystemsService.getSystems();
       
-      const notifications = secureStorage.get<Notification[]>(NOTIFICATIONS_KEY) || [];
+      // Check if the system has DNA protection
+      if (!system.watermark || !system.dnaSignature) {
+        system.watermark = generateSecurityWatermark(`quantum-system-${Date.now()}`);
+        system.dnaSignature = generateDNASignature(`quantum-system-${Date.now()}`, 'quantum-system');
+      }
       
-      // Create a secure notification
-      const notification: Notification = {
-        id: Date.now(),
-        userId: user.id,
-        type,
-        title,
-        message,
-        timestamp: new Date(),
-        watermark: generateSecurityWatermark(`notification-${Date.now()}`),
-        securityRelated,
-        read: false
+      // Add metadata if missing
+      if (!system.id) {
+        system.id = Date.now();
+      }
+      
+      if (!system.createdAt) {
+        system.createdAt = new Date().toISOString();
+      }
+      
+      if (!system.lastVerification) {
+        system.lastVerification = new Date().toISOString();
+      }
+      
+      // Add the system to the list
+      systems = [system, ...systems];
+      
+      // Create a secure systems object with DNA protection
+      const secureSystems = {
+        entries: systems,
+        watermark: generateSecurityWatermark('quantum-systems'),
+        dnaSignature: generateDNASignature(SERVICE_ID, 'quantum-systems'),
+        timestamp: new Date().toISOString(),
+        copyrightOwner: IMMUTABLE_COPYRIGHT_OWNER,
+        systemVersion: IMMUTABLE_SYSTEM_VERSION
       };
       
-      // Add to notifications and save
-      notifications.push(notification);
-      secureStorage.set(NOTIFICATIONS_KEY, notifications);
+      // Save to local storage
+      localStorage.setItem('dna-quantum-systems', JSON.stringify(secureSystems));
       
-      return notification;
+      return system;
     } catch (error) {
-      console.error('Error adding notification:', error);
+      console.error('Failed to save quantum system:', error);
       return null;
     }
   },
   
-  // Mark a notification as read
-  markAsRead: (id: number): boolean => {
+  /**
+   * Update a quantum system
+   * @param system The quantum system to update
+   */
+  updateSystem: (system: any) => {
     try {
-      const user = secureSession.getUser();
-      if (!user) return false;
+      // Get existing systems
+      let systems = quantumSystemsService.getSystems();
       
-      const notifications = secureStorage.get<Notification[]>(NOTIFICATIONS_KEY) || [];
+      // Find the system to update
+      const index = systems.findIndex(s => s.id === system.id);
+      if (index === -1) {
+        return quantumSystemsService.addSystem(system);
+      }
       
-      // Find the notification
-      const index = notifications.findIndex(notification => notification.id === id && notification.userId === user.id);
-      if (index === -1) return false;
+      // Update the system
+      systems[index] = {
+        ...systems[index],
+        ...system,
+        lastVerification: new Date().toISOString()
+      };
       
-      // Update notification
-      notifications[index].read = true;
-      secureStorage.set(NOTIFICATIONS_KEY, notifications);
+      // Create a secure systems object with DNA protection
+      const secureSystems = {
+        entries: systems,
+        watermark: generateSecurityWatermark('quantum-systems'),
+        dnaSignature: generateDNASignature(SERVICE_ID, 'quantum-systems'),
+        timestamp: new Date().toISOString(),
+        copyrightOwner: IMMUTABLE_COPYRIGHT_OWNER,
+        systemVersion: IMMUTABLE_SYSTEM_VERSION
+      };
       
-      return true;
+      // Save to local storage
+      localStorage.setItem('dna-quantum-systems', JSON.stringify(secureSystems));
+      
+      return systems[index];
     } catch (error) {
-      console.error('Error marking notification as read:', error);
-      return false;
-    }
-  },
-  
-  // Clear all notifications for current user
-  clearNotifications: (): boolean => {
-    try {
-      const user = secureSession.getUser();
-      if (!user) return false;
-      
-      const notifications = secureStorage.get<Notification[]>(NOTIFICATIONS_KEY) || [];
-      
-      // Filter out current user's notifications
-      const filteredNotifications = notifications.filter(notification => notification.userId !== user.id);
-      secureStorage.set(NOTIFICATIONS_KEY, filteredNotifications);
-      
-      return true;
-    } catch (error) {
-      console.error('Error clearing notifications:', error);
-      return false;
+      console.error('Failed to update quantum system:', error);
+      return null;
     }
   }
+};
+
+// Export the services
+export {
+  terminalHistoryService,
+  quantumSystemsService
 };
