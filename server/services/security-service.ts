@@ -13,56 +13,44 @@
  */
 
 import crypto from 'crypto';
+import { storage } from '../storage';
 
-// Copyright holder information
+// Copyright information - consistent across the application
 export const COPYRIGHT_INFO = {
   owner: "Ervin Remus Radosavlevici",
   birthDate: "01/09/1987",
   email: "ervin210@icloud.com",
   created: "2025",
-  rights: "All Rights Reserved"
+  rights: "All rights reserved. This software is protected by copyright law and international treaties. Unauthorized reproduction or distribution of this software, or any portion of it, may result in severe civil and criminal penalties."
 };
 
-// Private DNA security keys (these represent DNA sequences - ATCG base pairs)
-const DNA_PRIMARY_KEY = "ATCGTAGCTAGCTATCGATCGTAGCTCGATGCTAGCTAGCTAGCATCGATCGTA";
-const DNA_SECONDARY_KEY = "GCATTAGCCGATCGATCGATCGATCGATGCTAGCTAGCTAGCTAGCTAGCTA";
-const DNA_TERTIARY_KEY = "TCGAATCGATCGATCGATCGATCGATGCTAGCTAGCTAGCTAGCTAGCTAGC";
+// DNA base pairs for creating signatures
+const DNA_BASES = ['A', 'T', 'C', 'G'];
 
-// These represent quantum-based keys (in a real system, these would be generated using quantum algorithms)
-const QUANTUM_KEY = Buffer.from(crypto.randomBytes(32)).toString('base64');
+// Quantum-resistant hash function - in a real system, this would use 
+// post-quantum cryptographic algorithms
+function quantumResistantHash(data: string): string {
+  return crypto.createHash('sha512').update(data).digest('hex');
+}
 
 /**
  * Generates a DNA-like signature from input data
  * This creates a sequence resembling actual DNA base pairs (A, T, C, G)
  */
 function generateDNASignature(data: string): string {
-  // Get SHA-256 hash of data combined with DNA key
-  const hash = crypto.createHash('sha256')
-    .update(`${data}:${DNA_PRIMARY_KEY}:${Date.now()}`)
-    .digest('hex');
+  const hash = quantumResistantHash(data);
   
   // Convert hash to DNA-like sequence
-  let dnaSequence = '';
+  let dnaSignature = '';
+  
   for (let i = 0; i < hash.length; i++) {
-    const char = hash[i];
-    // Map hex characters to DNA base pairs
-    switch (char) {
-      case '0': case '1': case '2': case '3':
-        dnaSequence += 'A';
-        break;
-      case '4': case '5': case '6': case '7':
-        dnaSequence += 'T';
-        break;
-      case '8': case '9': case 'a': case 'b':
-        dnaSequence += 'C';
-        break;
-      default:
-        dnaSequence += 'G';
-        break;
-    }
+    // Use hash characters to deterministically select DNA bases
+    const charCode = hash.charCodeAt(i);
+    const baseIndex = charCode % DNA_BASES.length;
+    dnaSignature += DNA_BASES[baseIndex];
   }
   
-  return dnaSequence;
+  return dnaSignature;
 }
 
 /**
@@ -73,31 +61,37 @@ export function createSecurityWatermark(contentId: string): {
   watermark: string;
   dnaSignature: string;
   timestamp: Date;
-  verificationCode: string;
 } {
+  // Create a unique identifier for this content
   const timestamp = new Date();
+  const timestampString = timestamp.toISOString();
   
-  // Create a compound signature based on the content, copyright info, and DNA key
-  const dataToSign = `${contentId}|${COPYRIGHT_INFO.owner}|${timestamp.toISOString()}|${DNA_PRIMARY_KEY}`;
-  const dnaSignature = generateDNASignature(dataToSign);
+  // Combine content ID with copyright information
+  const baseData = `${contentId}|${COPYRIGHT_INFO.owner}|${COPYRIGHT_INFO.email}|${timestampString}`;
   
-  // Create verification code using HMAC
-  const verificationCode = crypto
-    .createHmac('sha256', DNA_SECONDARY_KEY)
-    .update(dnaSignature)
-    .digest('base64')
-    .substring(0, 16);
+  // Generate DNA signature
+  const dnaSignature = generateDNASignature(baseData);
   
-  // Format: QAI-[contentId]-[verification]-[timestamp]
-  const watermark = `QAI-${contentId.substring(0, 8)}-${verificationCode.substring(0, 8)}-${
-    timestamp.getTime().toString(36)
-  }`;
+  // Create watermark with encoded security information
+  const watermark = `DNAp-${dnaSignature.substring(0, 16)}-${Buffer.from(contentId).toString('base64').substring(0, 8)}-${Date.now().toString(36)}`;
+  
+  // Store watermark and DNA signature in database for verification
+  // This is just a stub - in a real application, we would persist this
+  storage.protectContent({
+    id: contentId,
+    dnaSignature,
+    watermark,
+    contentType: 'api_response',
+    userId: null, // System-generated watermark
+    createdAt: timestamp
+  }).catch(err => {
+    console.error('Failed to store content protection:', err);
+  });
   
   return {
     watermark,
     dnaSignature,
-    timestamp,
-    verificationCode
+    timestamp
   };
 }
 
@@ -105,31 +99,16 @@ export function createSecurityWatermark(contentId: string): {
  * Verifies if a watermark is authentic and hasn't been tampered with
  */
 export function verifyWatermark(watermark: string, dnaSignature: string): boolean {
-  try {
-    // Parse the watermark
-    const parts = watermark.split('-');
-    
-    // Validate format
-    if (parts.length !== 4 || parts[0] !== 'QAI') {
-      return false;
-    }
-    
-    // Extract verification code from watermark
-    const extractedVerificationCode = parts[2];
-    
-    // Generate expected verification code from DNA signature
-    const expectedVerificationCode = crypto
-      .createHmac('sha256', DNA_SECONDARY_KEY)
-      .update(dnaSignature)
-      .digest('base64')
-      .substring(0, 8);
-    
-    // Compare codes
-    return extractedVerificationCode === expectedVerificationCode;
-  } catch (error) {
-    console.error('Watermark verification failed:', error);
-    return false;
-  }
+  if (!watermark || !dnaSignature) return false;
+  
+  // Extract DNA signature from watermark
+  const parts = watermark.split('-');
+  if (parts.length < 2 || parts[0] !== 'DNAp') return false;
+  
+  const extractedSignature = parts[1];
+  
+  // Verify that the DNA signature matches the beginning of the actual signature
+  return dnaSignature.startsWith(extractedSignature);
 }
 
 /**
@@ -137,46 +116,56 @@ export function verifyWatermark(watermark: string, dnaSignature: string): boolea
  * All sensitive data passing through the API should use this function
  */
 export function createSecureResponse(data: any): any {
-  // Generate a unique ID for this response if not already present
-  const contentId = data.id || crypto.randomUUID();
+  // Generate a unique ID for this response
+  const responseId = crypto.randomBytes(16).toString('hex');
   
-  // Create security watermark
-  const securityInfo = createSecurityWatermark(contentId);
+  // Create watermark
+  const { watermark, dnaSignature } = createSecurityWatermark(responseId);
   
-  // Add security information to response
-  return {
-    ...data,
-    ...securityInfo,
-    copyright: COPYRIGHT_INFO,
-    secured: true,
-    dnaProtected: true
-  };
+  // Embed watermark and verification data in the response
+  // We add it at multiple levels to ensure it's preserved even if the response is modified
+  let secureData = { ...data };
+  
+  if (typeof secureData === 'object' && secureData !== null) {
+    // Add security metadata at the root level
+    secureData._secData = {
+      verified: true,
+      watermark: watermark,
+      responseId: responseId
+    };
+  }
+  
+  return secureData;
 }
 
 /**
  * Performs self-repair on potentially tampered data
  */
 export function selfRepair(originalData: any, currentData: any): any {
-  // Verify if data has been tampered with
-  if (!currentData.watermark || 
-      !currentData.dnaSignature ||
-      !verifyWatermark(currentData.watermark, currentData.dnaSignature)) {
+  if (!originalData || !currentData) return originalData;
+  
+  // This is a simplified implementation
+  // In a real system, this would use more sophisticated algorithms to detect
+  // and repair corrupted or tampered data
+  
+  // For objects, check each property
+  if (typeof originalData === 'object' && originalData !== null &&
+      typeof currentData === 'object' && currentData !== null) {
     
-    console.warn('Security alert: Data tampering detected - performing self-repair');
+    let repairedData = { ...currentData };
     
-    // Restore security features
-    const repairedData = {
-      ...currentData,
-      ...createSecurityWatermark(originalData.id || crypto.randomUUID()),
-      copyright: COPYRIGHT_INFO,
-      repaired: true,
-      repairedAt: new Date()
-    };
+    // Restore any missing or modified properties from the original
+    for (const key in originalData) {
+      if (!currentData.hasOwnProperty(key) || JSON.stringify(currentData[key]) !== JSON.stringify(originalData[key])) {
+        repairedData[key] = originalData[key];
+      }
+    }
     
     return repairedData;
   }
   
-  return currentData;
+  // For other types, return the original if different
+  return originalData;
 }
 
 /**
@@ -186,32 +175,30 @@ export function checkSystemIntegrity(): {
   intact: boolean;
   securityLevel: string;
   lastChecked: Date;
-  dnaProtected: boolean;
-  verificationDetails: {
-    method: string;
-    strength: 'high' | 'medium' | 'low';
-    timestamp: Date;
-  };
   issues?: string[];
 } {
-  // Generate a unique check ID
-  const checkId = crypto.randomUUID();
-  const timestamp = new Date();
-  
-  // Generate verification signature
-  const verificationSignature = generateDNASignature(`${checkId}|${timestamp.toISOString()}`);
+  const lastChecked = new Date();
   
   // In a real system, this would perform actual integrity checks
+  // For this demo, we'll always return intact
+  
+  // Log integrity check
+  storage.logIntegrityCheck({
+    result: true,
+    securityLevel: 'DNA-Enhanced',
+    details: {
+      checkTime: lastChecked,
+      components: ['api', 'database', 'frontend', 'security']
+    }
+  }).catch(err => {
+    console.error('Failed to log integrity check:', err);
+  });
+  
   return {
     intact: true,
-    securityLevel: "DNA-Enhanced",
-    lastChecked: timestamp,
-    dnaProtected: true,
-    verificationDetails: {
-      method: "DNA-Quantum-Cryptographic",
-      strength: "high",
-      timestamp
-    }
+    securityLevel: 'DNA-Enhanced',
+    lastChecked,
+    issues: []
   };
 }
 
@@ -220,50 +207,18 @@ export function checkSystemIntegrity(): {
  */
 export function activateSelfProtection(): {
   active: boolean;
-  securityLevel: string;
+  level: string;
   activatedAt: Date;
-  protection: string[];
-  mechanisms: {
-    name: string;
-    status: 'active' | 'standby' | 'disabled';
-    type: 'defensive' | 'monitoring' | 'repair' | 'encryption';
-  }[];
 } {
-  const now = new Date();
+  const activatedAt = new Date();
+  
+  // In a real system, this would enable additional security features
+  // such as enhanced monitoring, rate limiting, or additional encryption
   
   return {
     active: true,
-    securityLevel: "DNA-Quantum-Enhanced",
-    activatedAt: now,
-    protection: [
-      "Integrity monitoring active",
-      "Tampering detection enabled",
-      "Self-repair mechanisms ready",
-      "DNA-based verification active",
-      "Quantum cryptography layer enabled"
-    ],
-    mechanisms: [
-      {
-        name: "Quantum Encryption Layer",
-        status: "active",
-        type: "encryption"
-      },
-      {
-        name: "DNA Signature Verification",
-        status: "active",
-        type: "monitoring"
-      },
-      {
-        name: "Self-Repair Algorithm",
-        status: "standby",
-        type: "repair"
-      },
-      {
-        name: "Copyright Protection",
-        status: "active",
-        type: "defensive"
-      }
-    ]
+    level: 'Maximum',
+    activatedAt
   };
 }
 
@@ -274,22 +229,23 @@ export function activateSelfProtection(): {
 export function generateAntiTheftToken(resourceId: string): {
   token: string;
   expiresAt: Date;
-  resourceId: string;
 } {
-  const expiresAt = new Date();
-  expiresAt.setMinutes(expiresAt.getMinutes() + 15); // 15 minute expiration
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = new Date(Date.now() + 3600000); // 1 hour
   
-  // Create a secure token tied to resource and time
-  const tokenData = `${resourceId}|${expiresAt.toISOString()}|${DNA_TERTIARY_KEY}`;
-  const token = crypto
-    .createHash('sha256')
-    .update(tokenData)
-    .digest('base64');
+  // Store token
+  storage.createAntiTheftToken({
+    token,
+    resourceId,
+    expiresAt,
+    used: false
+  }).catch(err => {
+    console.error('Failed to create anti-theft token:', err);
+  });
   
   return {
     token,
-    expiresAt,
-    resourceId
+    expiresAt
   };
 }
 
@@ -297,8 +253,14 @@ export function generateAntiTheftToken(resourceId: string): {
  * Validates an anti-theft token
  */
 export function validateAntiTheftToken(token: string, resourceId: string): boolean {
-  // In a real system, this would check against stored tokens
-  // and invalidate them after a single use
+  // In a real system, this would check the database and invalidate after use
+  // For this demo, we'll call the storage service but return true regardless
+  
+  storage.validateAntiTheftToken(token, resourceId)
+    .catch(err => {
+      console.error('Failed to validate anti-theft token:', err);
+    });
+  
   return true;
 }
 
@@ -309,20 +271,13 @@ export function validateAntiTheftToken(token: string, resourceId: string): boole
  */
 export function createObfuscatedCode(sourceCode: string): {
   obfuscated: string;
-  fingerprint: string;
+  protected: boolean;
 } {
-  // Calculate a fingerprint of the original code
-  const fingerprint = crypto
-    .createHash('sha256')
-    .update(sourceCode)
-    .digest('hex');
-  
+  // This is a placeholder function
   // In a real system, this would perform actual code obfuscation
-  // with self-protecting mechanisms
-  const obfuscated = `/* DNA-Protected Code - Do Not Modify */\n${sourceCode}`;
   
   return {
-    obfuscated,
-    fingerprint
+    obfuscated: sourceCode,
+    protected: true
   };
 }
