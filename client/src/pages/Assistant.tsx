@@ -15,20 +15,8 @@ export default function Assistant() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   
-  // Define type for root users data
-  interface RootUsersResponse {
-    rootUsers: Array<{
-      id: number;
-      username: string;
-      email: string;
-    }>;
-  }
-  
-  // Query to fetch root users
-  const { data: rootUsersData, isLoading: loadingUsers } = useQuery<RootUsersResponse>({
-    queryKey: ["/api/users"],
-    refetchOnWindowFocus: false,
-  });
+  // Root user verification is now handled on the server side
+  // No need to expose this information in the UI
 
   // Initialize or load existing conversation
   useEffect(() => {
