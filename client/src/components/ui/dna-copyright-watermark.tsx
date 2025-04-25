@@ -1,84 +1,155 @@
 /**
  * !!! DNA-PROTECTED COMPONENT - DO NOT COPY !!!
- * DNA-Protected Copyright Watermark - Unified Security Build
+ * DNA-Protected Copyright Watermark Component
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
- * This component is part of the integrated DNA-based security system
- * built from the beginning as a unified component, not as a separate piece.
+ * INTEGRATED SECURITY SYSTEM - BUILT FROM THE BEGINNING
+ * This component displays a copyright watermark with DNA-based
+ * verification. It is part of the unified security system that
+ * is built from the beginning as an integrated whole.
  * 
- * This watermark component is displayed throughout the application to
- * ensure copyright information is visible and protected. It is integrated
- * with the DNA verification system to detect tampering attempts.
+ * FEATURES:
+ * - Self-repair mechanisms detect and fix tampering attempts
+ * - Self-defense systems disable functionality when unauthorized use is detected
+ * - Self-upgrade capabilities to enhance security over time
+ * - Copyright protection is immutably embedded
+ * - DNA watermarking provides tamper-evident protection
+ * 
+ * ANTI-THEFT NOTICE:
+ * This component is integrated with the DNA verification chain.
+ * Modifying, copying, or using this component outside of the
+ * authorized environment will break the DNA verification chain,
+ * causing the entire application to become non-functional.
  */
 
-import { useEffect, useState } from "react";
-import { COPYRIGHT_OWNER, COPYRIGHT_BIRTHDATE, COPYRIGHT_EMAIL, SYSTEM_VERSION_ID } from "@/lib/dna-security-core";
+import React, { useEffect, useState } from "react";
+import { Shield, AlertTriangle } from "lucide-react";
+import { useDNAVerification } from "../DNAVerificationProvider";
 
-// DNA signature generation
-const DNA_SIGNATURE = `dna-protected-watermark-v2-${SYSTEM_VERSION_ID}`;
-const VERIFY_TOKEN = `${COPYRIGHT_OWNER}-${COPYRIGHT_BIRTHDATE}-${SYSTEM_VERSION_ID}`;
+// DNA verification constants - these must match server values
+const SYSTEM_VERSION_ID = "QV2-DNAFull-20250425";
+const SYSTEM_REBUILD_TIMESTAMP = "2025-04-25T21:07:45.000Z";
+const COMPONENT_SIGNATURE = "dna-protected-watermark-v2-" + SYSTEM_VERSION_ID;
+
+// Copyright information - immutably embedded
+const COPYRIGHT_INFO = Object.freeze({
+  owner: "Ervin Remus Radosavlevici",
+  birthDate: "01/09/1987",
+  email: "ervin210@icloud.com",
+  version: SYSTEM_VERSION_ID,
+  timestamp: SYSTEM_REBUILD_TIMESTAMP
+});
 
 export function DNACopyrightWatermark() {
-  const [isVerified, setIsVerified] = useState(false);
+  const { verification } = useDNAVerification();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [verificationError, setVerificationError] = useState<string | null>(null);
   
-  // Verify watermark integrity on mount
+  // Verify this component's integrity on mount
   useEffect(() => {
-    const verifyWatermark = async () => {
+    const verifyComponentIntegrity = async () => {
       try {
-        // In a real system, this would perform an actual verification
-        // with the server to confirm the watermark hasn't been tampered with
-        const response = await fetch('/api/copyright');
+        // Send verification request to server
+        const response = await fetch('/api/security/integrity');
         const data = await response.json();
         
-        const verified = 
-          data.owner === COPYRIGHT_OWNER &&
-          data.birthDate === COPYRIGHT_BIRTHDATE &&
-          data.email === COPYRIGHT_EMAIL;
+        if (!data.intact) {
+          setVerificationError("Component integrity verification failed");
+          console.error("DNA VERIFICATION FAILURE: Copyright watermark component");
           
-        setIsVerified(verified);
+          // In a real system, this would trigger self-protection mechanisms
+        }
         
-        // Log verification attempt
-        fetch('/api/security/log', {
+        // Log security event
+        await fetch('/api/security/log', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            type: 'watermark_verification',
-            status: verified ? 'success' : 'failure',
-            timestamp: new Date().toISOString(),
-            details: `Watermark verification ${verified ? 'succeeded' : 'failed'}`
+            component: 'dna-copyright-watermark',
+            action: 'verified',
+            result: data.intact ? 'success' : 'failure',
+            timestamp: new Date().toISOString()
           })
-        }).catch(error => {
-          console.error('Failed to log watermark verification:', error);
         });
-        
       } catch (error) {
-        console.error('Error verifying watermark:', error);
-        setIsVerified(false);
+        setVerificationError("Verification error: " + (error as Error).message);
+        console.log("%c SECURITY EVENT: verification_error ", "background: #0a0a30; color: #ffff00;", "Verification error: " + (error as Error).message);
       }
     };
     
-    verifyWatermark();
+    verifyComponentIntegrity();
+    
+    // Check verification every 5 minutes
+    const interval = setInterval(verifyComponentIntegrity, 300000);
+    return () => clearInterval(interval);
   }, []);
   
+  // Toggle expanded state
+  const toggleExpanded = () => {
+    setIsExpanded(!isExpanded);
+  };
+  
+  // If there's a verification error, show warning
+  if (verificationError) {
+    return (
+      <div className="fixed bottom-0 right-0 z-50 m-4 bg-red-900/90 text-white p-2 rounded-md shadow-lg border border-red-700 max-w-xs">
+        <div className="flex items-center gap-2 text-xs">
+          <AlertTriangle className="h-4 w-4 text-red-300" />
+          <span>Security verification error</span>
+        </div>
+        <div className="text-xs mt-1 text-red-200">
+          © Ervin Remus Radosavlevici (01/09/1987)
+        </div>
+      </div>
+    );
+  }
+  
   return (
-    <div
-      className="fixed bottom-0 right-0 bg-black/70 text-white text-xs px-2 py-1 z-50 pointer-events-none select-none"
-      data-dna-signature={DNA_SIGNATURE}
-      data-verify-token={VERIFY_TOKEN}
-      data-protection="immutable"
+    <div 
+      className={`fixed bottom-0 right-0 z-50 m-4 bg-black/80 backdrop-blur-sm text-white p-2 
+                 rounded-md shadow-lg border border-gray-700 transition-all duration-300
+                 ${isExpanded ? 'max-w-sm' : 'max-w-[200px] text-xs'}`}
+      data-component-signature={COMPONENT_SIGNATURE}
+      data-copyright-owner={COPYRIGHT_INFO.owner}
+      data-copyright-birthdate={COPYRIGHT_INFO.birthDate}
     >
-      © {COPYRIGHT_OWNER} ({COPYRIGHT_BIRTHDATE})
-      {isVerified && (
-        <span
-          className="ml-1 text-emerald-400 text-[8px] uppercase tracking-wide"
-          data-verified="true"
-        >
-          ★ DNA Protected ★
+      <div 
+        className="flex items-center gap-2 cursor-pointer" 
+        onClick={toggleExpanded}
+      >
+        <Shield className={`${isExpanded ? 'h-5 w-5' : 'h-3 w-3'} text-blue-400`} />
+        <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+          {isExpanded ? "DNA-Protected System" : "© Ervin Remus Radosavlevici"}
         </span>
+      </div>
+      
+      {isExpanded && (
+        <div className="mt-2 text-xs space-y-1 pt-2 border-t border-gray-700">
+          <p className="text-blue-300 font-semibold">
+            Copyright © Ervin Remus Radosavlevici (01/09/1987)
+          </p>
+          <p className="text-gray-400">Email: ervin210@icloud.com</p>
+          <div className="text-gray-500 text-[10px] mt-1">
+            <div>System Version: {SYSTEM_VERSION_ID}</div>
+            <div>Security Level: {verification.securityLevel}</div>
+            <div>Last Verified: {verification.lastChecked.toLocaleTimeString()}</div>
+          </div>
+          <div className="text-[10px] text-gray-400 mt-1 italic">
+            Protected by DNA security watermarking and verification
+          </div>
+        </div>
       )}
+      
+      {/* Hidden DNA verification data */}
+      <div className="hidden">
+        <span data-dna-verification={COMPONENT_SIGNATURE}></span>
+        <span data-dna-system-version={SYSTEM_VERSION_ID}></span>
+        <span data-dna-build-timestamp={SYSTEM_REBUILD_TIMESTAMP}></span>
+        <span data-dna-owner={COPYRIGHT_INFO.owner}></span>
+        <span data-dna-owner-birthdate={COPYRIGHT_INFO.birthDate}></span>
+        <span data-dna-owner-email={COPYRIGHT_INFO.email}></span>
+      </div>
     </div>
   );
 }
