@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { getOpenAIResponse } from "./services/openai-service";
 import { getQuantumStatus, processQuantumCommand } from "./services/quantum-service";
 import { authenticateByEmail, hasRootPrivileges } from "./services/auth-service";
+import { generateToken, verifyToken, authorizeRequest } from "./services/token-service";
 import type { User } from "../shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -256,7 +257,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Authenticate user by email (secure, doesn't expose root status in response)
+  // Authenticate user by email and generate secure JWT token
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { email } = req.body;
@@ -269,13 +270,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Send back authentication result without exposing root status
       if (authResult.authenticated && authResult.user) {
+        // Generate JWT token - root status is not included in the token
+        const token = await generateToken(
+          authResult.user.id,
+          authResult.user.email, 
+          authResult.user.username
+        );
+        
         res.json({
           authenticated: true,
           user: {
             id: authResult.user.id,
             username: authResult.user.username,
             email: authResult.user.email
-          }
+          },
+          token // Return JWT token for client to use in future requests
         });
       } else {
         res.status(401).json({ 
@@ -291,37 +300,142 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Protected endpoint for advanced quantum operations
-  // Checks for root privileges internally without exposing this information
-  app.post("/api/quantum/advanced", async (req, res) => {
+  // Token verification middleware for protected routes
+  // Add this endpoint to verify token validity without exposing root status
+  app.post("/api/auth/verify", async (req, res) => {
     try {
-      const { userId, operation } = req.body;
+      const { token } = req.body;
       
-      if (!userId || !operation) {
-        return res.status(400).json({ error: "User ID and operation are required" });
+      if (!token) {
+        return res.status(400).json({ error: "Token is required" });
       }
       
-      // Check if user has root privileges (without exposing this to the client)
-      const hasPrivileges = await hasRootPrivileges(Number(userId));
+      const payload = await verifyToken(token);
       
-      if (!hasPrivileges) {
-        // Generic error message doesn't expose existence of root system
-        return res.status(403).json({ 
-          error: "Access denied",
-          message: "You don't have permission to perform this operation"
+      if (!payload) {
+        return res.status(401).json({ 
+          valid: false, 
+          message: "Invalid or expired token" 
         });
       }
       
-      // Process the operation for root users
+      res.json({ 
+        valid: true,
+        userId: payload.userId,
+        username: payload.username
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        error: "Token verification failed",
+        details: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+  
+  // Protected endpoint for advanced quantum operations with token-based auth
+  // Checks for root privileges internally without exposing this information
+  app.post("/api/quantum/advanced", async (req, res) => {
+    try {
+      const { operation } = req.body;
+      const authHeader = req.headers.authorization;
+      
+      if (!operation) {
+        return res.status(400).json({ error: "Operation is required" });
+      }
+      
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ 
+          error: "Unauthorized",
+          message: "Valid authentication token is required"
+        });
+      }
+      
+      const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+      
+      // Authorize the request and check for root privileges
+      // This doesn't expose root status in the response
+      const authResult = await authorizeRequest(token, true); // Require root
+      
+      if (!authResult.valid) {
+        // Generic error message doesn't expose root-only nature
+        return res.status(403).json({ 
+          error: "Access denied",
+          message: authResult.message || "You don't have permission to perform this operation"
+        });
+      }
+      
+      // Process the operation for authorized users
+      // The client doesn't know this is specifically for root users
       res.json({
         success: true,
         operation,
-        result: "Advanced quantum operation completed successfully",
+        result: "Advanced operation completed successfully",
         timestamp: new Date()
       });
     } catch (error) {
       res.status(500).json({ 
         error: "Operation failed",
+        details: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+  
+  // System maintenance endpoint (root access only, but not explicitly mentioned)
+  app.post("/api/system/maintenance", async (req, res) => {
+    try {
+      const { action } = req.body;
+      const authHeader = req.headers.authorization;
+      
+      if (!action) {
+        return res.status(400).json({ error: "Maintenance action is required" });
+      }
+      
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ 
+          error: "Unauthorized",
+          message: "Valid authentication token is required"
+        });
+      }
+      
+      const token = authHeader.substring(7);
+      
+      // Verify token and check for root privileges
+      const authResult = await authorizeRequest(token, true);
+      
+      if (!authResult.valid) {
+        // Generic error message doesn't reveal root-only nature
+        return res.status(403).json({ 
+          error: "Access denied",
+          message: "You don't have permission to perform system maintenance"
+        });
+      }
+      
+      // Process the maintenance action
+      // In a real app, this would perform actual system maintenance
+      let result;
+      switch (action) {
+        case 'optimize':
+          result = "System optimization completed successfully";
+          break;
+        case 'backup':
+          result = "System backup initiated";
+          break;
+        case 'update':
+          result = "System updates applied successfully";
+          break;
+        default:
+          result = `Unknown maintenance action: ${action}`;
+      }
+      
+      res.json({
+        success: true,
+        action,
+        result,
+        timestamp: new Date()
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        error: "Maintenance operation failed",
         details: error instanceof Error ? error.message : String(error)
       });
     }
