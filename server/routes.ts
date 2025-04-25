@@ -5,7 +5,7 @@ import { getOpenAIResponse } from "./services/openai-service";
 import { getQuantumStatus, processQuantumCommand } from "./services/quantum-service";
 import { authenticateByEmail, hasRootPrivileges } from "./services/auth-service";
 import { generateToken, verifyToken, authorizeRequest } from "./services/token-service";
-import { createWatermark, verifyWatermark, createSecureResponse, activateSelfProtection, COPYRIGHT_INFO } from "./services/watermark-service";
+import { createWatermark, verifyWatermark, createSecureResponse, activateSelfProtection, COPYRIGHT_INFO, checkApplicationIntegrity } from "./services/watermark-service";
 import type { User } from "../shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
