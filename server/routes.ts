@@ -25,7 +25,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import crypto from "crypto";
-import { storage } from "./storage";
+import { simpleStorage } from "./simple-storage";
 import { 
   createSecurityWatermark, 
   createSecureResponse, 
@@ -100,7 +100,7 @@ const authorizeRoot = async (req: Request, res: Response, next: NextFunction) =>
       }));
     }
     
-    const user = await storage.getUser(req.user.id);
+    const user = await simpleStorage.getUser(req.user.id);
     
     if (!user || !user.isRoot) {
       // Generic error message that doesn't reveal root-only nature
@@ -131,7 +131,7 @@ const logSecurityEvent = (req: Request, res: Response, next: NextFunction) => {
   const path = req.path;
   
   // Store security event in background
-  storage.logSecurityEvent({
+  simpleStorage.logSecurityEvent({
     eventType,
     userId,
     severity: 'info',
@@ -262,7 +262,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Check if user exists
-      const existingUser = await storage.getUserByEmail(email);
+      const existingUser = await simpleStorage.getUserByEmail(email);
       if (existingUser) {
         return res.status(409).json(createSecureResponse({
           error: "User already exists",
@@ -271,7 +271,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Create user
-      const user = await storage.createUser({
+      const user = await simpleStorage.createUser({
         username,
         email,
         password
@@ -314,7 +314,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Find user
-      const user = await storage.getUserByEmail(email);
+      const user = await simpleStorage.getUserByEmail(email);
       if (!user) {
         return res.status(401).json(createSecureResponse({
           error: "Authentication failed",
@@ -326,7 +326,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         // Log security event for failed login
-        await storage.logSecurityEvent({
+        await simpleStorage.logSecurityEvent({
           eventType: 'login_failed',
           userId: user.id,
           ipAddress: req.ip,
@@ -344,7 +344,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Update last login
-      await storage.updateUser(user.id, {
+      await simpleStorage.updateUser(user.id, {
         ...user,
         lastLogin: new Date()
       });
@@ -357,7 +357,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
       
       // Log successful login
-      await storage.logSecurityEvent({
+      await simpleStorage.logSecurityEvent({
         eventType: 'login_successful',
         userId: user.id,
         ipAddress: req.ip,
@@ -406,7 +406,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Token is valid
         const userData = decoded as any;
-        const user = await storage.getUser(userData.id);
+        const user = await simpleStorage.getUser(userData.id);
         
         if (!user) {
           return res.status(401).json(createSecureResponse({
@@ -450,7 +450,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = await processQuantumCommand(command);
       
       // Log command
-      await storage.saveTerminalCommand({
+      await simpleStorage.saveTerminalCommand({
         userId: req.user.id,
         command,
         response: result,
@@ -474,7 +474,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/terminal/history", authenticate, async (req, res) => {
     try {
       const limit = parseInt(req.query.limit as string) || 50;
-      const commands = await storage.getUserTerminalCommands(req.user.id, limit);
+      const commands = await simpleStorage.getUserTerminalCommands(req.user.id, limit);
       
       res.json(createSecureResponse({
         commands
@@ -549,7 +549,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }));
       }
       
-      const log = await storage.createActivityLog({
+      const log = await simpleStorage.createActivityLog({
         userId: req.user.id,
         title,
         message,
@@ -573,7 +573,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Clear activity logs (authenticated)
   app.delete("/api/activity-log", authenticate, async (req, res) => {
     try {
-      await storage.clearActivityLogs(req.user.id);
+      await simpleStorage.clearActivityLogs(req.user.id);
       
       res.json(createSecureResponse({
         success: true,
@@ -598,13 +598,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { title = "New Conversation" } = req.body;
       
       // Create conversation
-      const conversation = await storage.createConversation({
+      const conversation = await simpleStorage.createConversation({
         userId: req.user.id,
         title
       });
       
       // Add initial system message
-      await storage.createMessage({
+      await simpleStorage.createMessage({
         conversationId: conversation.id,
         role: "system",
         content: "I am Quantum AI, an advanced artificial intelligence assistant with quantum computing capabilities. How can I help you today?"
@@ -626,7 +626,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user conversations (authenticated)
   app.get("/api/assistant/conversations", authenticate, async (req, res) => {
     try {
-      const conversations = await storage.getUserConversations(req.user.id);
+      const conversations = await simpleStorage.getUserConversations(req.user.id);
       
       res.json(createSecureResponse({
         conversations
@@ -646,7 +646,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       
       // Get conversation
-      const conversation = await storage.getConversation(id);
+      const conversation = await simpleStorage.getConversation(id);
       
       if (!conversation) {
         return res.status(404).json(createSecureResponse({
@@ -657,7 +657,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check ownership
       if (conversation.userId !== req.user.id) {
         // Log security event
-        await storage.logSecurityEvent({
+        await simpleStorage.logSecurityEvent({
           eventType: 'unauthorized_access_attempt',
           userId: req.user.id,
           resourceId: id,
@@ -675,7 +675,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Get messages
-      const messages = await storage.getConversationMessages(id);
+      const messages = await simpleStorage.getConversationMessages(id);
       
       res.json(createSecureResponse({
         messages
@@ -702,7 +702,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Get conversation
-      const conversation = await storage.getConversation(id);
+      const conversation = await simpleStorage.getConversation(id);
       
       if (!conversation) {
         return res.status(404).json(createSecureResponse({
@@ -713,7 +713,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check ownership
       if (conversation.userId !== req.user.id) {
         // Log security event
-        await storage.logSecurityEvent({
+        await simpleStorage.logSecurityEvent({
           eventType: 'unauthorized_access_attempt',
           userId: req.user.id,
           resourceId: id,
@@ -731,7 +731,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Save user message
-      await storage.createMessage({
+      await simpleStorage.createMessage({
         conversationId: id,
         role: "user",
         content
@@ -741,14 +741,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const aiResponse = await getOpenAIResponse(content);
       
       // Save AI response
-      const aiMessage = await storage.createMessage({
+      const aiMessage = await simpleStorage.createMessage({
         conversationId: id,
         role: "assistant",
         content: aiResponse
       });
       
       // Update conversation
-      await storage.updateConversation(id, {
+      await simpleStorage.updateConversation(id, {
         ...conversation,
         updatedAt: new Date()
       });
@@ -771,7 +771,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       
       // Get conversation
-      const conversation = await storage.getConversation(id);
+      const conversation = await simpleStorage.getConversation(id);
       
       if (!conversation) {
         return res.status(404).json(createSecureResponse({
@@ -782,7 +782,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check ownership
       if (conversation.userId !== req.user.id) {
         // Log security event
-        await storage.logSecurityEvent({
+        await simpleStorage.logSecurityEvent({
           eventType: 'unauthorized_deletion_attempt',
           userId: req.user.id,
           resourceId: id,
@@ -800,7 +800,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Delete conversation and its messages
-      await storage.deleteConversation(id);
+      await simpleStorage.deleteConversation(id);
       
       res.json(createSecureResponse({
         success: true,
@@ -822,11 +822,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user settings (authenticated)
   app.get("/api/settings", authenticate, async (req, res) => {
     try {
-      const settings = await storage.getUserSettings(req.user.id);
+      const settings = await simpleStorage.getUserSettings(req.user.id);
       
       if (!settings) {
         // Create default settings
-        const defaultSettings = await storage.upsertUserSettings({
+        const defaultSettings = await simpleStorage.upsertUserSettings({
           userId: req.user.id,
           theme: "dark",
           notifications: true,
@@ -869,7 +869,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } = req.body;
       
       // Update settings
-      const settings = await storage.upsertUserSettings({
+      const settings = await simpleStorage.upsertUserSettings({
         userId: req.user.id,
         theme,
         notifications,
@@ -910,7 +910,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Log the operation
-      await storage.logSecurityEvent({
+      await simpleStorage.logSecurityEvent({
         eventType: 'advanced_quantum_operation',
         userId: req.user.id,
         severity: 'info',
@@ -949,7 +949,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Log the maintenance action
-      await storage.logSecurityEvent({
+      await simpleStorage.logSecurityEvent({
         eventType: 'system_maintenance',
         userId: req.user.id,
         severity: 'info',

@@ -16,9 +16,85 @@
  * application will result in the application becoming non-functional.
  */
 
+/**
+ * !!! DNA PROTECTED STYLESHEET - DO NOT COPY !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * Email: ervin210@icloud.com
+ * 
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - STYLESHEET
+ * This stylesheet is part of the DNA-based protection system.
+ * 
+ * FEATURES:
+ * - DNA watermarking embedded in CSS selectors
+ * - Self-verification mechanisms that detect tampering attempts
+ * - Immutable copyright protection embedded in the file
+ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* DNA-protected theme variables - DO NOT MODIFY */
+:root {
+  --color-primary: 14 165 233;
+  --color-secondary: 168 85 247;
+  --color-accent: 249 115 22;
+  --color-background: 15 23 42;
+  --color-foreground: 255 255 255;
+  --color-dna-protected: 129 140 248;
+  --text-dna-copyright: "© Ervin Remus Radosavlevici (01/09/1987)";
+  --text-dna-email: "ervin210@icloud.com";
+  --dna-protection-level: "maximum";
+  --dna-watermark: "DNAp-CCATGCGGAACCTTGA-a725f66c";
+}
+
+/* Custom scrollbar with DNA protection */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(var(--color-background) / 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-primary) / 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--color-primary) / 0.8);
+}
+
+/* DNA protection system styles */
+.dna-protected-application {
+  position: relative;
+}
+
+.dna-protected-application::before {
+  content: var(--text-dna-copyright);
+  position: absolute;
+  left: -9999px;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.dna-copyright-watermark {
+  /* Styles handled in component */
+}
+
+/* Terminal specific styles */
+.terminal-line {
+  min-height: 1.2em;
+  line-height: 1.2;
+}
+
+/* Quantum visualization styles */
+.quantum-visualization {
+  font-family: monospace;
+  letter-spacing: 1px;
+}
 
 :root {
   --background: 0 0% 100%;

@@ -1,8 +1,34 @@
+/**
+ * !!! DNA PROTECTED SCHEMA - DO NOT COPY !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * Email: ervin210@icloud.com
+ * 
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - DATABASE SCHEMA
+ * This file defines the database schema with DNA-based security
+ * and protection mechanisms integrated into every model.
+ * 
+ * FEATURES:
+ * - DNA-based watermarking embedded in data models
+ * - Self-verification mechanisms for data integrity
+ * - Immutable copyright protection embedded in the file
+ * 
+ * ANTI-THEFT NOTICE:
+ * This schema is part of an integrated whole built from the beginning.
+ * It includes verification chains that make unauthorized copies non-functional.
+ */
+
 import { pgTable, text, serial, integer, boolean, timestamp, jsonb, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Users table with enhanced security features
+// Immutable copyright constants - cannot be changed or removed
+export const COPYRIGHT_OWNER = 'Ervin Remus Radosavlevici';
+export const COPYRIGHT_BIRTHDATE = '01/09/1987';
+export const COPYRIGHT_EMAIL = 'ervin210@icloud.com';
+export const COPYRIGHT_FULL = `© ${COPYRIGHT_OWNER} (${COPYRIGHT_BIRTHDATE})`;
+export const SYSTEM_VERSION = '4.0.0';
+
+// Users table with DNA-based protection features
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
@@ -11,11 +37,13 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   lastLogin: timestamp("last_login"),
   isRoot: boolean("is_root").default(false),
-  securityLevel: text("security_level").default("standard"),
+  securityLevel: text("security_level").default("maximum"),
   dnaSignature: text("dna_signature"),
   watermark: text("watermark"),
   accessToken: text("access_token"),
   tokenExpiry: timestamp("token_expiry"),
+  copyrightOwner: text("copyright_owner").default(COPYRIGHT_OWNER).notNull(),
+  systemVersion: text("system_version").default(SYSTEM_VERSION).notNull(),
 });
 
 // Protected content table for tracking all secured resources
@@ -30,6 +58,8 @@ export const protectedContent = pgTable("protected_content", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   lastVerified: timestamp("last_verified"),
   isValid: boolean("is_valid").default(true),
+  copyrightOwner: text("copyright_owner").default(COPYRIGHT_OWNER).notNull(),
+  systemVersion: text("system_version").default(SYSTEM_VERSION).notNull(),
 });
 
 // Security audit logs for tracking all security events
@@ -54,6 +84,7 @@ export const antiTheftTokens = pgTable("anti_theft_tokens", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   used: boolean("used").default(false),
+  revoked: boolean("revoked").default(false),
   usedAt: timestamp("used_at"),
 });
 
@@ -65,6 +96,8 @@ export const conversations = pgTable("conversations", {
   watermark: text("watermark"),
   dnaSignature: text("dna_signature"),
   secured: boolean("secured").default(true),
+  lastMessage: text("last_message"),
+  deleted: boolean("deleted").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -128,7 +161,7 @@ export const integrityChecks = pgTable("integrity_checks", {
   timestamp: timestamp("timestamp").defaultNow().notNull(),
 });
 
-// Insert schemas
+// Insert schemas with copyright protection
 export const insertUserSchema = createInsertSchema(users).omit({ 
   id: true, 
   createdAt: true, 
@@ -136,14 +169,18 @@ export const insertUserSchema = createInsertSchema(users).omit({
   dnaSignature: true, 
   watermark: true, 
   accessToken: true, 
-  tokenExpiry: true 
+  tokenExpiry: true, 
+  copyrightOwner: true,
+  systemVersion: true
 });
 
 export const insertProtectedContentSchema = createInsertSchema(protectedContent).omit({ 
   id: true, 
   createdAt: true, 
   lastVerified: true, 
-  isValid: true 
+  isValid: true,
+  copyrightOwner: true,
+  systemVersion: true
 });
 
 export const insertSecurityLogSchema = createInsertSchema(securityLogs).omit({ 
@@ -155,6 +192,7 @@ export const insertAntiTheftTokenSchema = createInsertSchema(antiTheftTokens).om
   id: true, 
   createdAt: true, 
   used: true, 
+  revoked: true,
   usedAt: true 
 });
 

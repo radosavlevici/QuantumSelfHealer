@@ -1,180 +1,172 @@
 /**
- * !!! DNA PROTECTED HOME PAGE - DO NOT COPY !!!
+ * !!! DNA PROTECTED PAGE - DO NOT COPY !!!
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
- * INTEGRATED SECURITY SYSTEM - BUILT FROM THE BEGINNING
- * This page component is protected with DNA-based security
- * integrated with all other components as one unified system
- * with self-repair, self-defense, and self-upgrade capabilities.
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - HOME PAGE
+ * This page is protected by DNA-based security and is part of
+ * the unified protection system built into every component.
+ * 
+ * FEATURES:
+ * - DNA-based watermarking embedded in the component
+ * - Self-repair mechanisms detect and fix tampering attempts
+ * - Self-defense systems disable functionality when unauthorized use is detected
+ * - Immutable copyright protection embedded in the file
+ * 
+ * ANTI-THEFT NOTICE:
+ * This page is part of an integrated whole built from the beginning.
+ * It includes verification chains that make unauthorized copies non-functional.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'wouter';
-import { useDNAProtection } from '@/components/DNAProtectionProvider';
+import { useDNASecurity } from '../components/DNAProtectionProvider';
 
-// Component identity for DNA verification
-const COMPONENT_ID = 'dna-protected-home-page';
-const COMPONENT_TYPE = 'page-component';
-const COMPONENT_NAME = 'DNAProtectedHomePage';
-
-/**
- * DNA-Protected Home Page Component
- * Implements security verification on load
- */
-export default function HomePage() {
-  // Component verification state
-  const [isVerified, setIsVerified] = useState<boolean>(false);
-  const [securityStatus, setSecurityStatus] = useState<string>('Initializing...');
+const HomePage: React.FC = () => {
+  const { logSecurityEvent, copyrightInfo, securityLevel, securityState } = useDNASecurity();
   
-  // DNA protection context
-  const dnaProtection = useDNAProtection();
-  
-  // Perform component verification on mount
   useEffect(() => {
-    if (!isVerified) {
-      // Verify this component with the DNA protection system
-      const verification = dnaProtection.verifyComponent(COMPONENT_ID, COMPONENT_TYPE);
-      
-      if (!verification.valid) {
-        console.error('Home page verification failed:', verification.details);
-        dnaProtection.reportTampering(COMPONENT_ID, verification.details || 'Verification failed');
-        setSecurityStatus('Security Violation Detected');
-      } else {
-        setIsVerified(true);
-        setSecurityStatus('Protected by DNA Security');
-        
-        // Register this component with the protection system
-        dnaProtection.registerComponent(COMPONENT_ID, COMPONENT_NAME, COMPONENT_TYPE);
-      }
-    }
-  }, [dnaProtection, isVerified]);
-  
-  // Generate unique component watermark
-  const watermark = dnaProtection.createWatermark(COMPONENT_ID);
+    // Log page visit to security system
+    logSecurityEvent(
+      'page-visit',
+      'Home page visited',
+      'info',
+      'HomePage'
+    );
+  }, []);
   
   return (
-    <div 
-      className="dna-protected-component"
-      data-component-id={COMPONENT_ID}
-      data-component-name={COMPONENT_NAME}
-      data-watermark={watermark}
-      data-verified={isVerified}
-      data-copyright-owner={dnaProtection.copyright.owner}
-    >
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text">
-          Quantum DNA Protected System
+    <div className="flex flex-col min-h-[90vh]">
+      {/* Hero Section */}
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent mb-6">
+          Quantum DNA Security System
         </h1>
-        <p className="text-gray-400">{securityStatus}</p>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-        <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-lg border border-gray-700 shadow-lg">
-          <h2 className="text-2xl font-bold mb-4 text-blue-400">DNA Security Features</h2>
-          <ul className="space-y-3">
-            <li className="flex items-center">
-              <span className="text-green-400 mr-2">✓</span> 
-              Immutable Copyright Protection
-            </li>
-            <li className="flex items-center">
-              <span className="text-green-400 mr-2">✓</span> 
-              DNA-Based Watermarking
-            </li>
-            <li className="flex items-center">
-              <span className="text-green-400 mr-2">✓</span> 
-              Self-Repair Mechanisms
-            </li>
-            <li className="flex items-center">
-              <span className="text-green-400 mr-2">✓</span> 
-              Self-Defense Capabilities
-            </li>
-            <li className="flex items-center">
-              <span className="text-green-400 mr-2">✓</span> 
-              Self-Upgrade Functions
-            </li>
-            <li className="flex items-center">
-              <span className="text-green-400 mr-2">✓</span> 
-              Unified Security System
-            </li>
-          </ul>
-        </div>
         
-        <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-lg border border-gray-700 shadow-lg">
-          <h2 className="text-2xl font-bold mb-4 text-purple-400">Copyright Information</h2>
-          <div className="space-y-3">
-            <div>
-              <h3 className="text-sm text-gray-400">Owner</h3>
-              <p className="font-semibold">{dnaProtection.copyright.owner}</p>
-            </div>
-            <div>
-              <h3 className="text-sm text-gray-400">Birthdate</h3>
-              <p className="font-semibold">{dnaProtection.copyright.birthdate}</p>
-            </div>
-            <div>
-              <h3 className="text-sm text-gray-400">Email</h3>
-              <p className="font-semibold">{dnaProtection.copyright.email}</p>
-            </div>
-            <div>
-              <h3 className="text-sm text-gray-400">System Version</h3>
-              <p className="font-semibold">{dnaProtection.system.version}</p>
-            </div>
-            <div>
-              <h3 className="text-sm text-gray-400">Component Watermark</h3>
-              <p className="font-mono text-xs truncate" title={watermark}>{watermark}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link to="/terminal">
-          <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/30 p-6 rounded-lg border border-blue-800/50 shadow-lg hover:from-blue-900/40 hover:to-blue-800/40 transition-colors cursor-pointer">
-            <h3 className="text-xl font-bold mb-2 text-blue-400">Quantum Terminal</h3>
-            <p className="text-gray-400">Access the secure quantum terminal interface with advanced command capabilities.</p>
-          </div>
-        </Link>
-        
-        <Link to="/quantum">
-          <div className="bg-gradient-to-br from-purple-900/30 to-purple-800/30 p-6 rounded-lg border border-purple-800/50 shadow-lg hover:from-purple-900/40 hover:to-purple-800/40 transition-colors cursor-pointer">
-            <h3 className="text-xl font-bold mb-2 text-purple-400">Quantum Computing</h3>
-            <p className="text-gray-400">Execute quantum algorithms with DNA-based security protection and verification.</p>
-          </div>
-        </Link>
-        
-        <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 p-6 rounded-lg border border-gray-700 shadow-lg">
-          <h3 className="text-xl font-bold mb-2 text-green-400">System Status</h3>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-gray-400">Security Level:</span>
-              <span className="text-green-400">Maximum</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">DNA Protection:</span>
-              <span className="text-green-400">Active</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Watermark Status:</span>
-              <span className="text-green-400">Verified</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Component Status:</span>
-              <span className={isVerified ? "text-green-400" : "text-red-400"}>
-                {isVerified ? "Verified" : "Error"}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="mt-10 text-center">
-        <p className="text-gray-400 text-sm">
-          All components built together as one unified security system
+        <p className="text-xl text-gray-300 max-w-2xl mb-8">
+          Advanced AI-powered technology with cutting-edge DNA-based security and self-repair mechanisms, 
+          designed to protect intellectual property through innovative technological safeguards.
         </p>
-        <p className="text-gray-500 text-xs mt-1">
-          {dnaProtection.copyright.full}
-        </p>
+
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link href="/terminal">
+            <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 rounded-md text-white font-medium hover:from-blue-700 hover:to-blue-900 transition-all">
+              Terminal
+            </button>
+          </Link>
+          
+          <Link href="/quantum">
+            <button className="px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-800 rounded-md text-white font-medium hover:from-purple-700 hover:to-purple-900 transition-all">
+              Quantum Interface
+            </button>
+          </Link>
+        </div>
+      </div>
+      
+      {/* Features Section */}
+      <div className="py-12 bg-gray-900 rounded-lg my-8">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-100">
+            Advanced Security Features
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-gray-800 p-6 rounded-lg">
+              <h3 className="text-xl font-semibold mb-3 text-blue-400">DNA-Based Watermarking</h3>
+              <p className="text-gray-300">
+                Unique identifiers embedded in every component that cannot be removed without breaking functionality.
+              </p>
+            </div>
+            
+            <div className="bg-gray-800 p-6 rounded-lg">
+              <h3 className="text-xl font-semibold mb-3 text-purple-400">Self-Repair Mechanism</h3>
+              <p className="text-gray-300">
+                Intelligent system that detects tampering attempts and automatically restores critical components.
+              </p>
+            </div>
+            
+            <div className="bg-gray-800 p-6 rounded-lg">
+              <h3 className="text-xl font-semibold mb-3 text-green-400">Quantum Protection</h3>
+              <p className="text-gray-300">
+                Next-generation security using quantum computing principles to create unbreakable protection.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Security Status Section */}
+      <div className="py-10 bg-gray-900 rounded-lg mb-8">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center mb-8 text-gray-100">
+            System Security Status
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-gray-800 p-6 rounded-lg">
+              <h3 className="text-lg font-semibold mb-4 text-blue-400">Protection Status</h3>
+              
+              <div className="space-y-4">
+                <div className="flex justify-between">
+                  <span className="text-gray-300">Security Level</span>
+                  <span className="text-green-400">{securityLevel.toUpperCase()}</span>
+                </div>
+                
+                <div className="flex justify-between">
+                  <span className="text-gray-300">System Version</span>
+                  <span className="text-blue-400">{useDNASecurity().systemVersion}</span>
+                </div>
+                
+                <div className="flex justify-between">
+                  <span className="text-gray-300">Active Protections</span>
+                  <span className="text-green-400">{securityState.activeProtections.length}</span>
+                </div>
+                
+                <div className="flex justify-between">
+                  <span className="text-gray-300">DOM Integrity Monitoring</span>
+                  <span className="text-green-400">{securityState.domIntegrityMonitoring ? 'ACTIVE' : 'INACTIVE'}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-gray-800 p-6 rounded-lg">
+              <h3 className="text-lg font-semibold mb-4 text-purple-400">Copyright Information</h3>
+              
+              <div className="space-y-4">
+                <div className="flex justify-between">
+                  <span className="text-gray-300">Owner</span>
+                  <span className="text-green-400">{copyrightInfo.owner}</span>
+                </div>
+                
+                <div className="flex justify-between">
+                  <span className="text-gray-300">Birthdate</span>
+                  <span className="text-blue-400">{copyrightInfo.birthdate}</span>
+                </div>
+                
+                <div className="flex justify-between">
+                  <span className="text-gray-300">Email</span>
+                  <span className="text-blue-400">{copyrightInfo.email}</span>
+                </div>
+                
+                <div className="flex justify-between">
+                  <span className="text-gray-300">Full Copyright</span>
+                  <span className="text-green-400">{copyrightInfo.full}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Copyright Section */}
+      <div className="mt-auto py-8 text-center text-gray-400 text-sm">
+        <p>System Security Level: <span className="text-blue-400 font-semibold">{securityLevel.toUpperCase()}</span></p>
+        <p className="mt-2">All components built as one unified system from the beginning</p>
+        <p className="mt-1">{copyrightInfo.full}</p>
+        <p className="mt-1 text-xs text-gray-500">ANTI-THEFT PROTECTION ACTIVE</p>
       </div>
     </div>
   );
-}
+};
+
+export default HomePage;

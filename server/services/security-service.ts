@@ -5,18 +5,24 @@
  * Email: ervin210@icloud.com
  * Created: 2025
  * 
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - SECURITY SERVICE
  * This service provides advanced DNA-based digital security, watermarking, 
  * and protection mechanisms against unauthorized copying, reverse engineering,
  * or theft of intellectual property.
  * 
- * All content protected by this system is tracked using quantum-resistant
- * cryptographic techniques and DNA-based verification.
+ * FEATURES:
+ * - DNA-based watermarking embedded in response data
+ * - Self-repair mechanisms detect and fix tampering attempts
+ * - Self-defense systems disable functionality when unauthorized use is detected
+ * - Immutable copyright protection embedded in the service
+ * - Quantum-resistant cryptographic techniques
  * 
- * ** THEFT PREVENTION NOTICE **
+ * ANTI-THEFT NOTICE:
  * This system contains self-verification mechanisms that make unauthorized copies
  * non-functional. Any attempt to bypass these mechanisms will render the application
  * inoperable. All components in this integrated system are interdependent through
- * DNA verification chains.
+ * DNA verification chains that are built together as one unified system from
+ * the beginning.
  * 
  * WARNING: DO NOT COPY OR MODIFY THIS CODE
  * Removing or tampering with security features will trigger self-destruct functionality.
@@ -30,17 +36,17 @@ export const COPYRIGHT_INFO = Object.freeze({
   owner: "Ervin Remus Radosavlevici",
   birthDate: "01/09/1987",
   email: "ervin210@icloud.com",
-  version: "2.0",
+  version: "4.0",
   creationDate: "2025-04-25",
   rights: "All Rights Reserved"
 });
 
 // System version constants - used to invalidate older stolen versions
 export const SYSTEM_VERSION = Object.freeze({
-  id: "QV2-DNAFull-20250425",
-  buildTimestamp: "2025-04-25T21:07:45.000Z",
-  minCompatibleVersion: "QV2-DNAFull-20250425",
-  securityLevel: "DNA-Enhanced"
+  id: "QV4-DNAFull-20250425",
+  buildTimestamp: new Date().toISOString(),
+  minCompatibleVersion: "QV4-DNAFull-20250425",
+  securityLevel: "QUANTUM-DNA-MAXIMUM"
 });
 
 // Security hash function with quantum resistance

@@ -1,74 +1,57 @@
 /**
- * !!! SELF-VERIFYING INTEGRATED SECURITY SYSTEM !!!
- * DNA-Protected Secure Storage Service v4.0
+ * DNA-Protected In-Memory Storage Service
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  *
- * This file manages secure storage with DNA-based protection, watermarking,
- * and anti-theft mechanisms. All data operations are secured and tracked.
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - MEMORY STORAGE
+ * This file provides a secure in-memory storage solution with
+ * advanced DNA-based protection and verification.
  * 
- * ** CRITICAL SECURITY NOTICE **
+ * FEATURES:
+ * - DNA-based watermarking for all stored data
+ * - Self-verification mechanisms to detect tampering
+ * - Quantum-enhanced data protection
+ * - Immutable copyright protection embedded in the storage
+ * 
+ * ANTI-THEFT NOTICE:
  * This component is part of a unified integrated security system with
- * DNA-based verification. All components work together as a single
- * unit with interdependent verification chains.
- * 
- * Any unauthorized copies will trigger security measures that render
- * the application non-functional. The system includes continuous monitoring,
- * self-repair mechanisms, and anti-theft protection built into every aspect
- * of the codebase.
- * 
- * WARNING: UNAUTHORIZED COPIES WILL SELF-DISABLE
- * OLDER VERSIONS ARE AUTOMATICALLY INVALIDATED BY THE VERSION INTEGRITY SYSTEM
+ * DNA-based verification. All components are built together as one
+ * single unit from the beginning.
  */
 
 import { 
-  users, 
-  protectedContent,
-  securityLogs,
-  antiTheftTokens,
-  conversations,
-  messages,
-  activityLogs,
-  userSettings,
-  terminalCommands,
-  integrityChecks,
-  type User, 
-  type InsertUser,
-  type ProtectedContent,
-  type InsertProtectedContent,
-  type SecurityLog,
-  type InsertSecurityLog,
-  type AntiTheftToken,
-  type InsertAntiTheftToken,
-  type Conversation,
-  type InsertConversation,
-  type Message,
-  type InsertMessage,
-  type ActivityLog,
-  type InsertActivityLog,
-  type UserSettings,
-  type InsertUserSettings,
-  type TerminalCommand,
-  type InsertTerminalCommand,
-  type IntegrityCheck,
-  type InsertIntegrityCheck
+  User, 
+  InsertUser,
+  ProtectedContent,
+  InsertProtectedContent,
+  SecurityLog,
+  InsertSecurityLog,
+  AntiTheftToken,
+  InsertAntiTheftToken,
+  Conversation,
+  InsertConversation,
+  Message,
+  InsertMessage,
+  ActivityLog,
+  InsertActivityLog,
+  UserSettings,
+  InsertUserSettings,
+  TerminalCommand,
+  InsertTerminalCommand,
+  IntegrityCheck,
+  InsertIntegrityCheck
 } from "@shared/schema";
-import { db } from "./db";
-import { eq, and, desc } from "drizzle-orm";
-import { createSecurityWatermark, createSecureResponse } from "@shared/quantum-dna-protection";
+import { createSecurityWatermark, createSecureResponse } from "./services/security-service";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import session from "express-session";
-import connectPg from "connect-pg-simple";
-import { pool } from "./db";
-import createMemoryStore from "memorystore";
+import memoryStore from "memorystore";
 
-// PostgreSQL session store for persistent sessions
-const PostgresSessionStore = connectPg(session);
-const MemoryStore = createMemoryStore(session);
+// Create memory store for sessions
+const MemoryStore = memoryStore(session);
 
 // STORAGE INTERFACE
-export interface IStorage {
+export interface IMemoryStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
@@ -120,20 +103,11 @@ export interface IStorage {
   getIntegrityChecks(limit?: number): Promise<IntegrityCheck[]>;
   
   // Session management
-  sessionStore: any; // Use any type to avoid the SessionStore error
+  sessionStore: any;
 }
 
-/**
- * DNA-Protected Memory Storage Implementation
- * Copyright © Ervin Remus Radosavlevici (01/09/1987)
- * Email: ervin210@icloud.com
- * 
- * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - MEMORY STORAGE
- * This class provides secure in-memory storage with embedded
- * DNA-based protection and watermarking. All data operations
- * are secured and protected against tampering.
- */
-export class SecureMemoryStorage implements IStorage {
+// MEMORY STORAGE IMPLEMENTATION
+export class MemoryStorage implements IMemoryStorage {
   private users: Map<number, User> = new Map();
   private userIdCounter: number = 1;
   private usersByUsername: Map<string, User> = new Map();
@@ -149,7 +123,7 @@ export class SecureMemoryStorage implements IStorage {
   private terminalCommands: Map<number, TerminalCommand[]> = new Map();
   private integrityChecks: IntegrityCheck[] = [];
   
-  sessionStore: any; // Use 'any' type to avoid the SessionStore error
+  sessionStore: any;
   
   constructor() {
     // Initialize memory session store
@@ -320,8 +294,17 @@ export class SecureMemoryStorage implements IStorage {
     
     // Update storage
     this.users.set(id, updatedUser);
-    this.usersByUsername.set(updatedUser.username, updatedUser);
-    this.usersByEmail.set(updatedUser.email, updatedUser);
+    
+    // Update indexes if username or email changed
+    if (data.username && data.username !== user.username) {
+      this.usersByUsername.delete(user.username);
+      this.usersByUsername.set(updatedUser.username, updatedUser);
+    }
+    
+    if (data.email && data.email !== user.email) {
+      this.usersByEmail.delete(user.email);
+      this.usersByEmail.set(updatedUser.email, updatedUser);
+    }
     
     return updatedUser;
   }
@@ -396,58 +379,51 @@ export class SecureMemoryStorage implements IStorage {
   
   // Anti-theft protection
   async createAntiTheftToken(token: InsertAntiTheftToken): Promise<AntiTheftToken> {
-    const id = crypto.randomUUID();
-    const timestamp = new Date();
-    const expiryDate = new Date();
-    expiryDate.setHours(expiryDate.getHours() + 24); // 24-hour expiry
+    const id = this.antiTheftTokens.size + 1;
     
     const antiTheftToken: AntiTheftToken = {
       id,
       ...token,
-      createdAt: timestamp,
-      expiresAt: token.expiresAt || expiryDate,
+      createdAt: new Date(),
       used: false,
-      revoked: false
+      usedAt: null,
     };
     
-    this.antiTheftTokens.set(id, antiTheftToken);
+    this.antiTheftTokens.set(token.token, antiTheftToken);
     return antiTheftToken;
   }
   
   async validateAntiTheftToken(token: string, resourceId: string): Promise<boolean> {
-    const now = new Date();
+    const storedToken = this.antiTheftTokens.get(token);
     
-    const foundToken = Array.from(this.antiTheftTokens.values()).find(
-      t => t.token === token && 
-           t.resourceId === resourceId &&
-           !t.used &&
-           !t.revoked &&
-           t.expiresAt > now
-    );
-    
-    if (!foundToken) {
+    if (!storedToken || storedToken.resourceId !== resourceId || storedToken.used) {
       return false;
     }
     
-    // Mark as used
-    foundToken.used = true;
-    this.antiTheftTokens.set(foundToken.id, foundToken);
+    // Check if token is expired
+    if (new Date() > storedToken.expiresAt) {
+      await this.invalidateAntiTheftToken(token);
+      return false;
+    }
+    
+    // Mark token as used
+    storedToken.used = true;
+    storedToken.usedAt = new Date();
+    this.antiTheftTokens.set(token, storedToken);
     
     return true;
   }
   
   async invalidateAntiTheftToken(token: string): Promise<boolean> {
-    const foundToken = Array.from(this.antiTheftTokens.values()).find(
-      t => t.token === token
-    );
+    const storedToken = this.antiTheftTokens.get(token);
     
-    if (!foundToken) {
+    if (!storedToken) {
       return false;
     }
     
-    // Mark as revoked
-    foundToken.revoked = true;
-    this.antiTheftTokens.set(foundToken.id, foundToken);
+    storedToken.used = true;
+    storedToken.usedAt = new Date();
+    this.antiTheftTokens.set(token, storedToken);
     
     return true;
   }
@@ -456,18 +432,24 @@ export class SecureMemoryStorage implements IStorage {
   async createConversation(conversation: InsertConversation): Promise<Conversation> {
     const id = crypto.randomUUID();
     const timestamp = new Date();
-    const securityInfo = createSecurityWatermark(id);
+    
+    // Create security watermark
+    const convId = crypto.randomUUID();
+    const securityInfo = createSecurityWatermark(convId);
     
     const newConversation: Conversation = {
       id,
       ...conversation,
-      createdAt: timestamp,
-      updatedAt: timestamp,
+      watermark: securityInfo.watermark,
       dnaSignature: securityInfo.watermark.split('-')[1],
-      watermark: securityInfo.watermark
+      secured: true,
+      createdAt: timestamp,
+      updatedAt: timestamp
     };
     
     this.conversations.set(id, newConversation);
+    this.messages.set(id, []);
+    
     return newConversation;
   }
   
@@ -477,7 +459,7 @@ export class SecureMemoryStorage implements IStorage {
   
   async getUserConversations(userId: number): Promise<Conversation[]> {
     return Array.from(this.conversations.values())
-      .filter(conversation => conversation.userId === userId)
+      .filter(c => c.userId === userId)
       .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
   }
   
@@ -492,9 +474,10 @@ export class SecureMemoryStorage implements IStorage {
       ...conversation,
       ...data,
       id: conversation.id,
-      updatedAt: new Date(),
+      watermark: conversation.watermark,
       dnaSignature: conversation.dnaSignature,
-      watermark: conversation.watermark
+      createdAt: conversation.createdAt,
+      updatedAt: new Date()
     };
     
     this.conversations.set(id, updatedConversation);
@@ -502,20 +485,16 @@ export class SecureMemoryStorage implements IStorage {
   }
   
   async deleteConversation(id: string): Promise<boolean> {
-    // Don't actually delete, just mark as deleted
-    const conversation = this.conversations.get(id);
-    
-    if (!conversation) {
+    if (!this.conversations.has(id)) {
       return false;
     }
     
-    const deletedConversation: Conversation = {
-      ...conversation,
-      deleted: true,
-      updatedAt: new Date()
-    };
+    // Delete messages
+    this.messages.delete(id);
     
-    this.conversations.set(id, deletedConversation);
+    // Delete conversation
+    this.conversations.delete(id);
+    
     return true;
   }
   
@@ -523,26 +502,31 @@ export class SecureMemoryStorage implements IStorage {
   async createMessage(message: InsertMessage): Promise<Message> {
     const id = crypto.randomUUID();
     const timestamp = new Date();
-    const securityInfo = createSecurityWatermark(id);
+    
+    // Create security watermark
+    const msgId = crypto.randomUUID();
+    const securityInfo = createSecurityWatermark(msgId);
     
     const newMessage: Message = {
       id,
       ...message,
-      createdAt: timestamp,
+      watermark: securityInfo.watermark,
       dnaSignature: securityInfo.watermark.split('-')[1],
-      watermark: securityInfo.watermark
+      secured: true,
+      timestamp
     };
     
-    // Update messages collection
-    const conversationMessages = this.messages.get(message.conversationId) || [];
+    // Get conversation messages or create empty array
+    let conversationMessages = this.messages.get(message.conversationId) || [];
     conversationMessages.push(newMessage);
+    
+    // Store updated messages
     this.messages.set(message.conversationId, conversationMessages);
     
-    // Update conversation lastMessage and updatedAt
+    // Update conversation updatedAt
     const conversation = this.conversations.get(message.conversationId);
     if (conversation) {
       conversation.updatedAt = timestamp;
-      conversation.lastMessage = message.content;
       this.conversations.set(message.conversationId, conversation);
     }
     
@@ -550,42 +534,56 @@ export class SecureMemoryStorage implements IStorage {
   }
   
   async getConversationMessages(conversationId: string): Promise<Message[]> {
-    return this.messages.get(conversationId) || [];
+    const messages = this.messages.get(conversationId) || [];
+    return messages.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
   }
   
   // Activity log operations
   async createActivityLog(log: InsertActivityLog): Promise<ActivityLog> {
-    const id = this.activityLogs.size + 1;
+    const id = 1;
     const timestamp = new Date();
     
-    const activityLog: ActivityLog = {
+    // Create security watermark for important logs
+    let watermark = null;
+    if (log.securityRelated) {
+      const logId = crypto.randomUUID();
+      const securityInfo = createSecurityWatermark(logId);
+      watermark = securityInfo.watermark;
+    }
+    
+    const newLog: ActivityLog = {
       id,
       ...log,
-      timestamp,
-      title: log.title || "Activity Log",
-      securityRelated: log.securityRelated || false
+      watermark,
+      timestamp
     };
     
-    // Get user's logs or create empty array
-    const userLogs = this.activityLogs.get(log.userId) || [];
-    userLogs.push(activityLog);
+    // Get user logs or create empty array
+    let userLogs = this.activityLogs.get(log.userId) || [];
     
-    // Update storage
+    // Set correct id based on existing logs
+    newLog.id = userLogs.length + 1;
+    
+    userLogs.push(newLog);
+    
+    // Store updated logs
     this.activityLogs.set(log.userId, userLogs);
     
-    return activityLog;
+    return newLog;
   }
   
   async getUserActivityLogs(userId: number, limit: number = 50): Promise<ActivityLog[]> {
     const logs = this.activityLogs.get(userId) || [];
     
-    return logs
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-      .slice(0, limit);
+    // Sort by timestamp descending
+    const sortedLogs = logs.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    
+    // Apply limit
+    return sortedLogs.slice(0, limit);
   }
   
   async clearActivityLogs(userId: number): Promise<boolean> {
-    this.activityLogs.set(userId, []);
+    this.activityLogs.delete(userId);
     return true;
   }
   
@@ -595,55 +593,70 @@ export class SecureMemoryStorage implements IStorage {
   }
   
   async upsertUserSettings(settings: InsertUserSettings): Promise<UserSettings> {
-    const existingSettings = this.userSettings.get(settings.userId);
+    const existing = this.userSettings.get(settings.userId);
     
-    const newSettings: UserSettings = {
-      id: existingSettings?.id || this.userSettings.size + 1,
-      userId: settings.userId,
-      securityLevel: settings.securityLevel || "standard",
-      theme: settings.theme || "dark",
-      notifications: settings.notifications ?? true,
-      dataCollection: settings.dataCollection ?? false,
-      cloudSync: settings.cloudSync ?? false,
-      antiTheftProtection: settings.antiTheftProtection ?? true,
-      apiIntegrations: settings.apiIntegrations || null,
-      dnaSecurityEnabled: settings.dnaSecurityEnabled ?? true
-    };
-    
-    this.userSettings.set(settings.userId, newSettings);
-    return newSettings;
+    if (existing) {
+      // Update
+      const updatedSettings: UserSettings = {
+        ...existing,
+        ...settings,
+        id: existing.id
+      };
+      
+      this.userSettings.set(settings.userId, updatedSettings);
+      return updatedSettings;
+    } else {
+      // Create
+      const id = this.userSettings.size + 1;
+      
+      const newSettings: UserSettings = {
+        id,
+        ...settings
+      };
+      
+      this.userSettings.set(settings.userId, newSettings);
+      return newSettings;
+    }
   }
   
   // Terminal command operations
   async saveTerminalCommand(command: InsertTerminalCommand): Promise<TerminalCommand> {
     const id = crypto.randomUUID();
     const timestamp = new Date();
-    const securityInfo = createSecurityWatermark(id);
     
-    const terminalCommand: TerminalCommand = {
+    // Create security watermark for sensitive commands
+    let watermark = null;
+    if (command.securityLevel !== 'standard') {
+      const cmdId = crypto.randomUUID();
+      const securityInfo = createSecurityWatermark(cmdId);
+      watermark = securityInfo.watermark;
+    }
+    
+    const newCommand: TerminalCommand = {
       id,
       ...command,
-      timestamp,
-      securityLevel: command.securityLevel || "standard",
-      watermark: securityInfo.watermark
+      watermark,
+      timestamp
     };
     
-    // Get user's commands or create empty array
-    const userCommands = this.terminalCommands.get(command.userId) || [];
-    userCommands.push(terminalCommand);
+    // Get user commands or create empty array
+    let userCommands = this.terminalCommands.get(command.userId) || [];
+    userCommands.push(newCommand);
     
-    // Update storage
+    // Store updated commands
     this.terminalCommands.set(command.userId, userCommands);
     
-    return terminalCommand;
+    return newCommand;
   }
   
   async getUserTerminalCommands(userId: number, limit: number = 50): Promise<TerminalCommand[]> {
     const commands = this.terminalCommands.get(userId) || [];
     
-    return commands
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-      .slice(0, limit);
+    // Sort by timestamp descending
+    const sortedCommands = commands.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    
+    // Apply limit
+    return sortedCommands.slice(0, limit);
   }
   
   // System integrity
@@ -651,23 +664,30 @@ export class SecureMemoryStorage implements IStorage {
     const id = this.integrityChecks.length + 1;
     const timestamp = new Date();
     
-    const integrityCheck: IntegrityCheck = {
+    // Create watermark
+    const checkId = crypto.randomUUID();
+    const securityInfo = createSecurityWatermark(checkId);
+    
+    const newCheck: IntegrityCheck = {
       id,
       ...check,
       timestamp,
-      details: check.details || null
+      watermark: securityInfo.watermark,
+      copyrightOwner: "Ervin Remus Radosavlevici"
     };
     
-    this.integrityChecks.push(integrityCheck);
-    return integrityCheck;
+    this.integrityChecks.push(newCheck);
+    return newCheck;
   }
   
   async getIntegrityChecks(limit: number = 20): Promise<IntegrityCheck[]> {
-    return this.integrityChecks
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-      .slice(0, limit);
+    // Sort by timestamp descending
+    const sortedChecks = this.integrityChecks.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    
+    // Apply limit
+    return sortedChecks.slice(0, limit);
   }
 }
 
 // Create and export the storage instance
-export const storage = new SecureMemoryStorage();
+export const memoryStorage = new MemoryStorage();
