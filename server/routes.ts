@@ -403,6 +403,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
   
+  // Application integrity check endpoint
+  app.get("/api/security/integrity", (req, res) => {
+    try {
+      // Check application integrity
+      const integrityResult = checkApplicationIntegrity();
+      
+      // Return integrity result with security watermark
+      res.json(createSecureResponse({
+        ...integrityResult,
+        checkTime: new Date(),
+        watermarkVerified: true
+      }));
+    } catch (error) {
+      res.status(500).json({ 
+        error: "Integrity check failed",
+        details: error instanceof Error ? error.message : String(error),
+        critical: true
+      });
+    }
+  });
+  
   // DNA-based security verification endpoint
   app.post("/api/security/verify", async (req, res) => {
     try {

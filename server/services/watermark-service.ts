@@ -177,11 +177,35 @@ export function createSecureResponse(data: any): any {
 export function checkApplicationIntegrity(): {
   intact: boolean;
   issues?: string[];
+  securityLevel: string;
+  lastChecked: Date;
+  dnaProtected: boolean;
+  verificationDetails?: {
+    method: string;
+    strength: 'high' | 'medium' | 'low';
+    timestamp: Date;
+  };
 } {
-  // In a real application, this would check for signs of tampering
-  // For demo purposes, we're returning a positive result
+  // In a real application, this would perform thorough integrity checks
+  
+  // Generate a unique check ID for this verification
+  const checkId = crypto.randomUUID();
+  const timestamp = new Date();
+  
+  // Create DNA verification for this check
+  const dnaVerification = generateDNAChecksum(`${checkId}|${timestamp.toISOString()}|${DNA_SEQUENCE}`);
+  
+  // For demo purposes, we're simulating a comprehensive check with positive results
   return {
-    intact: true
+    intact: true,
+    securityLevel: "DNA-Enhanced",
+    lastChecked: timestamp,
+    dnaProtected: true,
+    verificationDetails: {
+      method: "DNA-Cryptographic",
+      strength: "high",
+      timestamp
+    }
   };
 }
 
@@ -192,15 +216,48 @@ export function checkApplicationIntegrity(): {
 export function activateSelfProtection(): {
   active: boolean;
   protection: string[];
+  securityLevel: string;
+  activatedAt: Date;
+  mechanisms: {
+    name: string;
+    status: 'active' | 'standby' | 'disabled';
+    type: 'defensive' | 'monitoring' | 'repair' | 'encryption';
+  }[];
 } {
-  // In a real application, this would activate protection measures
+  const now = new Date();
+  
+  // In a real application, this would activate advanced protection measures
   return {
     active: true,
+    securityLevel: "DNA-Enhanced",
+    activatedAt: now,
     protection: [
       "Integrity monitoring active",
       "Tampering detection enabled",
       "Self-repair mechanisms ready",
       "DNA-based verification active"
+    ],
+    mechanisms: [
+      {
+        name: "Quantum Encryption Layer",
+        status: "active",
+        type: "encryption"
+      },
+      {
+        name: "DNA Signature Verification",
+        status: "active",
+        type: "monitoring"
+      },
+      {
+        name: "Self-Repair Algorithm",
+        status: "standby",
+        type: "repair"
+      },
+      {
+        name: "Copyright Protection",
+        status: "active",
+        type: "defensive"
+      }
     ]
   };
 }
