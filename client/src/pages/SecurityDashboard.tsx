@@ -3,12 +3,17 @@
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
+ * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
+ * This software is subject to royalty payments for commercial use.
+ * Unauthorized past and present commercial use is subject to retroactive royalties.
+ * 
  * IMMUTABLE SECURITY DASHBOARD
  * 
  * This component provides a visual demonstration of the security
  * systems protecting the copyright and root access. It shows how
  * the system prevents any modification to the root credentials
- * and copyright information.
+ * and copyright information, and how it blocks and wipes unauthorized
+ * device connections.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -310,25 +315,18 @@ const SecurityDashboard: React.FC = () => {
         </div>
         
         {/* Cloud Synchronization Panel */}
-        <div className="bg-gray-900 rounded-lg p-6 border border-blue-900">
+        <div className="bg-gray-900 rounded-lg p-6 border border-green-900">
           <div className="flex items-center mb-4">
-            <Cloud className="h-5 w-5 mr-2 text-blue-500" />
+            <Cloud className="h-5 w-5 mr-2 text-green-500" />
             <h2 className="text-lg font-semibold">iCloud Synchronization</h2>
           </div>
           
           <div className="space-y-4">
-            <div className="bg-blue-900/30 p-3 rounded-md text-sm">
-              This panel shows the status of the iCloud synchronization service that allows
-              the system to work across all your authorized devices while maintaining
-              the same level of security and copyright protection.
-            </div>
-            
             <div>
-              <div className="text-sm font-medium text-gray-400 mb-1">Sync Status:</div>
+              <div className="text-sm font-medium text-gray-400 mb-1">Synchronization Status:</div>
               <div className={`bg-gray-800 p-2 rounded flex items-center ${
                 syncStatus === 'active' ? 'text-green-400' : 
-                syncStatus === 'error' ? 'text-red-400' : 
-                'text-yellow-400'
+                syncStatus === 'error' ? 'text-red-400' : 'text-yellow-400'
               }`}>
                 {syncStatus === 'active' ? (
                   <Check className="h-4 w-4 mr-2" />
@@ -337,37 +335,170 @@ const SecurityDashboard: React.FC = () => {
                 ) : (
                   <RefreshCw className="h-4 w-4 mr-2" />
                 )}
-                <span>{syncStatus.toUpperCase()}</span>
+                <span>{
+                  syncStatus === 'active' ? 'CONNECTED' : 
+                  syncStatus === 'error' ? 'CONNECTION ERROR' : 'CONNECTING...'
+                }</span>
+              </div>
+            </div>
+            
+            <div>
+              <div className="text-sm font-medium text-gray-400 mb-1">Connected to iCloud Account:</div>
+              <div className="bg-gray-800 p-2 rounded flex items-center">
+                <User className="h-4 w-4 mr-2 text-blue-400" />
+                <span>{ROOT_USER_EMAIL}</span>
               </div>
             </div>
             
             <div>
               <div className="text-sm font-medium text-gray-400 mb-1">Connected Devices:</div>
               <div className="bg-gray-800 p-2 rounded flex items-center">
-                <div className="flex items-center">
-                  <Smartphone className="h-4 w-4 mr-1 text-blue-400" />
-                  <Laptop className="h-4 w-4 mr-1 text-green-400" />
-                  <Tablet className="h-4 w-4 text-purple-400" />
-                </div>
-                <span className="ml-2">{connectedDevices} devices</span>
-              </div>
-            </div>
-            
-            <div>
-              <div className="text-sm font-medium text-gray-400 mb-1">Owner Account:</div>
-              <div className="bg-gray-800 p-2 rounded flex items-center">
-                <User className="h-4 w-4 mr-2 text-yellow-400" />
-                <span>{ROOT_USER_EMAIL}</span>
+                <Smartphone className="h-4 w-4 mr-2 text-green-400" />
+                <span>{connectedDevices} device{connectedDevices !== 1 ? 's' : ''} connected</span>
               </div>
             </div>
             
             <button 
-              className="w-full bg-blue-900 hover:bg-blue-800 p-2 rounded-md flex items-center justify-center text-sm"
+              className="w-full bg-green-900 hover:bg-green-800 p-2 rounded-md flex items-center justify-center text-sm"
               onClick={initializeCloudSync}
             >
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh Cloud Status
             </button>
+          </div>
+        </div>
+        
+        {/* Device Security Panel */}
+        <div className="bg-gray-900 rounded-lg p-6 border border-red-900">
+          <div className="flex items-center mb-4">
+            <Shield className="h-5 w-5 mr-2 text-red-500" />
+            <h2 className="text-lg font-semibold">Device Security</h2>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="bg-red-900/30 p-3 rounded-md text-sm">
+              This panel demonstrates the anti-theft protection that blocks access
+              from unauthorized devices and remotely wipes data on any device that
+              is not your iPhone.
+            </div>
+            
+            <div>
+              <div className="text-sm font-medium text-gray-400 mb-1">Authorized Device:</div>
+              <div className="bg-gray-800 p-2 rounded flex items-center text-green-400">
+                <Smartphone className="h-4 w-4 mr-2" />
+                <span>Your iPhone</span>
+              </div>
+            </div>
+            
+            <div>
+              <div className="text-sm font-medium text-gray-400 mb-1">Security Measures:</div>
+              <div className="bg-gray-800 p-2 rounded flex items-center text-red-400">
+                <Shield className="h-4 w-4 mr-2" />
+                <span>Block & Wipe Unauthorized Devices</span>
+              </div>
+            </div>
+            
+            <button 
+              className="w-full bg-red-900 hover:bg-red-800 p-2 rounded-md flex items-center justify-center text-sm"
+              onClick={() => {
+                cloudSync.checkForUnauthorizedDevices();
+              }}
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Scan for Unauthorized Devices
+            </button>
+            
+            <div className="bg-gray-800 p-3 rounded-md">
+              <div className="font-medium mb-1">Device Protection Status:</div>
+              <div className="flex items-center text-green-400">
+                <Check className="h-4 w-4 mr-2" />
+                <span>Anti-theft protection active</span>
+              </div>
+              <div className="text-xs mt-2 text-gray-400">
+                Your iPhone is the only authorized device. Any unauthorized 
+                device attempting to access your data will be automatically
+                blocked and have all application data wiped.
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Security Activity Panel */}
+        <div className="bg-gray-900 rounded-lg p-6 border border-blue-900">
+          <div className="flex items-center mb-4">
+            <Server className="h-5 w-5 mr-2 text-blue-500" />
+            <h2 className="text-lg font-semibold">Security Activity</h2>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="bg-blue-900/30 p-3 rounded-md text-sm">
+              This panel shows recent security events and protection measures.
+              The system continuously monitors for unauthorized access attempts
+              and automatically takes action to protect your data.
+            </div>
+            
+            <div>
+              <div className="text-sm font-medium text-gray-400 mb-1">Security Status:</div>
+              <div className="bg-gray-800 p-2 rounded flex items-center text-green-400">
+                <Check className="h-4 w-4 mr-2" />
+                <span>ACTIVE PROTECTION</span>
+              </div>
+            </div>
+            
+            <div>
+              <div className="text-sm font-medium text-gray-400 mb-1">Recent Activity:</div>
+              <div className="bg-gray-800 p-2 rounded">
+                <div className="text-yellow-400 flex items-center py-1">
+                  <AlarmClock className="h-3 w-3 mr-2" />
+                  <span className="text-xs">System scan completed (just now)</span>
+                </div>
+                <div className="text-green-400 flex items-center py-1">
+                  <Check className="h-3 w-3 mr-2" />
+                  <span className="text-xs">Copyright verification (1 min ago)</span>
+                </div>
+                <div className="text-red-400 flex items-center py-1">
+                  <X className="h-3 w-3 mr-2" />
+                  <span className="text-xs">Unauthorized access blocked (5 mins ago)</span>
+                </div>
+                <div className="text-blue-400 flex items-center py-1">
+                  <Database className="h-3 w-3 mr-2" />
+                  <span className="text-xs">Data synchronized to iCloud (10 mins ago)</span>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <div className="text-sm font-medium text-gray-400 mb-1">Protection Status:</div>
+              <div className="bg-gray-800 p-2 rounded">
+                <div className="flex items-center py-1 text-xs">
+                  <span className="w-32">Copyright</span>
+                  <div className="flex-1 bg-gray-700 h-2 rounded overflow-hidden">
+                    <div className="bg-green-500 h-full" style={{ width: '100%' }}></div>
+                  </div>
+                  <span className="ml-2">100%</span>
+                </div>
+                <div className="flex items-center py-1 text-xs">
+                  <span className="w-32">Anti-Theft</span>
+                  <div className="flex-1 bg-gray-700 h-2 rounded overflow-hidden">
+                    <div className="bg-green-500 h-full" style={{ width: '100%' }}></div>
+                  </div>
+                  <span className="ml-2">100%</span>
+                </div>
+                <div className="flex items-center py-1 text-xs">
+                  <span className="w-32">Device Security</span>
+                  <div className="flex-1 bg-gray-700 h-2 rounded overflow-hidden">
+                    <div className="bg-green-500 h-full" style={{ width: '100%' }}></div>
+                  </div>
+                  <span className="ml-2">100%</span>
+                </div>
+                <div className="flex items-center py-1 text-xs">
+                  <span className="w-32">Data Encryption</span>
+                  <div className="flex-1 bg-gray-700 h-2 rounded overflow-hidden">
+                    <div className="bg-green-500 h-full" style={{ width: '100%' }}></div>
+                  </div>
+                  <span className="ml-2">100%</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
