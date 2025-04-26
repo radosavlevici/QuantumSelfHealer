@@ -425,6 +425,14 @@ class CloudSyncService {
   public hasRootAccess(): boolean {
     return this.config.rootAccess && this.config.ownerEmail === IMMUTABLE_COPYRIGHT_EMAIL;
   }
+
+  /**
+   * Get the user's email address (always returns the copyright owner's email)
+   * This is used to verify identity when connecting to quantum services
+   */
+  public getUserEmail(): string {
+    return IMMUTABLE_COPYRIGHT_EMAIL; // Always returns ervin210@icloud.com
+  }
 }
 
 // Export the singleton instance
