@@ -47,6 +47,9 @@ import {
 // Import cloud synchronization service
 import { cloudSync } from '../lib/cloud-sync-service';
 
+// Import device security service
+import { deviceSecurity, DeviceSecurityLevel, type UnauthorizedDevice } from '../lib/device-security-service';
+
 // Security Dashboard Component
 const SecurityDashboard: React.FC = () => {
   const [verificationStatus, setVerificationStatus] = useState<boolean>(true);
@@ -65,6 +68,7 @@ const SecurityDashboard: React.FC = () => {
   });
   const [syncStatus, setSyncStatus] = useState<'active' | 'inactive' | 'error'>('inactive');
   const [connectedDevices, setConnectedDevices] = useState<number>(0);
+  const [unauthorizedDevices, setUnauthorizedDevices] = useState<UnauthorizedDevice[]>([]);
   
   // Run verification on mount
   useEffect(() => {
@@ -82,8 +86,13 @@ const SecurityDashboard: React.FC = () => {
     // Set up continuous verification
     const interval = setInterval(verify, 30000);
     
-    // Initialize cloud sync
+    // Initialize cloud sync and device security
     initializeCloudSync();
+    
+    // Load any existing unauthorized devices
+    setTimeout(() => {
+      getUnauthorizedDevices();
+    }, 1000);
     
     return () => clearInterval(interval);
   }, []);
@@ -97,10 +106,34 @@ const SecurityDashboard: React.FC = () => {
       if (success) {
         const devices = cloudSync.getConnectedDevices();
         setConnectedDevices(devices.length);
+        
+        // Initialize device security and check for unauthorized devices
+        await deviceSecurity.initialize();
+        checkForUnauthorizedDevices();
       }
     } catch (error) {
       setSyncStatus('error');
       console.error("Failed to initialize cloud sync:", error);
+    }
+  };
+  
+  // Check for unauthorized devices
+  const checkForUnauthorizedDevices = async () => {
+    try {
+      const devices = await deviceSecurity.scanForUnauthorizedDevices();
+      setUnauthorizedDevices(devices);
+    } catch (error) {
+      console.error("Failed to scan for unauthorized devices:", error);
+    }
+  };
+  
+  // Get the existing unauthorized devices
+  const getUnauthorizedDevices = () => {
+    try {
+      const devices = deviceSecurity.getUnauthorizedDevices();
+      setUnauthorizedDevices(devices);
+    } catch (error) {
+      console.error("Failed to get unauthorized devices:", error);
     }
   };
   
@@ -400,9 +433,7 @@ const SecurityDashboard: React.FC = () => {
             
             <button 
               className="w-full bg-red-900 hover:bg-red-800 p-2 rounded-md flex items-center justify-center text-sm"
-              onClick={() => {
-                cloudSync.checkForUnauthorizedDevices();
-              }}
+              onClick={checkForUnauthorizedDevices}
             >
               <RefreshCw className="h-4 w-4 mr-2" />
               Scan for Unauthorized Devices
@@ -420,6 +451,28 @@ const SecurityDashboard: React.FC = () => {
                 blocked and have all application data wiped.
               </div>
             </div>
+            
+            {unauthorizedDevices.length > 0 && (
+              <div className="bg-red-900/20 p-3 rounded-md border border-red-900 mt-3">
+                <div className="font-medium mb-2 text-red-400">Blocked Unauthorized Devices:</div>
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {unauthorizedDevices.map((device, index) => (
+                    <div key={index} className="bg-gray-800 p-2 rounded text-xs">
+                      <div className="flex justify-between items-center mb-1">
+                        <div className="font-medium">{device.name}</div>
+                        <div className="text-red-400 text-[10px] uppercase">Blocked & Wiped</div>
+                      </div>
+                      <div className="text-gray-400 flex flex-col">
+                        <div>ID: {device.id}</div>
+                        <div>Type: {device.type}</div>
+                        <div>Last attempt: {formatTimestamp(device.lastAttempt)}</div>
+                        {device.ipAddress && <div>IP: {device.ipAddress}</div>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
         {/* Security Activity Panel */}
