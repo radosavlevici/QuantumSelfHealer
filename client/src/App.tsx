@@ -54,6 +54,7 @@ import { DNACopyrightWatermark } from './components/ui/DNACopyrightWatermark';
 import HomePage from './pages/HomePage';
 import TerminalPage from './pages/TerminalPage';
 import QuantumPage from './pages/QuantumPage';
+import QuantumTerminal from './pages/QuantumTerminal';
 import NotFound from './pages/not-found';
 
 // Component identity constants
@@ -114,11 +115,12 @@ function App() {
               data-security-level="maximum"
             >
               <Toaster />
-              <main className="container mx-auto py-4 px-4">
+              <main className="container mx-auto py-0 px-0">
                 <Switch>
-                  <Route path="/" component={HomePage} />
+                  <Route path="/" component={QuantumTerminal} />
                   <Route path="/terminal" component={TerminalPage} />
                   <Route path="/quantum" component={QuantumPage} />
+                  <Route path="/home" component={HomePage} />
                   <Route component={NotFound} />
                 </Switch>
               </main>

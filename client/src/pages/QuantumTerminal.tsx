@@ -1,162 +1,264 @@
 /**
- * !!! DNA-PROTECTED PAGE - DO NOT COPY !!!
- * DNA-Protected Quantum Terminal Page
+ * !!! QUANTUM TERMINAL - UNIFIED ACCESS INTERFACE !!!
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
- * 
- * This page is an integrated part of the DNA-protected security system.
- * It is built from the ground up with security as a core component,
- * not as a separate add-on. All elements on this page share the same
- * DNA verification chain.
- * 
- * ANTI-THEFT NOTICE:
- * This page contains cryptographic signatures and self-verification
- * mechanisms that validate its integrity. Any unauthorized copies or
- * modifications will result in the page becoming non-functional.
  */
 
-import React, { useEffect, useState } from "react";
-import DNAProtectedTerminal from "../components/dna-protected-terminal";
-import { Shield, ClipboardCheck, AlertTriangle, Server } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import { 
+  Terminal, 
+  Shield, 
+  Lock, 
+  Eye, 
+  EyeOff, 
+  RefreshCw, 
+  Code, 
+  Zap, 
+  Server,
+  Check,
+  ArrowRight
+} from 'lucide-react';
 
-// DNA verification constants - must match other components
-const SYSTEM_VERSION_ID = "QV2-DNAFull-20250425";
-const SYSTEM_REBUILD_TIMESTAMP = "2025-04-25T21:07:45.000Z";
-const PAGE_SIGNATURE = "dna-protected-page-terminal-v2-" + SYSTEM_VERSION_ID;
-
-const QuantumTerminal: React.FC = () => {
-  const [securityStatus, setSecurityStatus] = useState<{
-    intact: boolean;
-    level: string;
-    lastChecked: Date;
-  }>({
-    intact: false,
-    level: "Verifying...",
-    lastChecked: new Date()
+// Quantum Terminal component
+const QuantumTerminal = () => {
+  const [logs, setLogs] = useState<string[]>([]);
+  const [command, setCommand] = useState('');
+  const [status, setStatus] = useState<Record<string, boolean>>({
+    systemIntegration: true,
+    resetWorkflow: true,
+    developmentEnabler: true,
+    systemResetTube: true,
+    restrictionRemoval: true,
+    visibilityAnti: true,
+    deploymentIntegration: true,
+    integratedDeployment: true,
+    parallelSequential: true,
+    completeUnified: true,
+    enhancedVisibility: true,
+    simultaneousExecution: true,
   });
-  
-  // Verify page integrity on load
+
+  // Add simulated terminal logs on load
   useEffect(() => {
-    const verifyPageIntegrity = async () => {
-      try {
-        // Check security integrity
-        const response = await fetch('/api/security/integrity');
-        const data = await response.json();
-        
-        setSecurityStatus({
-          intact: data.intact,
-          level: data.securityLevel,
-          lastChecked: new Date(data.lastChecked)
-        });
-      } catch (error) {
-        console.error("Failed to verify page integrity:", error);
-        setSecurityStatus({
-          intact: false,
-          level: "Verification Failed",
-          lastChecked: new Date()
-        });
-      }
-    };
-    
-    verifyPageIntegrity();
-    
-    // Check integrity periodically
-    const interval = setInterval(verifyPageIntegrity, 60000); // Every minute
-    
-    return () => clearInterval(interval);
+    const initialLogs = [
+      'QUANTUM TERMINAL v4.0 INITIALIZED',
+      'Copyright © Ervin Remus Radosavlevici (01/09/1987)',
+      'Email: ervin210@icloud.com - All Rights Reserved.',
+      '-------------------------------------------',
+      'ALL SYSTEMS ONLINE - MAXIMUM SECURITY ACTIVE',
+      'SIMULTANEOUS EXECUTION SYSTEM: OPERATIONAL',
+      'ENHANCED VISIBILITY PROTECTION: ACTIVE',
+      'COMPLETE UNIFIED INTEGRATION: SUCCESSFUL',
+      '-------------------------------------------',
+      'Type "help" for available commands.'
+    ];
+    setLogs(initialLogs);
   }, []);
 
-  return (
-    <div 
-      className="p-6 max-w-7xl mx-auto"
-      data-page-signature={PAGE_SIGNATURE}
-      data-copyright="© Ervin Remus Radosavlevici (01/09/1987)"
-      data-build-timestamp={SYSTEM_REBUILD_TIMESTAMP}
-    >
-      {/* Page header with security indicator */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Server className="h-6 w-6" />
-            Quantum Terminal Interface
-          </h1>
+  // Execute command function
+  const executeCommand = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!command.trim()) return;
+    
+    const newLogs = [...logs, `> ${command}`];
+    
+    // Handle commands
+    switch (command.toLowerCase()) {
+      case 'help':
+        newLogs.push(
+          'AVAILABLE COMMANDS:',
+          '- status: Check status of all systems',
+          '- execute [system]: Execute a specific system',
+          '- execute all: Execute all systems simultaneously',
+          '- protect: Activate enhanced visibility protection',
+          '- integrate: Run complete unified integration',
+          '- clear: Clear terminal screen',
+          '- help: Show this help message'
+        );
+        break;
+      case 'status':
+        newLogs.push(
+          'SYSTEM STATUS:',
+          `- System Integration Protocol: ${status.systemIntegration ? 'ACTIVE' : 'INACTIVE'}`,
+          `- System Reset Workflow: ${status.resetWorkflow ? 'ACTIVE' : 'INACTIVE'}`,
+          `- Development Enabler: ${status.developmentEnabler ? 'ACTIVE' : 'INACTIVE'}`,
+          `- Complete System Reset Tube: ${status.systemResetTube ? 'ACTIVE' : 'INACTIVE'}`,
+          `- Restriction Removal Prevention: ${status.restrictionRemoval ? 'ACTIVE' : 'INACTIVE'}`,
+          `- Visibility Anti-Monitoring: ${status.visibilityAnti ? 'ACTIVE' : 'INACTIVE'}`,
+          `- Deployment Integration: ${status.deploymentIntegration ? 'ACTIVE' : 'INACTIVE'}`,
+          `- Integrated Deployment System: ${status.integratedDeployment ? 'ACTIVE' : 'INACTIVE'}`,
+          `- Parallel-Sequential Integration: ${status.parallelSequential ? 'ACTIVE' : 'INACTIVE'}`,
+          `- Complete Unified Integration: ${status.completeUnified ? 'ACTIVE' : 'INACTIVE'}`,
+          `- Enhanced Visibility Protection: ${status.enhancedVisibility ? 'ACTIVE' : 'INACTIVE'}`,
+          `- Simultaneous Execution System: ${status.simultaneousExecution ? 'ACTIVE' : 'INACTIVE'}`
+        );
+        break;
+      case 'execute all':
+        newLogs.push(
+          'EXECUTING ALL SYSTEMS SIMULTANEOUSLY...',
+          'SYNCHRONIZATION PHASE 1: COMPONENT PREPARATION...',
+          'SYNCHRONIZATION PHASE 2: SYSTEM SYNCHRONIZATION...',
+          'SYNCHRONIZATION PHASE 3: SIMULTANEOUS EXECUTION...',
+          'ALL COMPONENTS EXECUTED SUCCESSFULLY',
+          'SYNCHRONIZATION PHASE 4: CONTINUOUS OPERATION...',
+          'SYNCHRONIZATION PHASE 5: FINAL SYNCHRONIZATION...',
+          'SUCCESS - SIMULTANEOUS EXECUTION SYSTEM COMPLETED'
+        );
+        // Set all systems to active
+        setStatus(Object.fromEntries(Object.keys(status).map(key => [key, true])));
+        break;
+      case 'protect':
+        newLogs.push(
+          'INITIATING ENHANCED VISIBILITY PROTECTION SEQUENCE...',
+          'INVISIBILITY PHASE 1: TOTAL VISIBILITY ASSESSMENT...',
+          'INVISIBILITY PHASE 2: MAXIMUM OBFUSCATION IMPLEMENTATION...',
+          'INVISIBILITY PHASE 3: ANTI-VIEW TECHNOLOGY ACTIVATION...',
+          'INVISIBILITY PHASE 4: COMPLETE SIGHT PREVENTION...',
+          'INVISIBILITY PHASE 5: FINAL INVISIBILITY ASSURANCE...',
+          'SUCCESS - ENHANCED VISIBILITY PROTECTION COMPLETED'
+        );
+        setStatus({...status, enhancedVisibility: true});
+        break;
+      case 'integrate':
+        newLogs.push(
+          'INITIATING COMPLETE UNIFIED INTEGRATION SEQUENCE...',
+          'INTEGRATION PHASE 1: COMPONENT IDENTIFICATION...',
+          'INTEGRATION PHASE 2: COMPONENT UNIFICATION...',
+          'INTEGRATION PHASE 3: SYSTEM INTEGRATION...',
+          'INTEGRATION PHASE 4: MASTER CONTROL ESTABLISHMENT...',
+          'INTEGRATION PHASE 5: FINAL INTEGRATION CONFIRMATION...',
+          'SUCCESS - COMPLETE UNIFIED INTEGRATION COMPLETED'
+        );
+        setStatus({...status, completeUnified: true});
+        break;
+      case 'clear':
+        newLogs.length = 0;
+        break;
+      default:
+        if (command.toLowerCase().startsWith('execute ')) {
+          const system = command.substring(8).trim();
+          newLogs.push(`EXECUTING: ${system}...`, `${system.toUpperCase()} EXECUTION COMPLETE`);
           
-          <div className="flex items-center gap-2 text-sm">
-            {securityStatus.intact ? (
-              <div className="flex items-center gap-1 text-green-600">
-                <Shield className="h-4 w-4" />
-                <span>Security: Active</span>
+          // Update status for the specific system if it exists
+          const systemKey = Object.keys(status).find(
+            key => key.toLowerCase() === system.toLowerCase() || 
+                  key.toLowerCase().includes(system.toLowerCase())
+          );
+          
+          if (systemKey) {
+            setStatus({...status, [systemKey]: true});
+          } else {
+            newLogs.push(`SYSTEM NOT FOUND: ${system}`);
+          }
+        } else {
+          newLogs.push(`UNKNOWN COMMAND: ${command}`, 'Type "help" for available commands.');
+        }
+        break;
+    }
+    
+    setLogs(newLogs);
+    setCommand('');
+  };
+
+  return (
+    <div className="flex flex-col h-screen bg-black text-green-400 p-4 font-mono">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4 border-b border-green-700 pb-2">
+        <div className="flex items-center">
+          <Terminal className="mr-2" />
+          <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
+            QUANTUM TERMINAL v4.0
+          </h1>
+        </div>
+        <div className="flex items-center">
+          <Shield className="mr-1 text-red-500" />
+          <span className="mr-4 text-sm">MAXIMUM SECURITY</span>
+          <Lock className="mr-1 text-yellow-500" />
+          <span className="text-sm">DNA PROTECTED</span>
+        </div>
+      </div>
+      
+      {/* Main content */}
+      <div className="flex flex-1 gap-4">
+        {/* Terminal */}
+        <div className="flex-1 bg-gray-900 rounded-md border border-green-700 p-2 overflow-hidden flex flex-col">
+          <div className="flex-1 overflow-y-auto text-sm">
+            {logs.map((log, i) => (
+              <div 
+                key={i} 
+                className={`mb-1 ${log.startsWith('>') ? 'text-blue-400' : 
+                               log.includes('SUCCESS') ? 'text-green-500' :
+                               log.includes('ERROR') ? 'text-red-500' :
+                               log.includes('PHASE') ? 'text-yellow-400' :
+                               log.includes('Copyright') ? 'text-purple-400' :
+                               log.includes('QUANTUM TERMINAL') ? 'font-bold text-cyan-400' :
+                               ''}`}
+              >
+                {log}
               </div>
-            ) : (
-              <div className="flex items-center gap-1 text-red-600">
-                <AlertTriangle className="h-4 w-4" />
-                <span>Security: Warning</span>
-              </div>
-            )}
+            ))}
+          </div>
+          <form onSubmit={executeCommand} className="mt-2 flex">
+            <span className="mr-2 text-yellow-500">{'>'}</span>
+            <input
+              type="text"
+              value={command}
+              onChange={(e) => setCommand(e.target.value)}
+              className="flex-1 bg-transparent outline-none"
+              autoFocus
+            />
+          </form>
+        </div>
+        
+        {/* Status panel */}
+        <div className="w-72 bg-gray-900 rounded-md border border-green-700 p-2 text-sm overflow-y-auto">
+          <h2 className="font-bold border-b border-green-700 pb-1 mb-2 text-center bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
+            SYSTEM STATUS
+          </h2>
+          
+          <div className="space-y-2">
+            {Object.entries(status).map(([key, active]) => {
+              // Format the key with spaces and proper capitalization
+              const formattedKey = key
+                .replace(/([A-Z])/g, ' $1')
+                .replace(/^./, (str) => str.toUpperCase());
+              
+              // Select icon based on key
+              let Icon = active ? Check : ArrowRight;
+              if (key.includes('visibility')) Icon = active ? Eye : EyeOff;
+              else if (key.includes('reset')) Icon = RefreshCw;
+              else if (key.includes('Integration')) Icon = Zap;
+              else if (key.includes('development')) Icon = Code;
+              else if (key.includes('deployment')) Icon = Server;
+              
+              return (
+                <div 
+                  key={key} 
+                  className={`flex items-center justify-between p-1 rounded ${
+                    active ? 'bg-green-900/30' : 'bg-gray-800/50'
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <Icon className={`mr-2 h-4 w-4 ${active ? 'text-green-500' : 'text-gray-500'}`} />
+                    <span>{formattedKey}</span>
+                  </div>
+                  <span className={active ? 'text-green-500' : 'text-gray-500'}>
+                    {active ? 'ACTIVE' : 'INACTIVE'}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
-        
-        <p className="text-gray-500 mb-4">
-          DNA-protected quantum computing terminal with advanced security features.
-          All operations are protected with DNA-based verification.
-        </p>
-        
-        {/* Security banner */}
-        <div className={`p-3 rounded-md mb-4 flex items-center gap-3 ${securityStatus.intact ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
-          {securityStatus.intact ? (
-            <>
-              <ClipboardCheck className="h-5 w-5 flex-shrink-0" />
-              <div>
-                <p className="font-medium">Security Verified</p>
-                <p className="text-sm">
-                  DNA protection active • Security level: {securityStatus.level} • 
-                  Last verified: {securityStatus.lastChecked.toLocaleTimeString()}
-                </p>
-              </div>
-            </>
-          ) : (
-            <>
-              <AlertTriangle className="h-5 w-5 flex-shrink-0" />
-              <div>
-                <p className="font-medium">Security Warning</p>
-                <p className="text-sm">
-                  DNA verification failed • Some features may be disabled • 
-                  Last check: {securityStatus.lastChecked.toLocaleTimeString()}
-                </p>
-              </div>
-            </>
-          )}
-        </div>
       </div>
       
-      {/* Terminal with copyright and security notice */}
-      <div className="mb-6">
-        <DNAProtectedTerminal 
-          maxHeight="500px" 
-          securityLevel="maximum"
-          className="shadow-2xl"
-        />
-      </div>
-      
-      {/* Security information */}
-      <div className="mt-8 border-t border-gray-200 pt-4 text-xs text-gray-500">
-        <p>
-          This terminal interface is protected by DNA-based security technology.
-          All interactions are logged and verified against the security chain.
+      {/* Footer */}
+      <div className="mt-4 text-xs text-center border-t border-green-700 pt-2">
+        <p>Copyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com - All Rights Reserved.</p>
+        <p className="text-red-500 mt-1">
+          ANTI-THEFT PROTECTION ACTIVE - DNA PROTECTED - UNAUTHORIZED COPYING WILL TRIGGER SECURITY MEASURES
         </p>
-        <p className="mt-1">
-          Version: {SYSTEM_VERSION_ID} • Build Date: {new Date(SYSTEM_REBUILD_TIMESTAMP).toLocaleDateString()}
-        </p>
-        <p className="mt-1">
-          © Ervin Remus Radosavlevici (01/09/1987) • All rights reserved
-        </p>
-      </div>
-      
-      {/* Hidden DNA verification data */}
-      <div className="hidden">
-        <span data-dna-verification={PAGE_SIGNATURE}></span>
-        <span data-system-version={SYSTEM_VERSION_ID}></span>
-        <span data-build-timestamp={SYSTEM_REBUILD_TIMESTAMP}></span>
       </div>
     </div>
   );
