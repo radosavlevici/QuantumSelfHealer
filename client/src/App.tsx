@@ -55,6 +55,7 @@ import HomePage from './pages/HomePage';
 import TerminalPage from './pages/TerminalPage';
 import QuantumPage from './pages/QuantumPage';
 import QuantumTerminal from './pages/QuantumTerminal';
+import QuantumNLPTerminal from './pages/QuantumNLPTerminal';
 import NotFound from './pages/not-found';
 
 // Component identity constants
@@ -118,6 +119,7 @@ function App() {
               <main className="container mx-auto py-0 px-0">
                 <Switch>
                   <Route path="/" component={QuantumTerminal} />
+                  <Route path="/nlp" component={QuantumNLPTerminal} />
                   <Route path="/terminal" component={TerminalPage} />
                   <Route path="/quantum" component={QuantumPage} />
                   <Route path="/home" component={HomePage} />

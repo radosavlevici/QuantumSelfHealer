@@ -17,7 +17,25 @@ import {
   Zap,
   Loader
 } from 'lucide-react';
-import { quantumNLP, NLPModel } from '../../quantum-natural-language';
+// Define NLP model enum temporarily until we set up proper imports
+enum NLPModel {
+  // OpenAI models
+  GPT4o = "gpt-4o",
+  GPT35Turbo = "gpt-3.5-turbo",
+  
+  // Anthropic models
+  Claude = "claude-3-7-sonnet-20250219",
+  
+  // Google models
+  Gemini = "gemini-1.5-pro",
+  
+  // Meta models
+  Llama = "llama-3-70b",
+  
+  // Combined approaches
+  Quantum = "quantum-nlp",
+  MegaQuantum = "mega-quantum-nlp"
+}
 
 // QuantumNLPTerminal component
 const QuantumNLPTerminal: React.FC = () => {
@@ -183,8 +201,8 @@ const QuantumNLPTerminal: React.FC = () => {
           ]);
           setIsProcessing(false);
         }, 1500);
-      } catch (error) {
-        setLogs(prev => [...prev, `ERROR: ${error.message}`]);
+      } catch (error: any) {
+        setLogs(prev => [...prev, `ERROR: ${error?.message || 'Unknown error occurred'}`]);
         setIsProcessing(false);
       }
       
