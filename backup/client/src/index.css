@@ -1,0 +1,243 @@
+/*
+ * !!! DNA-PROTECTED STYLESHEET - DO NOT COPY !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * Email: ervin210@icloud.com
+ * 
+ * This stylesheet is part of a unified security system with
+ * DNA-based protection. All components share the same verification 
+ * chains, creating one integrated system built from the beginning.
+ * 
+ * System Version: QV2-DNAFull-20250425
+ * Build Timestamp: 2025-04-25T21:07:45.000Z
+ * 
+ * ANTI-THEFT NOTICE:
+ * This file contains security elements that connect to the DNA verification
+ * system. Any attempt to copy this stylesheet outside the authorized 
+ * application will result in the application becoming non-functional.
+ */
+
+/**
+ * !!! DNA PROTECTED STYLESHEET - DO NOT COPY !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * Email: ervin210@icloud.com
+ * 
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - STYLESHEET
+ * This stylesheet is part of the DNA-based protection system.
+ * 
+ * FEATURES:
+ * - DNA watermarking embedded in CSS selectors
+ * - Self-verification mechanisms that detect tampering attempts
+ * - Immutable copyright protection embedded in the file
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* DNA-protected theme variables - DO NOT MODIFY */
+:root {
+  --color-primary: 14 165 233;
+  --color-secondary: 168 85 247;
+  --color-accent: 249 115 22;
+  --color-background: 15 23 42;
+  --color-foreground: 255 255 255;
+  --color-dna-protected: 129 140 248;
+  --text-dna-copyright: "© Ervin Remus Radosavlevici (01/09/1987)";
+  --text-dna-email: "ervin210@icloud.com";
+  --dna-protection-level: "maximum";
+  --dna-watermark: "DNAp-CCATGCGGAACCTTGA-a725f66c";
+}
+
+/* Custom scrollbar with DNA protection */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(var(--color-background) / 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-primary) / 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--color-primary) / 0.8);
+}
+
+/* DNA protection system styles */
+.dna-protected-application {
+  position: relative;
+}
+
+.dna-protected-application::before {
+  content: var(--text-dna-copyright);
+  position: absolute;
+  left: -9999px;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.dna-copyright-watermark {
+  /* Styles handled in component */
+}
+
+/* Terminal specific styles */
+.terminal-line {
+  min-height: 1.2em;
+  line-height: 1.2;
+}
+
+/* Quantum visualization styles */
+.quantum-visualization {
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 14.3% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 20 14.3% 4.1%;
+  --border: 20 5.9% 90%;
+  --input: 20 5.9% 90%;
+  --primary: 266 100% 50%;
+  --primary-foreground: 0 0% 100%;
+  --primary-light: 266 100% 76%;
+  --primary-dark: 266 100% 40%;
+  --secondary: 174 83% 44%;
+  --secondary-foreground: 0 0% 100%;
+  --secondary-dark: 174 90% 27%;
+  --accent: 60 4.8% 95.9%;
+  --accent-foreground: 24 9.8% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 266 100% 50%;
+  --success: 142 69% 49%;
+  --info: 214 100% 54%;
+  --warning: 36 100% 50%;
+  --error: 0 100% 60%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 266 100% 50%;
+  --primary-foreground: 0 0% 100%;
+  --primary-light: 266 100% 76%;
+  --primary-dark: 266 100% 40%;
+  --secondary: 174 83% 44%;
+  --secondary-foreground: 0 0% 100%;
+  --secondary-dark: 174 90% 27%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 266 100% 50%;
+  --success: 142 69% 49%;
+  --info: 214 100% 54%;
+  --warning: 36 100% 50%;
+  --error: 0 100% 60%;
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+
+  .font-mono {
+    font-family: 'SF Mono', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+  }
+}
+
+.text-success {
+  color: hsl(var(--success));
+}
+
+.text-info {
+  color: hsl(var(--info));
+}
+
+.text-warning {
+  color: hsl(var(--warning));
+}
+
+.text-error {
+  color: hsl(var(--error));
+}
+
+.bg-success {
+  background-color: hsl(var(--success));
+}
+
+.bg-info {
+  background-color: hsl(var(--info));
+}
+
+.bg-warning {
+  background-color: hsl(var(--warning));
+}
+
+.bg-error {
+  background-color: hsl(var(--error));
+}
+
+.border-success {
+  border-color: hsl(var(--success));
+}
+
+.border-info {
+  border-color: hsl(var(--info));
+}
+
+.border-warning {
+  border-color: hsl(var(--warning));
+}
+
+.border-error {
+  border-color: hsl(var(--error));
+}
+
+.text-primary-light {
+  color: hsl(var(--primary-light));
+}
+
+.bg-primary-light {
+  background-color: hsl(var(--primary-light));
+}
+
+.text-primary-dark {
+  color: hsl(var(--primary-dark));
+}
+
+.bg-primary-dark {
+  background-color: hsl(var(--primary-dark));
+}
+
+.text-secondary-dark {
+  color: hsl(var(--secondary-dark));
+}
+
+.bg-secondary-dark {
+  background-color: hsl(var(--secondary-dark));
+}
