@@ -1,300 +1,267 @@
-import { AIAssistantMessage, AIAssistantConversation } from "@/types";
+/**
+ * !!! DNA PROTECTED SERVICE - DO NOT COPY !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * Email: ervin210@icloud.com
+ * 
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - AI SERVICE INTERFACE
+ * Front-end interface for interacting with the OpenAI service backend.
+ * 
+ * FEATURES:
+ * - Secure AI completions with DNA watermarking
+ * - Self-protecting API calls
+ * - Image generation with copyright protection
+ * - Audio transcription with security verification
+ * 
+ * ANTI-THEFT NOTICE:
+ * This component is part of a unified integrated security system with
+ * DNA-based verification. All components are built together as one
+ * single unit from the beginning.
+ */
 
-const AI_STORAGE_KEY = "quantum-ai-conversations";
+import axios from 'axios';
+import { 
+  IMMUTABLE_COPYRIGHT_OWNER,
+  IMMUTABLE_COPYRIGHT_EMAIL,
+  IMMUTABLE_SYSTEM_VERSION,
+  generateDNASignature,
+  validateDNASignature
+} from './dna-security-core';
+import { registerProtectedComponent } from './dna-protection-system';
 
-// Helper to save conversations to local storage
-function saveConversations(conversations: AIAssistantConversation[]): void {
-  try {
-    localStorage.setItem(AI_STORAGE_KEY, JSON.stringify(conversations));
-  } catch (error) {
-    console.error("Error saving AI conversations:", error);
-  }
+// Register this component with the DNA protection system
+const componentId = 'ai-service-client';
+const serviceProtection = registerProtectedComponent(
+  componentId, 
+  'client-service'
+);
+
+// API endpoints
+const AI_COMPLETION_ENDPOINT = '/api/ai/completion';
+const AI_IMAGE_ENDPOINT = '/api/ai/image';
+const AI_TRANSCRIPTION_ENDPOINT = '/api/ai/transcription';
+
+/**
+ * Interface for AI completion parameters
+ */
+export interface AICompletionParams {
+  prompt: string;
+  model?: string;
+  maxTokens?: number;
+  temperature?: number;
+  systemPrompt?: string;
 }
 
-// Helper to load conversations from local storage
-function loadConversations(): AIAssistantConversation[] {
+/**
+ * Interface for AI completion result
+ */
+export interface AICompletionResult {
+  id: string;
+  text: string;
+  model: string;
+  usage: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+  createdAt: string;
+  dnaSignature: string;
+  watermark: string;
+  verificationChain: string;
+}
+
+/**
+ * Generate an AI completion using the OpenAI service
+ * @param params AI completion parameters
+ * @returns Promise resolving to the AI completion result
+ */
+export async function generateAICompletion(
+  params: AICompletionParams
+): Promise<AICompletionResult> {
   try {
-    const saved = localStorage.getItem(AI_STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      
-      // Convert string dates to Date objects
-      return parsed.map((conv: any) => ({
-        ...conv,
-        createdAt: new Date(conv.createdAt),
-        updatedAt: new Date(conv.updatedAt),
-        messages: conv.messages.map((msg: any) => ({
-          ...msg,
-          timestamp: new Date(msg.timestamp)
-        }))
-      }));
+    // Generate a secure client-side signature for the request
+    const requestId = `ai-req-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const clientSignature = generateDNASignature(requestId, 'ai-request');
+    
+    // Make the API request
+    const response = await axios.post(AI_COMPLETION_ENDPOINT, {
+      ...params,
+      clientSignature,
+      clientWatermark: serviceProtection.watermark,
+      timestamp: new Date().toISOString()
+    });
+    
+    const result = response.data;
+    
+    // Validate the DNA signature of the response
+    if (!validateDNASignature(result.dnaSignature, result.id, 'ai-completion')) {
+      throw new Error('AI completion response failed DNA signature validation');
     }
+    
+    // Return the validated result
+    return result;
   } catch (error) {
-    console.error("Error loading AI conversations:", error);
-  }
-  
-  return [];
-}
-
-// Creates a new conversation
-export async function createConversation(title: string = "New Conversation"): Promise<AIAssistantConversation> {
-  try {
-    // Create locally first for immediate feedback
-    const newConversation: AIAssistantConversation = {
-      id: crypto.randomUUID(),
-      title,
-      messages: [
-        {
-          id: crypto.randomUUID(),
-          role: "system",
-          content: "I am Quantum AI, an advanced artificial intelligence assistant with quantum computing capabilities. How can I help you today?",
-          timestamp: new Date()
-        }
-      ],
-      createdAt: new Date(),
-      updatedAt: new Date()
+    console.error('AI completion error:', error);
+    
+    // Return a protected error result
+    return {
+      id: `error-${Date.now()}`,
+      text: `AI completion failed: ${error.message}`,
+      model: 'error',
+      usage: {
+        promptTokens: 0,
+        completionTokens: 0,
+        totalTokens: 0
+      },
+      createdAt: new Date().toISOString(),
+      dnaSignature: generateDNASignature(`error-${Date.now()}`, 'ai-completion'),
+      watermark: serviceProtection.watermark,
+      verificationChain: 'error'
     };
-    
-    // Add to stored conversations
-    const conversations = loadConversations();
-    conversations.unshift(newConversation);
-    saveConversations(conversations);
-    
-    // Also try to sync with server
-    try {
-      const response = await fetch("/api/assistant/conversations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title }),
-        credentials: "include"
-      });
-      
-      if (response.ok) {
-        const serverConversation = await response.json();
-        // Update local storage with server data
-        const updatedConversations = loadConversations().map(c => 
-          c.id === newConversation.id ? {
-            ...serverConversation,
-            createdAt: new Date(serverConversation.createdAt),
-            updatedAt: new Date(serverConversation.updatedAt),
-            messages: serverConversation.messages.map((msg: any) => ({
-              ...msg,
-              timestamp: new Date(msg.timestamp)
-            }))
-          } : c
-        );
-        saveConversations(updatedConversations);
-        return serverConversation;
-      }
-    } catch (error) {
-      console.error("Error syncing conversation with server:", error);
-    }
-    
-    return newConversation;
-  } catch (error) {
-    console.error("Error creating conversation:", error);
-    throw error;
   }
 }
 
-// Gets all conversations
-export async function getConversations(): Promise<AIAssistantConversation[]> {
-  try {
-    // Try to fetch from server first
-    try {
-      const response = await fetch("/api/assistant/conversations", {
-        credentials: "include"
-      });
-      
-      if (response.ok) {
-        const serverConversations = await response.json();
-        
-        // Format and save to local storage
-        const formatted = serverConversations.map((conv: any) => ({
-          ...conv,
-          createdAt: new Date(conv.createdAt),
-          updatedAt: new Date(conv.updatedAt),
-          messages: conv.messages.map((msg: any) => ({
-            ...msg,
-            timestamp: new Date(msg.timestamp)
-          }))
-        }));
-        
-        saveConversations(formatted);
-        return formatted;
-      }
-    } catch (error) {
-      console.error("Error fetching conversations from server:", error);
-    }
-    
-    // Fall back to local storage
-    return loadConversations();
-  } catch (error) {
-    console.error("Error getting conversations:", error);
-    throw error;
-  }
+/**
+ * Interface for AI image generation parameters
+ */
+export interface AIImageGenerationParams {
+  prompt: string;
+  size?: '256x256' | '512x512' | '1024x1024' | '1792x1024' | '1024x1792';
+  style?: 'vivid' | 'natural';
+  quality?: 'standard' | 'hd';
 }
 
-// Sends a message in a conversation
-export async function sendMessage(
-  conversationId: string, 
-  content: string
-): Promise<AIAssistantMessage> {
+/**
+ * Interface for AI image generation result
+ */
+export interface AIImageGenerationResult {
+  id: string;
+  url: string;
+  prompt: string;
+  createdAt: string;
+  dnaSignature: string;
+  watermark: string;
+  verificationChain: string;
+}
+
+/**
+ * Generate an image using the OpenAI DALL-E service
+ * @param params AI image generation parameters
+ * @returns Promise resolving to the AI image generation result
+ */
+export async function generateAIImage(
+  params: AIImageGenerationParams
+): Promise<AIImageGenerationResult> {
   try {
-    // Add user message locally for immediate feedback
-    const userMessage: AIAssistantMessage = {
-      id: crypto.randomUUID(),
-      role: "user",
-      content,
-      timestamp: new Date()
+    // Generate a secure client-side signature for the request
+    const requestId = `img-req-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const clientSignature = generateDNASignature(requestId, 'image-request');
+    
+    // Make the API request
+    const response = await axios.post(AI_IMAGE_ENDPOINT, {
+      ...params,
+      clientSignature,
+      clientWatermark: serviceProtection.watermark,
+      timestamp: new Date().toISOString()
+    });
+    
+    const result = response.data;
+    
+    // Validate the DNA signature of the response
+    if (!validateDNASignature(result.dnaSignature, result.id, 'ai-image')) {
+      throw new Error('AI image generation response failed DNA signature validation');
+    }
+    
+    // Return the validated result
+    return result;
+  } catch (error) {
+    console.error('AI image generation error:', error);
+    
+    // Return a protected error result
+    return {
+      id: `error-${Date.now()}`,
+      url: '',
+      prompt: params.prompt,
+      createdAt: new Date().toISOString(),
+      dnaSignature: generateDNASignature(`error-${Date.now()}`, 'ai-image'),
+      watermark: serviceProtection.watermark,
+      verificationChain: 'error'
     };
-    
-    // Update conversation in local storage
-    const conversations = loadConversations();
-    const conversationIndex = conversations.findIndex(c => c.id === conversationId);
-    
-    if (conversationIndex === -1) {
-      throw new Error("Conversation not found");
-    }
-    
-    conversations[conversationIndex].messages.push(userMessage);
-    conversations[conversationIndex].updatedAt = new Date();
-    saveConversations(conversations);
-    
-    // Send to server for AI response
-    try {
-      const response = await fetch(`/api/assistant/conversations/${conversationId}/message`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content }),
-        credentials: "include"
-      });
-      
-      if (response.ok) {
-        const aiResponse = await response.json();
-        
-        // Add AI response to local storage
-        const aiMessage: AIAssistantMessage = {
-          id: aiResponse.id,
-          role: "assistant",
-          content: aiResponse.content,
-          timestamp: new Date(aiResponse.timestamp)
-        };
-        
-        const updatedConversations = loadConversations();
-        const updatedIndex = updatedConversations.findIndex(c => c.id === conversationId);
-        
-        if (updatedIndex !== -1) {
-          updatedConversations[updatedIndex].messages.push(aiMessage);
-          updatedConversations[updatedIndex].updatedAt = new Date();
-          saveConversations(updatedConversations);
-        }
-        
-        return aiMessage;
-      } else {
-        // If server request fails, add a fallback AI message
-        const fallbackMessage: AIAssistantMessage = {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          content: "I'm having trouble connecting to my quantum processing backend. Please try again later.",
-          timestamp: new Date()
-        };
-        
-        const updatedConversations = loadConversations();
-        const updatedIndex = updatedConversations.findIndex(c => c.id === conversationId);
-        
-        if (updatedIndex !== -1) {
-          updatedConversations[updatedIndex].messages.push(fallbackMessage);
-          updatedConversations[updatedIndex].updatedAt = new Date();
-          saveConversations(updatedConversations);
-        }
-        
-        return fallbackMessage;
-      }
-    } catch (error) {
-      console.error("Error sending message to server:", error);
-      
-      // Add fallback AI response for offline scenario
-      const fallbackMessage: AIAssistantMessage = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: "I'm currently working in offline mode due to connectivity issues. My responses will be limited until connection is restored.",
-        timestamp: new Date()
-      };
-      
-      const updatedConversations = loadConversations();
-      const updatedIndex = updatedConversations.findIndex(c => c.id === conversationId);
-      
-      if (updatedIndex !== -1) {
-        updatedConversations[updatedIndex].messages.push(fallbackMessage);
-        updatedConversations[updatedIndex].updatedAt = new Date();
-        saveConversations(updatedConversations);
-      }
-      
-      return fallbackMessage;
-    }
-  } catch (error) {
-    console.error("Error sending message:", error);
-    throw error;
   }
 }
 
-// Deletes a conversation
-export async function deleteConversation(conversationId: string): Promise<void> {
-  try {
-    // Remove from local storage first
-    const conversations = loadConversations();
-    const updatedConversations = conversations.filter(c => c.id !== conversationId);
-    saveConversations(updatedConversations);
-    
-    // Try to sync with server
-    try {
-      await fetch(`/api/assistant/conversations/${conversationId}`, {
-        method: "DELETE",
-        credentials: "include"
-      });
-    } catch (error) {
-      console.error("Error deleting conversation from server:", error);
-    }
-  } catch (error) {
-    console.error("Error deleting conversation:", error);
-    throw error;
-  }
+/**
+ * Interface for AI audio transcription parameters
+ */
+export interface AITranscriptionParams {
+  audioFile: File;
+  language?: string;
+  prompt?: string;
 }
 
-// Gets a conversation by ID
-export async function getConversation(conversationId: string): Promise<AIAssistantConversation | null> {
+/**
+ * Interface for AI audio transcription result
+ */
+export interface AITranscriptionResult {
+  id: string;
+  text: string;
+  language: string;
+  durationSeconds?: number;
+  createdAt: string;
+  dnaSignature: string;
+  watermark: string;
+  verificationChain: string;
+}
+
+/**
+ * Transcribe audio using the OpenAI Whisper service
+ * @param params AI audio transcription parameters
+ * @returns Promise resolving to the AI transcription result
+ */
+export async function transcribeAudio(
+  params: AITranscriptionParams
+): Promise<AITranscriptionResult> {
   try {
-    // Try to fetch from server first
-    try {
-      const response = await fetch(`/api/assistant/conversations/${conversationId}`, {
-        credentials: "include"
-      });
-      
-      if (response.ok) {
-        const serverConversation = await response.json();
-        
-        return {
-          ...serverConversation,
-          createdAt: new Date(serverConversation.createdAt),
-          updatedAt: new Date(serverConversation.updatedAt),
-          messages: serverConversation.messages.map((msg: any) => ({
-            ...msg,
-            timestamp: new Date(msg.timestamp)
-          }))
-        };
+    // Generate a secure client-side signature for the request
+    const requestId = `trans-req-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const clientSignature = generateDNASignature(requestId, 'transcription-request');
+    
+    // Create form data for the file upload
+    const formData = new FormData();
+    formData.append('audioFile', params.audioFile);
+    formData.append('language', params.language || 'en');
+    if (params.prompt) formData.append('prompt', params.prompt);
+    formData.append('clientSignature', clientSignature);
+    formData.append('clientWatermark', serviceProtection.watermark);
+    formData.append('timestamp', new Date().toISOString());
+    
+    // Make the API request
+    const response = await axios.post(AI_TRANSCRIPTION_ENDPOINT, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
       }
-    } catch (error) {
-      console.error("Error fetching conversation from server:", error);
+    });
+    
+    const result = response.data;
+    
+    // Validate the DNA signature of the response
+    if (!validateDNASignature(result.dnaSignature, result.id, 'ai-transcription')) {
+      throw new Error('AI transcription response failed DNA signature validation');
     }
     
-    // Fall back to local storage
-    const conversations = loadConversations();
-    const conversation = conversations.find(c => c.id === conversationId);
-    
-    return conversation || null;
+    // Return the validated result
+    return result;
   } catch (error) {
-    console.error("Error getting conversation:", error);
-    throw error;
+    console.error('AI transcription error:', error);
+    
+    // Return a protected error result
+    return {
+      id: `error-${Date.now()}`,
+      text: `Transcription failed: ${error.message}`,
+      language: 'en',
+      createdAt: new Date().toISOString(),
+      dnaSignature: generateDNASignature(`error-${Date.now()}`, 'ai-transcription'),
+      watermark: serviceProtection.watermark,
+      verificationChain: 'error'
+    };
   }
 }
