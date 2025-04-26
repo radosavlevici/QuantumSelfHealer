@@ -21,6 +21,7 @@ import { WebSocketServer } from 'ws';
 import cors from 'cors';
 import { registerRoutes } from './routes';
 import { getRootName, getRootEmail } from '../shared/dna-protection-system';
+import { AutomaticPaymentRerouting } from '../shared/automatic-payment-rerouting';
 
 // DNA Security Constants
 const COMPONENT_ID = `server-main-${Date.now()}`;
@@ -63,7 +64,7 @@ app.use(express.json());
 app.use(cors());
 
 // Centralized error handler with DNA verification
-app.use((err, req, res, next) => {
+app.use((err: any, req: any, res: any, next: any) => {
   console.error('Secure error handler:', err);
   res.status(500).json({
     error: 'An error occurred',

