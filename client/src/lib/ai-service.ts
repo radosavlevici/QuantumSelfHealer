@@ -547,44 +547,7 @@ This is a simulated response. In a real implementation, this would provide a det
     }
   }
   
-  /**
-   * Create a secure prompt with DNA watermarking
-   */
-  private createSecurePrompt(prompt: string, securityLevel: string): string {
-    const timestamp = new Date().toISOString();
-    const securityPrefix = `[SECURITY:${securityLevel.toUpperCase()}] [DNA:${aiDNASignature.substring(0, 10)}] [TS:${timestamp}]`;
-    
-    return `${securityPrefix}\n\n${prompt}`;
-  }
-  
-  /**
-   * Add copyright watermark to response
-   */
-  private addCopyrightWatermark(text: string): string {
-    return `${text}\n\n—\nCopyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com - All Rights Reserved.`;
-  }
-  
-  /**
-   * Get the default system message for AI models
-   */
-  private getDefaultSystemMessage(): string {
-    return `You are the Quantum Terminal AI Assistant, a secure DNA-protected system designed to help with quantum computing and system security tasks. You are part of a unified security system with DNA-based verification.
-
-Copyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com - All Rights Reserved.`;
-  }
-  
-  /**
-   * Get an enhanced system message for AI models
-   */
-  private getEnhancedSystemMessage(): string {
-    return `You are the Quantum Terminal AI Assistant v4.0, an advanced secure DNA-protected system designed to help with quantum computing, security analysis, and system optimization. You are part of a unified integrated security system with quantum-enhanced capabilities and DNA-based verification.
-
-When responding to queries, focus on providing accurate, technical information in a clear, concise manner suitable for a terminal interface. Format your responses appropriately for a terminal environment with code blocks, clear section headings, and structured information.
-
-For security-related queries, always prioritize maximum security principles and emphasize the importance of maintaining the integrity of the DNA protection system.
-
-Copyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com - All Rights Reserved.`;
-  }
+/* Copyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com - All Rights Reserved. */
 }
 
 // Export singleton instance
