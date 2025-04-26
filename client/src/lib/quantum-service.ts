@@ -203,10 +203,184 @@ async function executeCommand(userId: number, command: string): Promise<{
   }
 }
 
+/**
+ * Connect to IBM Quantum Computer using IBM Qiskit API
+ * This establishes a real connection to IBM's quantum computing services
+ */
+async function connectToIBMQuantum(): Promise<{
+  success: boolean;
+  response: string;
+  provider?: string;
+}> {
+  try {
+    const watermark = generateSecurityWatermark(`ibm-quantum-${Date.now()}`);
+    const dnaSignature = generateDNASignature(`ibm-quantum-${Date.now()}`, 'quantum-provider');
+    
+    // Connect to real IBM Quantum service
+    const response = await fetch('/api/quantum/ibm/connect', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        watermark,
+        dnaSignature,
+        copyrightOwner: IMMUTABLE_COPYRIGHT_OWNER,
+        timestamp: new Date().toISOString(),
+        iCloudUser: cloudSync.getUserEmail() 
+      })
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      
+      // Update IBM connection status
+      systemStatus.ibmConnected = true;
+      
+      return {
+        success: true,
+        response: `Successfully connected to IBM Quantum. Available qubits: ${result.qubits}`,
+        provider: 'IBM Quantum Experience'
+      };
+    } else {
+      return {
+        success: false,
+        response: 'Failed to connect to IBM Quantum service'
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      response: `IBM Quantum connection error: ${error instanceof Error ? error.message : 'Unknown error'}`
+    };
+  }
+}
+
+/**
+ * Connect to Azure Quantum Computer using Azure Quantum API
+ * This establishes a real connection to Microsoft's quantum computing services
+ */
+async function connectToAzureQuantum(): Promise<{
+  success: boolean;
+  response: string;
+  provider?: string;
+}> {
+  try {
+    const watermark = generateSecurityWatermark(`azure-quantum-${Date.now()}`);
+    const dnaSignature = generateDNASignature(`azure-quantum-${Date.now()}`, 'quantum-provider');
+    
+    // Connect to real Azure Quantum service
+    const response = await fetch('/api/quantum/azure/connect', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        watermark,
+        dnaSignature,
+        copyrightOwner: IMMUTABLE_COPYRIGHT_OWNER,
+        timestamp: new Date().toISOString(),
+        iCloudUser: cloudSync.getUserEmail()
+      })
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      
+      // Update Azure connection status
+      systemStatus.azureConnected = true;
+      
+      return {
+        success: true,
+        response: `Successfully connected to Azure Quantum. Available qubits: ${result.qubits}`,
+        provider: 'Microsoft Azure Quantum'
+      };
+    } else {
+      return {
+        success: false,
+        response: 'Failed to connect to Azure Quantum service'
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      response: `Azure Quantum connection error: ${error instanceof Error ? error.message : 'Unknown error'}`
+    };
+  }
+}
+
+/**
+ * Run a quantum circuit on a real quantum computer
+ * @param circuit Quantum circuit to run
+ * @param provider Quantum provider (IBM or Azure)
+ */
+async function runQuantumCircuit(
+  circuit: string,
+  provider: 'ibm' | 'azure'
+): Promise<{
+  success: boolean;
+  results?: any;
+  error?: string;
+}> {
+  try {
+    const watermark = generateSecurityWatermark(`quantum-circuit-${Date.now()}`);
+    
+    // Check if we're connected to the specified provider
+    if (provider === 'ibm' && !systemStatus.ibmConnected) {
+      return {
+        success: false,
+        error: 'Not connected to IBM Quantum. Please connect first.'
+      };
+    } else if (provider === 'azure' && !systemStatus.azureConnected) {
+      return {
+        success: false,
+        error: 'Not connected to Azure Quantum. Please connect first.'
+      };
+    }
+    
+    // Run circuit on the specified quantum provider
+    const endpoint = provider === 'ibm' ? '/api/quantum/ibm/run' : '/api/quantum/azure/run';
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        circuit,
+        watermark,
+        shots: 1024, // Number of times to run the circuit
+        copyrightOwner: IMMUTABLE_COPYRIGHT_OWNER,
+        timestamp: new Date().toISOString()
+      })
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      return {
+        success: true,
+        results: result.measurements
+      };
+    } else {
+      return {
+        success: false,
+        error: `Failed to run quantum circuit on ${provider.toUpperCase()}`
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: `Quantum circuit error: ${error instanceof Error ? error.message : 'Unknown error'}`
+    };
+  }
+}
+
 // Export the quantum service
 export const quantumService = {
   initializeQuantumSystem,
   getSecurityStatus,
   encryptText,
-  executeCommand
+  executeCommand,
+  connectToIBMQuantum,
+  connectToAzureQuantum,
+  runQuantumCircuit
 };
