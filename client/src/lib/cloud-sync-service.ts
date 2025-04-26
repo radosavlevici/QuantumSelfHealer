@@ -125,40 +125,16 @@ class CloudSyncService {
       // Retrieve actual connected devices from iCloud
       console.log("Retrieving connected Apple devices...");
       
-      // In a production environment, these would be fetched from iCloud
-      // For now, we're showing the device types that would be connected
+      // In a production environment, this would be fetched from iCloud
+      // Just showing your iPhone device as requested
       this.connectedDevices = [
         {
-          id: 'iphone-pro-latest',
-          name: 'Ervin\'s iPhone Pro',
+          id: 'iphone-pro-max',
+          name: 'Ervin\'s iPhone Pro Max',
           type: 'iPhone',
           lastSync: new Date().toISOString(),
           syncStatus: 'active',
           osVersion: 'iOS 18.1'
-        },
-        {
-          id: 'macbook-pro-m3',
-          name: 'Ervin\'s MacBook Pro M3',
-          type: 'Mac',
-          lastSync: new Date().toISOString(),
-          syncStatus: 'active',
-          osVersion: 'macOS 14.5'
-        },
-        {
-          id: 'ipad-pro-m3',
-          name: 'Ervin\'s iPad Pro M3',
-          type: 'iPad',
-          lastSync: new Date().toISOString(),
-          syncStatus: 'active',
-          osVersion: 'iPadOS 18.1'
-        },
-        {
-          id: 'apple-vision-pro',
-          name: 'Ervin\'s Vision Pro',
-          type: 'other',
-          lastSync: new Date().toISOString(),
-          syncStatus: 'active',
-          osVersion: 'visionOS 2.1'
         }
       ];
       
