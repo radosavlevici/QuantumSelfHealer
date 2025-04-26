@@ -20,14 +20,20 @@ import React, { useState, useEffect } from 'react';
 import { 
   Shield, 
   Lock, 
+  Unlock,
   User, 
   Key, 
   RefreshCw, 
   X, 
   Check, 
   AlarmClock,
+  Clock,
   Cloud,
+  Cpu,
   Database,
+  Dna,
+  ShieldAlert,
+  ShieldCheck,
   Smartphone,
   Laptop,
   Server,
@@ -50,6 +56,9 @@ import { cloudSync } from '../lib/cloud-sync-service';
 // Import device security service
 import { deviceSecurity, DeviceSecurityLevel, type UnauthorizedDevice } from '../lib/device-security-service';
 
+// Import quantum DNA security service
+import { quantumDNASecurity, type QuantumSecurityState } from '../lib/quantum-dna-security';
+
 // Security Dashboard Component
 const SecurityDashboard: React.FC = () => {
   const [verificationStatus, setVerificationStatus] = useState<boolean>(true);
@@ -69,7 +78,28 @@ const SecurityDashboard: React.FC = () => {
   const [syncStatus, setSyncStatus] = useState<'active' | 'inactive' | 'error'>('inactive');
   const [connectedDevices, setConnectedDevices] = useState<number>(0);
   const [unauthorizedDevices, setUnauthorizedDevices] = useState<UnauthorizedDevice[]>([]);
+  const [quantumSecurityState, setQuantumSecurityState] = useState<QuantumSecurityState>({
+    initialized: false,
+    securityStrength: 'standard',
+    encryptionActive: false,
+    quantumKeyDistribution: false,
+    dnaProtectionActive: false,
+    antiTamperActive: false,
+    deviceProtectionActive: false,
+    rootAuthority: ROOT_USER_EMAIL,
+    lastVerified: new Date().toISOString()
+  });
   
+  // Get quantum security state
+  const getQuantumSecurityState = () => {
+    try {
+      const state = quantumDNASecurity.getSecurityState();
+      setQuantumSecurityState(state);
+    } catch (error) {
+      console.error("Failed to get quantum security state:", error);
+    }
+  };
+
   // Run verification on mount
   useEffect(() => {
     const verify = () => {
@@ -93,8 +123,19 @@ const SecurityDashboard: React.FC = () => {
     setTimeout(() => {
       getUnauthorizedDevices();
     }, 1000);
+
+    // Get quantum security state
+    setTimeout(() => {
+      getQuantumSecurityState();
+    }, 1500);
     
-    return () => clearInterval(interval);
+    // Set up interval to refresh quantum security state
+    const quantumInterval = setInterval(getQuantumSecurityState, 30000);
+    
+    return () => {
+      clearInterval(interval);
+      clearInterval(quantumInterval);
+    };
   }, []);
   
   // Initialize cloud synchronization
@@ -186,6 +227,146 @@ const SecurityDashboard: React.FC = () => {
       
       {/* Main Content */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+        {/* Quantum Security Panel */}
+        <div className="bg-gray-900 rounded-lg p-6 border border-cyan-900 md:col-span-2">
+          <div className="flex items-center mb-4">
+            <Cpu className="h-5 w-5 mr-2 text-cyan-500" />
+            <h2 className="text-lg font-semibold">Quantum DNA Security System</h2>
+          </div>
+          
+          <div className="bg-cyan-900/20 p-3 rounded-md text-sm mb-4">
+            This panel displays the status of the integrated Quantum DNA Security system.
+            It combines quantum computing principles with DNA-based protection to create
+            an unbreakable security framework that protects your copyright and root access.
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-3">
+              <div>
+                <div className="text-sm font-medium text-gray-400 mb-1">Security Status:</div>
+                <div className={`bg-gray-800 p-2 rounded flex items-center ${
+                  quantumSecurityState.initialized ? 'text-green-400' : 'text-yellow-400'
+                }`}>
+                  {quantumSecurityState.initialized ? (
+                    <Check className="h-4 w-4 mr-2" />
+                  ) : (
+                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  )}
+                  <span>{quantumSecurityState.initialized ? 'ACTIVE' : 'INITIALIZING...'}</span>
+                </div>
+              </div>
+              
+              <div>
+                <div className="text-sm font-medium text-gray-400 mb-1">Security Strength:</div>
+                <div className="bg-gray-800 p-2 rounded flex items-center text-cyan-400">
+                  <Shield className="h-4 w-4 mr-2" />
+                  <span className="uppercase">{quantumSecurityState.securityStrength}</span>
+                </div>
+              </div>
+              
+              <div>
+                <div className="text-sm font-medium text-gray-400 mb-1">Root Authority:</div>
+                <div className="bg-gray-800 p-2 rounded flex items-center">
+                  <User className="h-4 w-4 mr-2 text-blue-400" />
+                  <span>{quantumSecurityState.rootAuthority}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <div>
+                <div className="text-sm font-medium text-gray-400 mb-1">Quantum Encryption:</div>
+                <div className={`bg-gray-800 p-2 rounded flex items-center ${
+                  quantumSecurityState.encryptionActive ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  {quantumSecurityState.encryptionActive ? (
+                    <Lock className="h-4 w-4 mr-2" />
+                  ) : (
+                    <Unlock className="h-4 w-4 mr-2" />
+                  )}
+                  <span>{quantumSecurityState.encryptionActive ? 'ACTIVE' : 'INACTIVE'}</span>
+                </div>
+              </div>
+              
+              <div>
+                <div className="text-sm font-medium text-gray-400 mb-1">Key Distribution:</div>
+                <div className={`bg-gray-800 p-2 rounded flex items-center ${
+                  quantumSecurityState.quantumKeyDistribution ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  {quantumSecurityState.quantumKeyDistribution ? (
+                    <Key className="h-4 w-4 mr-2" />
+                  ) : (
+                    <X className="h-4 w-4 mr-2" />
+                  )}
+                  <span>{quantumSecurityState.quantumKeyDistribution ? 'ACTIVE' : 'INACTIVE'}</span>
+                </div>
+              </div>
+              
+              <div>
+                <div className="text-sm font-medium text-gray-400 mb-1">DNA Protection:</div>
+                <div className={`bg-gray-800 p-2 rounded flex items-center ${
+                  quantumSecurityState.dnaProtectionActive ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  {quantumSecurityState.dnaProtectionActive ? (
+                    <Dna className="h-4 w-4 mr-2" />
+                  ) : (
+                    <X className="h-4 w-4 mr-2" />
+                  )}
+                  <span>{quantumSecurityState.dnaProtectionActive ? 'ACTIVE' : 'INACTIVE'}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <div>
+                <div className="text-sm font-medium text-gray-400 mb-1">Anti-Tamper System:</div>
+                <div className={`bg-gray-800 p-2 rounded flex items-center ${
+                  quantumSecurityState.antiTamperActive ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  {quantumSecurityState.antiTamperActive ? (
+                    <ShieldCheck className="h-4 w-4 mr-2" />
+                  ) : (
+                    <ShieldAlert className="h-4 w-4 mr-2" />
+                  )}
+                  <span>{quantumSecurityState.antiTamperActive ? 'ACTIVE' : 'INACTIVE'}</span>
+                </div>
+              </div>
+              
+              <div>
+                <div className="text-sm font-medium text-gray-400 mb-1">Device Protection:</div>
+                <div className={`bg-gray-800 p-2 rounded flex items-center ${
+                  quantumSecurityState.deviceProtectionActive ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  {quantumSecurityState.deviceProtectionActive ? (
+                    <Smartphone className="h-4 w-4 mr-2" />
+                  ) : (
+                    <X className="h-4 w-4 mr-2" />
+                  )}
+                  <span>{quantumSecurityState.deviceProtectionActive ? 'ACTIVE' : 'INACTIVE'}</span>
+                </div>
+              </div>
+              
+              <div>
+                <div className="text-sm font-medium text-gray-400 mb-1">Last Verified:</div>
+                <div className="bg-gray-800 p-2 rounded flex items-center">
+                  <Clock className="h-4 w-4 mr-2 text-yellow-400" />
+                  <span>{formatTimestamp(quantumSecurityState.lastVerified)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-4">
+            <button 
+              className="w-full bg-cyan-900 hover:bg-cyan-800 p-2 rounded-md flex items-center justify-center text-sm"
+              onClick={getQuantumSecurityState}
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh Quantum Security Status
+            </button>
+          </div>
+        </div>
         {/* Root Status Panel */}
         <div className="bg-gray-900 rounded-lg p-6 border border-blue-900">
           <div className="flex items-center mb-4">
