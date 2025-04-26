@@ -22,6 +22,7 @@ import cors from 'cors';
 import { registerRoutes } from './routes';
 import { getRootName, getRootEmail } from '../shared/dna-protection-system';
 import { AutomaticPaymentRerouting } from '../shared/automatic-payment-rerouting';
+import { LicenseProtectionSystem } from '../license-protection';
 
 // DNA Security Constants
 const COMPONENT_ID = `server-main-${Date.now()}`;
@@ -161,7 +162,7 @@ async function startServerWithPortFallback(initialPort: number, maxAttempts: num
       
       // Server started successfully
       return;
-    } catch (error) {
+    } catch (error: any) {
       if (error.code === 'EADDRINUSE') {
         console.log({
           event: 'port_conflict',
@@ -197,7 +198,7 @@ async function startServerWithPortFallback(initialPort: number, maxAttempts: num
 
 // Start the server with port conflict resolution
 startServerWithPortFallback(3000)
-  .catch(error => {
+  .catch((error: any) => {
     console.error({
       event: 'fatal_error',
       error: error.message,

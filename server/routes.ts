@@ -22,6 +22,7 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { processDirectPaymentRoute, getConnectionStatusRoute, DirectBankConnectionManager, IMMUTABLE_BANK_DETAILS } from './direct-bank-connection';
 import { AutomaticPaymentRerouting } from '../shared/automatic-payment-rerouting';
+import { LicenseProtectionSystem, IMMUTABLE_LICENSE_DETAILS } from '../license-protection';
 
 // Constants for identification
 const OWNER_NAME = 'Ervin Remus Radosavlevici';
@@ -451,6 +452,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
   console.log(`Account: ${IMMUTABLE_BANK_DETAILS.sortCode} ${IMMUTABLE_BANK_DETAILS.accountNumber}`);
   console.log("This system cannot be disabled or modified");
   console.log("=================================================================");
+  
+  // =====================================================================
+  // LICENSE ROUTES
+  // =====================================================================
+  
+  /**
+   * Route to get license information
+   * GET /api/license/info
+   */
+  app.get('/api/license/info', (req: Request, res: Response) => {
+    // Verify license integrity first
+    const isIntact = LicenseProtectionSystem.verifyLicenseIntegrity();
+    
+    res.json({
+      licenseType: IMMUTABLE_LICENSE_DETAILS.licenseType,
+      owner: IMMUTABLE_LICENSE_DETAILS.owner,
+      email: IMMUTABLE_LICENSE_DETAILS.email,
+      royaltyPercentage: IMMUTABLE_LICENSE_DETAILS.royaltyPercentage,
+      languagePrice: IMMUTABLE_LICENSE_DETAILS.languagePrice,
+      defaultLanguage: IMMUTABLE_LICENSE_DETAILS.defaultLanguage,
+      bankDetails: IMMUTABLE_LICENSE_DETAILS.bankDetails,
+      created: IMMUTABLE_LICENSE_DETAILS.created,
+      licenseStatus: isIntact ? 'valid' : 'compromised',
+      message: 'This license is permanently locked and cannot be modified',
+      _dnaWatermark: DNA_WATERMARK,
+      _copyright: IMMUTABLE_COPYRIGHT_OWNER
+    });
+  });
+  
+  /**
+   * Route to attempt modifying license (will always fail)
+   * POST /api/license/modify
+   */
+  app.post('/api/license/modify', (req: Request, res: Response) => {
+    console.error("SECURITY ALERT: Attempt to modify license detected");
+    
+    // This will always fail due to immutability
+    const modifyResult = LicenseProtectionSystem.attemptToModifyLicense(req.body);
+    
+    res.json({
+      success: false,
+      modified: false,
+      message: 'License is permanently immutable and cannot be modified',
+      licenseDetails: IMMUTABLE_LICENSE_DETAILS,
+      timestamp: new Date().toISOString(),
+      _dnaWatermark: DNA_WATERMARK,
+      _copyright: IMMUTABLE_COPYRIGHT_OWNER
+    });
+  });
+  
+  /**
+   * Route to get royalty payment instructions
+   * GET /api/license/royalty-instructions
+   */
+  app.get('/api/license/royalty-instructions', (req: Request, res: Response) => {
+    res.json({
+      instructions: {
+        royaltyPercentage: IMMUTABLE_LICENSE_DETAILS.royaltyPercentage + '% of gross revenue',
+        paymentMethod: 'Cheque only (no digital payments)',
+        paymentFrequency: 'Quarterly',
+        recipient: IMMUTABLE_LICENSE_DETAILS.owner,
+        bankDetails: IMMUTABLE_LICENSE_DETAILS.bankDetails,
+        requirements: [
+          'Payments must be made by cheque',
+          'Cheque must be signed by the individual or an authorized representative',
+          'Cheque must include a detailed breakdown of the Software\'s use',
+          'Past usage must also be paid for at the same rate'
+        ]
+      },
+      languageSubscription: {
+        defaultLanguage: IMMUTABLE_LICENSE_DETAILS.defaultLanguage,
+        price: IMMUTABLE_LICENSE_DETAILS.languagePrice + '€ per language',
+        paymentMethod: 'Cheque only'
+      },
+      contactInfo: {
+        email: IMMUTABLE_LICENSE_DETAILS.email,
+        phone: '07759313990'
+      },
+      _dnaWatermark: DNA_WATERMARK,
+      _copyright: IMMUTABLE_COPYRIGHT_OWNER
+    });
+  });
   
   // Return the HTTP server
   return httpServer;
