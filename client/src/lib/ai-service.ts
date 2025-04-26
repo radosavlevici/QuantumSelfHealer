@@ -1,16 +1,17 @@
 /**
- * !!! DNA PROTECTED SERVICE - DO NOT COPY !!!
+ * !!! QUANTUM AI ASSISTANT SERVICE - DNA PROTECTED INTELLIGENCE SYSTEM !!!
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
- * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - AI SERVICE INTERFACE
- * Front-end interface for interacting with the OpenAI service backend.
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - AI ASSISTANT
+ * This file implements a secure multi-model AI assistant service with
+ * DNA-based watermarking, copyright protection, and anti-theft measures.
  * 
  * FEATURES:
- * - Secure AI completions with DNA watermarking
- * - Self-protecting API calls
- * - Image generation with copyright protection
- * - Audio transcription with security verification
+ * - Multi-model AI system leveraging both OpenAI and Anthropic Claude
+ * - DNA-based watermarking for all AI interactions
+ * - Quantum-enhanced prompt security
+ * - Immutable copyright protection embedded in all AI responses
  * 
  * ANTI-THEFT NOTICE:
  * This component is part of a unified integrated security system with
@@ -18,250 +19,374 @@
  * single unit from the beginning.
  */
 
-import axios from 'axios';
-import { 
-  IMMUTABLE_COPYRIGHT_OWNER,
-  IMMUTABLE_COPYRIGHT_EMAIL,
-  IMMUTABLE_SYSTEM_VERSION,
-  generateDNASignature,
-  validateDNASignature
-} from './dna-security-core';
-import { registerProtectedComponent } from './dna-protection-system';
+import { generateDNASignature, generateSecurityWatermark } from '@shared/quantum-dna-security';
+import { apiRequest } from './queryClient';
 
-// Register this component with the DNA protection system
-const componentId = 'ai-service-client';
-const serviceProtection = registerProtectedComponent(
-  componentId, 
-  'client-service'
-);
+// Component identity constants
+const COMPONENT_ID = 'quantum-ai-assistant';
+const COMPONENT_NAME = 'QuantumAIAssistant';
 
-// API endpoints
-const AI_COMPLETION_ENDPOINT = '/api/ai/completion';
-const AI_IMAGE_ENDPOINT = '/api/ai/image';
-const AI_TRANSCRIPTION_ENDPOINT = '/api/ai/transcription';
+// Generate secure identifiers for this component
+const aiDNASignature = generateDNASignature(COMPONENT_ID, COMPONENT_NAME);
+const aiWatermark = generateSecurityWatermark(`ai-${COMPONENT_ID}`);
 
-/**
- * Interface for AI completion parameters
- */
-export interface AICompletionParams {
+// Define AI models and their capabilities
+export enum AIModel {
+  // OpenAI models
+  GPT4 = 'gpt-4o',
+  GPT35Turbo = 'gpt-3.5-turbo',
+  
+  // Anthropic models
+  Claude3Sonnet = 'claude-3-7-sonnet-20250219',
+  
+  // Google models
+  Gemini = 'gemini-pro',
+  GeminiPro = 'gemini-1.5-pro',
+  
+  // DeepSeek models
+  DeepSeek = 'deepseek-coder',
+  DeepSeekChat = 'deepseek-chat',
+  
+  // Combined approaches
+  Quantum = 'quantum-enhanced-hybrid',
+  SuperQuantum = 'super-quantum-hybrid'
+}
+
+// Define AI query types
+export interface AIQuery {
   prompt: string;
-  model?: string;
+  model?: AIModel;
   maxTokens?: number;
   temperature?: number;
-  systemPrompt?: string;
+  includeWatermark?: boolean;
+  securityLevel?: 'standard' | 'enhanced' | 'maximum';
+  systemMessage?: string;
 }
 
-/**
- * Interface for AI completion result
- */
-export interface AICompletionResult {
-  id: string;
+export interface AIResponse {
   text: string;
   model: string;
-  usage: {
-    promptTokens: number;
-    completionTokens: number;
-    totalTokens: number;
-  };
-  createdAt: string;
-  dnaSignature: string;
   watermark: string;
-  verificationChain: string;
+  timestamp: string;
+  copyright: string;
+  securityLevel: string;
+  processingTime: number;
+  tokenCount?: number;
 }
 
-/**
- * Generate an AI completion using the OpenAI service
- * @param params AI completion parameters
- * @returns Promise resolving to the AI completion result
- */
-export async function generateAICompletion(
-  params: AICompletionParams
-): Promise<AICompletionResult> {
-  try {
-    // Generate a secure client-side signature for the request
-    const requestId = `ai-req-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-    const clientSignature = generateDNASignature(requestId, 'ai-request');
-    
-    // Make the API request
-    const response = await axios.post(AI_COMPLETION_ENDPOINT, {
-      ...params,
-      clientSignature,
-      clientWatermark: serviceProtection.watermark,
-      timestamp: new Date().toISOString()
-    });
-    
-    const result = response.data;
-    
-    // Validate the DNA signature of the response
-    if (!validateDNASignature(result.dnaSignature, result.id, 'ai-completion')) {
-      throw new Error('AI completion response failed DNA signature validation');
-    }
-    
-    // Return the validated result
-    return result;
-  } catch (error) {
-    console.error('AI completion error:', error);
-    
-    // Return a protected error result
-    return {
-      id: `error-${Date.now()}`,
-      text: `AI completion failed: ${error.message}`,
-      model: 'error',
-      usage: {
-        promptTokens: 0,
-        completionTokens: 0,
-        totalTokens: 0
-      },
-      createdAt: new Date().toISOString(),
-      dnaSignature: generateDNASignature(`error-${Date.now()}`, 'ai-completion'),
-      watermark: serviceProtection.watermark,
-      verificationChain: 'error'
-    };
+// Quantum AI Assistant Class
+export class QuantumAIAssistant {
+  private static instance: QuantumAIAssistant;
+  private defaultModel: AIModel = AIModel.Quantum;
+  private securityLevel: 'standard' | 'enhanced' | 'maximum' = 'maximum';
+  
+  private constructor() {
+    console.log(`QUANTUM AI ASSISTANT INITIALIZING - DNA: ${aiDNASignature.substring(0, 10)}...`);
   }
-}
-
-/**
- * Interface for AI image generation parameters
- */
-export interface AIImageGenerationParams {
-  prompt: string;
-  size?: '256x256' | '512x512' | '1024x1024' | '1792x1024' | '1024x1792';
-  style?: 'vivid' | 'natural';
-  quality?: 'standard' | 'hd';
-}
-
-/**
- * Interface for AI image generation result
- */
-export interface AIImageGenerationResult {
-  id: string;
-  url: string;
-  prompt: string;
-  createdAt: string;
-  dnaSignature: string;
-  watermark: string;
-  verificationChain: string;
-}
-
-/**
- * Generate an image using the OpenAI DALL-E service
- * @param params AI image generation parameters
- * @returns Promise resolving to the AI image generation result
- */
-export async function generateAIImage(
-  params: AIImageGenerationParams
-): Promise<AIImageGenerationResult> {
-  try {
-    // Generate a secure client-side signature for the request
-    const requestId = `img-req-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-    const clientSignature = generateDNASignature(requestId, 'image-request');
-    
-    // Make the API request
-    const response = await axios.post(AI_IMAGE_ENDPOINT, {
-      ...params,
-      clientSignature,
-      clientWatermark: serviceProtection.watermark,
-      timestamp: new Date().toISOString()
-    });
-    
-    const result = response.data;
-    
-    // Validate the DNA signature of the response
-    if (!validateDNASignature(result.dnaSignature, result.id, 'ai-image')) {
-      throw new Error('AI image generation response failed DNA signature validation');
+  
+  public static getInstance(): QuantumAIAssistant {
+    if (!QuantumAIAssistant.instance) {
+      QuantumAIAssistant.instance = new QuantumAIAssistant();
     }
-    
-    // Return the validated result
-    return result;
-  } catch (error) {
-    console.error('AI image generation error:', error);
-    
-    // Return a protected error result
-    return {
-      id: `error-${Date.now()}`,
-      url: '',
-      prompt: params.prompt,
-      createdAt: new Date().toISOString(),
-      dnaSignature: generateDNASignature(`error-${Date.now()}`, 'ai-image'),
-      watermark: serviceProtection.watermark,
-      verificationChain: 'error'
-    };
+    return QuantumAIAssistant.instance;
   }
-}
-
-/**
- * Interface for AI audio transcription parameters
- */
-export interface AITranscriptionParams {
-  audioFile: File;
-  language?: string;
-  prompt?: string;
-}
-
-/**
- * Interface for AI audio transcription result
- */
-export interface AITranscriptionResult {
-  id: string;
-  text: string;
-  language: string;
-  durationSeconds?: number;
-  createdAt: string;
-  dnaSignature: string;
-  watermark: string;
-  verificationChain: string;
-}
-
-/**
- * Transcribe audio using the OpenAI Whisper service
- * @param params AI audio transcription parameters
- * @returns Promise resolving to the AI transcription result
- */
-export async function transcribeAudio(
-  params: AITranscriptionParams
-): Promise<AITranscriptionResult> {
-  try {
-    // Generate a secure client-side signature for the request
-    const requestId = `trans-req-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-    const clientSignature = generateDNASignature(requestId, 'transcription-request');
+  
+  /**
+   * Query the AI assistant
+   */
+  public async query(query: AIQuery): Promise<AIResponse> {
+    const startTime = Date.now();
+    const model = query.model || this.defaultModel;
+    const securityLevel = query.securityLevel || this.securityLevel;
     
-    // Create form data for the file upload
-    const formData = new FormData();
-    formData.append('audioFile', params.audioFile);
-    formData.append('language', params.language || 'en');
-    if (params.prompt) formData.append('prompt', params.prompt);
-    formData.append('clientSignature', clientSignature);
-    formData.append('clientWatermark', serviceProtection.watermark);
-    formData.append('timestamp', new Date().toISOString());
+    // Create a secure prompt with DNA watermarking
+    const securePrompt = this.createSecurePrompt(query.prompt, securityLevel);
     
-    // Make the API request
-    const response = await axios.post(AI_TRANSCRIPTION_ENDPOINT, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
+    // Determine which AI service to use based on the model
+    let responseText = '';
+    
+    try {
+      if (model === AIModel.Quantum) {
+        // Quantum-enhanced hybrid approach uses multiple models and quantum techniques
+        responseText = await this.queryHybridModel(securePrompt, query);
+      } else if (model === AIModel.Claude3Sonnet) {
+        responseText = await this.queryAnthropic(securePrompt, query);
+      } else if (model === AIModel.Gemini || model === AIModel.GeminiPro) {
+        responseText = await this.queryGoogle(securePrompt, query);
+      } else if (model === AIModel.DeepSeek || model === AIModel.DeepSeekChat) {
+        responseText = await this.queryDeepSeek(securePrompt, query);
+      } else if (model === AIModel.SuperQuantum) {
+        responseText = await this.querySuperQuantumModel(securePrompt, query);
+      } else {
+        responseText = await this.queryOpenAI(securePrompt, query);
       }
-    });
-    
-    const result = response.data;
-    
-    // Validate the DNA signature of the response
-    if (!validateDNASignature(result.dnaSignature, result.id, 'ai-transcription')) {
-      throw new Error('AI transcription response failed DNA signature validation');
+      
+      // Add copyright watermark if requested
+      if (query.includeWatermark !== false) {
+        responseText = this.addCopyrightWatermark(responseText);
+      }
+      
+      const processingTime = Date.now() - startTime;
+      
+      // Return the final response
+      return {
+        text: responseText,
+        model: model.toString(),
+        watermark: aiWatermark,
+        timestamp: new Date().toISOString(),
+        copyright: 'Copyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com',
+        securityLevel,
+        processingTime,
+      };
+    } catch (error: any) {
+      console.error('AI Assistant Error:', error);
+      return {
+        text: `Error communicating with AI service: ${error.message}`,
+        model: model.toString(),
+        watermark: aiWatermark,
+        timestamp: new Date().toISOString(),
+        copyright: 'Copyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com',
+        securityLevel,
+        processingTime: Date.now() - startTime,
+      };
     }
+  }
+  
+  /**
+   * Query OpenAI GPT models
+   */
+  private async queryOpenAI(prompt: string, options: AIQuery): Promise<string> {
+    try {
+      const response = await apiRequest('POST', '/api/ai/openai', {
+        prompt,
+        model: options.model || AIModel.GPT4,
+        max_tokens: options.maxTokens || 1000,
+        temperature: options.temperature || 0.7,
+        system_message: options.systemMessage || this.getDefaultSystemMessage(),
+        watermark: aiWatermark,
+        security_level: options.securityLevel || 'maximum'
+      });
+      
+      const data = await response.json();
+      return data.text;
+    } catch (error: any) {
+      throw new Error(`OpenAI Error: ${error.message}`);
+    }
+  }
+  
+  /**
+   * Query Anthropic Claude models
+   */
+  private async queryAnthropic(prompt: string, options: AIQuery): Promise<string> {
+    try {
+      const response = await apiRequest('POST', '/api/ai/anthropic', {
+        prompt,
+        model: options.model || AIModel.Claude3Sonnet,
+        max_tokens: options.maxTokens || 1000,
+        temperature: options.temperature || 0.7,
+        system_message: options.systemMessage || this.getDefaultSystemMessage(),
+        watermark: aiWatermark,
+        security_level: options.securityLevel || 'maximum'
+      });
+      
+      const data = await response.json();
+      return data.text;
+    } catch (error) {
+      throw new Error(`Anthropic Error: ${error.message}`);
+    }
+  }
+  
+  /**
+   * Quantum-enhanced hybrid approach that combines multiple AI models
+   */
+  private async queryHybridModel(prompt: string, options: AIQuery): Promise<string> {
+    try {
+      // For the hybrid approach, we'll use both models and blend the results
+      const [openaiPromise, anthropicPromise] = await Promise.all([
+        this.queryOpenAI(prompt, {
+          ...options,
+          model: AIModel.GPT4,
+          systemMessage: options.systemMessage || this.getEnhancedSystemMessage()
+        }),
+        this.queryAnthropic(prompt, {
+          ...options,
+          model: AIModel.Claude3Sonnet,
+          systemMessage: options.systemMessage || this.getEnhancedSystemMessage()
+        })
+      ]);
+      
+      // In a real system, we would blend these results using quantum techniques
+      // For now, we'll simulate this by combining them with a specialized prompt
+      const blendedResponse = await this.queryOpenAI(
+        `I have two AI responses to the query: "${prompt}".
+        
+        Response 1: ${openaiPromise}
+        
+        Response 2: ${anthropicPromise}
+        
+        Please synthesize these responses into a single, coherent, comprehensive answer that leverages the strengths of both responses. Focus on technical accuracy, completeness, and clarity. The response should be formatted for a quantum computing terminal interface.`,
+        {
+          ...options,
+          model: AIModel.GPT4,
+          maxTokens: 1500,
+          temperature: 0.5,
+          systemMessage: "You are QuantumSynthesis, an expert system that blends multiple AI responses into a single, superior response for quantum computing terminal interfaces. Your specialty is creating technically accurate, comprehensive answers that leverage the best insights from multiple AI models."
+        }
+      );
+      
+      return `[QUANTUM-ENHANCED RESPONSE]\n\n${blendedResponse}`;
+    } catch (error) {
+      // Fallback to a single model if there's an error with the hybrid approach
+      console.warn('Hybrid model error, falling back to GPT-4:', error);
+      return this.queryOpenAI(prompt, {
+        ...options,
+        model: AIModel.GPT4
+      });
+    }
+  }
+  
+  /**
+   * Super Quantum hybrid approach that combines all four AI models
+   */
+  private async querySuperQuantumModel(prompt: string, options: AIQuery): Promise<string> {
+    try {
+      // For the super quantum approach, we'll use all four models and blend the results
+      const [openaiPromise, anthropicPromise, googlePromise, deepseekPromise] = await Promise.all([
+        this.queryOpenAI(prompt, {
+          ...options,
+          model: AIModel.GPT4,
+          systemMessage: options.systemMessage || this.getEnhancedSystemMessage()
+        }),
+        this.queryAnthropic(prompt, {
+          ...options,
+          model: AIModel.Claude3Sonnet,
+          systemMessage: options.systemMessage || this.getEnhancedSystemMessage()
+        }),
+        this.queryGoogle(prompt, {
+          ...options,
+          model: AIModel.GeminiPro,
+          systemMessage: options.systemMessage || this.getEnhancedSystemMessage()
+        }),
+        this.queryDeepSeek(prompt, {
+          ...options,
+          model: AIModel.DeepSeekChat,
+          systemMessage: options.systemMessage || this.getEnhancedSystemMessage()
+        })
+      ]);
+      
+      // Blend all four responses using a specialized prompt
+      const blendedResponse = await this.queryOpenAI(
+        `I have four AI responses to the query: "${prompt}".
+        
+        Response 1 (OpenAI GPT-4o): ${openaiPromise}
+        
+        Response 2 (Claude 3.7 Sonnet): ${anthropicPromise}
+        
+        Response 3 (Google Gemini 1.5 Pro): ${googlePromise}
+        
+        Response 4 (DeepSeek Chat): ${deepseekPromise}
+        
+        Please synthesize these responses into a single, coherent, comprehensive answer that leverages the strengths of all four responses. Focus on technical accuracy, completeness, and clarity. The response should be formatted for a quantum computing terminal interface. Include any unique insights from each model.`,
+        {
+          ...options,
+          model: AIModel.GPT4,
+          maxTokens: 2000,
+          temperature: 0.4,
+          systemMessage: "You are QuantumSuperSynthesis, an expert system that blends multiple AI responses into a single, superior response for quantum computing terminal interfaces. Your specialty is creating technically accurate, comprehensive answers that leverage the best insights from multiple AI models. You excel at identifying the unique strengths of each model's response and synthesizing them into a coherent whole."
+        }
+      );
+      
+      return `[SUPER-QUANTUM-ENHANCED RESPONSE]\n\n${blendedResponse}`;
+    } catch (error) {
+      // Fallback to the regular quantum model if there's an error
+      console.warn('Super Quantum model error, falling back to regular Quantum model:', error);
+      return this.queryHybridModel(prompt, options);
+    }
+  }
+  
+  /**
+   * Query Google Gemini models
+   */
+  private async queryGoogle(prompt: string, options: AIQuery): Promise<string> {
+    try {
+      const response = await apiRequest('POST', '/api/ai/google', {
+        prompt,
+        model: options.model || AIModel.GeminiPro,
+        max_tokens: options.maxTokens || 1000,
+        temperature: options.temperature || 0.7,
+        system_message: options.systemMessage || this.getDefaultSystemMessage(),
+        watermark: aiWatermark,
+        security_level: options.securityLevel || 'maximum'
+      });
+      
+      const data = await response.json();
+      return data.text;
+    } catch (error: any) {
+      throw new Error(`Google Error: ${error.message}`);
+    }
+  }
+  
+  /**
+   * Query DeepSeek models
+   */
+  private async queryDeepSeek(prompt: string, options: AIQuery): Promise<string> {
+    try {
+      const response = await apiRequest('POST', '/api/ai/deepseek', {
+        prompt,
+        model: options.model || AIModel.DeepSeekChat,
+        max_tokens: options.maxTokens || 1000,
+        temperature: options.temperature || 0.7,
+        system_message: options.systemMessage || this.getDefaultSystemMessage(),
+        watermark: aiWatermark,
+        security_level: options.securityLevel || 'maximum'
+      });
+      
+      const data = await response.json();
+      return data.text;
+    } catch (error: any) {
+      throw new Error(`DeepSeek Error: ${error.message}`);
+    }
+  }
+  
+  /**
+   * Create a secure prompt with DNA watermarking
+   */
+  private createSecurePrompt(prompt: string, securityLevel: string): string {
+    const timestamp = new Date().toISOString();
+    const securityPrefix = `[SECURITY:${securityLevel.toUpperCase()}] [DNA:${aiDNASignature.substring(0, 10)}] [TS:${timestamp}]`;
     
-    // Return the validated result
-    return result;
-  } catch (error) {
-    console.error('AI transcription error:', error);
-    
-    // Return a protected error result
-    return {
-      id: `error-${Date.now()}`,
-      text: `Transcription failed: ${error.message}`,
-      language: 'en',
-      createdAt: new Date().toISOString(),
-      dnaSignature: generateDNASignature(`error-${Date.now()}`, 'ai-transcription'),
-      watermark: serviceProtection.watermark,
-      verificationChain: 'error'
-    };
+    return `${securityPrefix}\n\n${prompt}`;
+  }
+  
+  /**
+   * Add copyright watermark to response
+   */
+  private addCopyrightWatermark(text: string): string {
+    return `${text}\n\n—\nCopyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com - All Rights Reserved.`;
+  }
+  
+  /**
+   * Get the default system message for AI models
+   */
+  private getDefaultSystemMessage(): string {
+    return `You are the Quantum Terminal AI Assistant, a secure DNA-protected system designed to help with quantum computing and system security tasks. You are part of a unified security system with DNA-based verification.
+
+Copyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com - All Rights Reserved.`;
+  }
+  
+  /**
+   * Get an enhanced system message for AI models
+   */
+  private getEnhancedSystemMessage(): string {
+    return `You are the Quantum Terminal AI Assistant v4.0, an advanced secure DNA-protected system designed to help with quantum computing, security analysis, and system optimization. You are part of a unified integrated security system with quantum-enhanced capabilities and DNA-based verification.
+
+When responding to queries, focus on providing accurate, technical information in a clear, concise manner suitable for a terminal interface. Format your responses appropriately for a terminal environment with code blocks, clear section headings, and structured information.
+
+For security-related queries, always prioritize maximum security principles and emphasize the importance of maintaining the integrity of the DNA protection system.
+
+Copyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com - All Rights Reserved.`;
   }
 }
+
+// Export singleton instance
+export const quantumAI = QuantumAIAssistant.getInstance();
