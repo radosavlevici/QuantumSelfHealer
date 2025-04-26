@@ -4,6 +4,10 @@
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  *
+ * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
+ * This software is subject to royalty payments for commercial use.
+ * Unauthorized past and present commercial use is subject to retroactive royalties.
+ *
  * This file implements a secure Express server with DNA-based watermarking,
  * copyright protection, and anti-theft measures. It cannot be modified
  * without breaking the application's security integrity.

@@ -3,6 +3,10 @@
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
+ * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
+ * This software is subject to royalty payments for commercial use.
+ * Unauthorized past and present commercial use is subject to retroactive royalties.
+ * 
  * PERMANENT IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - CORE SECURITY
  * This file implements the core DNA-based security functionality
  * that is shared between client and server.
