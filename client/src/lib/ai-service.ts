@@ -43,13 +43,18 @@ export enum AIModel {
   Gemini = 'gemini-pro',
   GeminiPro = 'gemini-1.5-pro',
   
+  // Meta models
+  LLaMA3 = 'llama-3-70b',
+  LLaMA3Instruct = 'llama-3-70b-instruct',
+  
   // DeepSeek models
   DeepSeek = 'deepseek-coder',
   DeepSeekChat = 'deepseek-chat',
   
   // Combined approaches
   Quantum = 'quantum-enhanced-hybrid',
-  SuperQuantum = 'super-quantum-hybrid'
+  SuperQuantum = 'super-quantum-hybrid',
+  UltraQuantum = 'ultra-quantum-hybrid'
 }
 
 // Define AI query types
@@ -115,8 +120,12 @@ export class QuantumAIAssistant {
         responseText = await this.queryGoogle(securePrompt, query);
       } else if (model === AIModel.DeepSeek || model === AIModel.DeepSeekChat) {
         responseText = await this.queryDeepSeek(securePrompt, query);
+      } else if (model === AIModel.LLaMA3 || model === AIModel.LLaMA3Instruct) {
+        responseText = await this.queryMeta(securePrompt, query);
       } else if (model === AIModel.SuperQuantum) {
         responseText = await this.querySuperQuantumModel(securePrompt, query);
+      } else if (model === AIModel.UltraQuantum) {
+        responseText = await this.queryUltraQuantumModel(securePrompt, query);
       } else {
         responseText = await this.queryOpenAI(securePrompt, query);
       }
@@ -191,7 +200,7 @@ export class QuantumAIAssistant {
       
       const data = await response.json();
       return data.text;
-    } catch (error) {
+    } catch (error: any) {
       throw new Error(`Anthropic Error: ${error.message}`);
     }
   }
@@ -345,6 +354,94 @@ export class QuantumAIAssistant {
       return data.text;
     } catch (error: any) {
       throw new Error(`DeepSeek Error: ${error.message}`);
+    }
+  }
+  
+  /**
+   * Meta LLaMA models query
+   */
+  private async queryMeta(prompt: string, options: AIQuery): Promise<string> {
+    try {
+      const response = await apiRequest('POST', '/api/ai/meta', {
+        prompt,
+        model: options.model || AIModel.LLaMA3Instruct,
+        max_tokens: options.maxTokens || 1000,
+        temperature: options.temperature || 0.7,
+        system_message: options.systemMessage || this.getDefaultSystemMessage(),
+        watermark: aiWatermark,
+        security_level: options.securityLevel || 'maximum'
+      });
+      
+      const data = await response.json();
+      return data.text;
+    } catch (error: any) {
+      throw new Error(`Meta Error: ${error.message}`);
+    }
+  }
+  
+  /**
+   * Ultra Quantum hybrid approach - uses all five AI models including Meta LLaMA
+   */
+  private async queryUltraQuantumModel(prompt: string, options: AIQuery): Promise<string> {
+    try {
+      // For the ultra quantum approach, we'll use all five models and blend the results
+      const [openaiPromise, anthropicPromise, googlePromise, metaPromise, deepseekPromise] = await Promise.all([
+        this.queryOpenAI(prompt, {
+          ...options,
+          model: AIModel.GPT4,
+          systemMessage: options.systemMessage || this.getEnhancedSystemMessage()
+        }),
+        this.queryAnthropic(prompt, {
+          ...options,
+          model: AIModel.Claude3Sonnet,
+          systemMessage: options.systemMessage || this.getEnhancedSystemMessage()
+        }),
+        this.queryGoogle(prompt, {
+          ...options,
+          model: AIModel.GeminiPro,
+          systemMessage: options.systemMessage || this.getEnhancedSystemMessage()
+        }),
+        this.queryMeta(prompt, {
+          ...options,
+          model: AIModel.LLaMA3Instruct,
+          systemMessage: options.systemMessage || this.getEnhancedSystemMessage()
+        }),
+        this.queryDeepSeek(prompt, {
+          ...options,
+          model: AIModel.DeepSeekChat,
+          systemMessage: options.systemMessage || this.getEnhancedSystemMessage()
+        })
+      ]);
+      
+      // Blend all five responses using a specialized prompt
+      const blendedResponse = await this.queryOpenAI(
+        `I have five AI responses to the query: "${prompt}".
+        
+        Response 1 (OpenAI GPT-4o): ${openaiPromise}
+        
+        Response 2 (Claude 3.7 Sonnet): ${anthropicPromise}
+        
+        Response 3 (Google Gemini 1.5 Pro): ${googlePromise}
+        
+        Response 4 (Meta LLaMA 3 70B Instruct): ${metaPromise}
+        
+        Response 5 (DeepSeek Chat): ${deepseekPromise}
+        
+        Please synthesize these responses into a single, coherent, comprehensive answer that leverages the strengths of all five responses. Focus on technical accuracy, completeness, and clarity. The response should be formatted for a quantum computing terminal interface. Include any unique insights from each model.`,
+        {
+          ...options,
+          model: AIModel.GPT4,
+          maxTokens: 2500,
+          temperature: 0.3,
+          systemMessage: "You are QuantumUltraSynthesis, an expert system that blends multiple AI responses into a single, superior response for quantum computing terminal interfaces. Your specialty is creating technically accurate, comprehensive answers that leverage the best insights from multiple AI models. You excel at identifying the unique strengths of each model's response and synthesizing them into a coherent whole. Your responses are always well-structured, with clear sections, and formatted for terminal display."
+        }
+      );
+      
+      return `[ULTRA-QUANTUM-ENHANCED RESPONSE]\n\n${blendedResponse}`;
+    } catch (error: any) {
+      // Fallback to the super quantum model if there's an error
+      console.warn('Ultra Quantum model error, falling back to Super Quantum model:', error);
+      return this.querySuperQuantumModel(prompt, options);
     }
   }
   
