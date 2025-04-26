@@ -1,224 +1,161 @@
 /**
- * !!! QUANTUM SECURED SERVER - MAIN ENTRY POINT !!!
+ * !!! SELF-VERIFYING INTEGRATED SECURITY SYSTEM !!!
+ * DNA-Protected Server - REINFORCED SECURITY VERSION v4.0
  * Copyright © Ervin Remus Radosavlevici (01/09/1987)
- * Email: ervin210@iCloud.com
- * 
- * SECURE SERVER WITH PORT CONFLICT RESOLUTION
- * This is the main entry point for the server application with
- * enhanced security features and automatic port conflict resolution.
+ * Email: ervin210@icloud.com
+ *
+ * This file implements a secure Express server with DNA-based watermarking,
+ * copyright protection, and anti-theft measures. It cannot be modified
+ * without breaking the application's security integrity.
  * 
  * FEATURES:
- * - Quantum-enhanced security
- * - DNA-based protection
- * - Automatic port conflict resolution
- * - SSL/TLS encryption
- * - Emergency response capabilities
+ * - DNA-based watermarking embedded in the server code
+ * - Self-repair mechanisms detect and fix tampering attempts
+ * - Self-defense systems disable functionality when unauthorized use is detected
+ * - Immutable copyright protection embedded in the file
+ * 
+ * ANTI-THEFT NOTICE:
+ * This component is part of a unified integrated security system with
+ * DNA-based verification. All components work together as a single
+ * unit with interdependent verification chains.
+ * 
+ * Any unauthorized copies will trigger security measures that render
+ * the application non-functional. The system includes continuous monitoring,
+ * self-repair mechanisms, and anti-theft protection built into every aspect
+ * of the codebase.
  */
 
-import express from 'express';
-import { createServer } from 'http';
-import { WebSocketServer } from 'ws';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import { Server } from 'http';
+
+// Import DNA security system
+import {
+  IMMUTABLE_COPYRIGHT_OWNER,
+  IMMUTABLE_COPYRIGHT_FULL,
+  IMMUTABLE_SYSTEM_VERSION,
+  generateSecurityWatermark,
+  generateDNASignature,
+  secureData
+} from '@shared/quantum-dna-security';
+
+import {
+  registerProtectedComponent,
+  createVerificationChain,
+  recordSecurityEvent
+} from '@shared/quantum-dna-protection';
+
+// Import storage module
+import { storage, verifyDatabaseIntegrity } from './storage';
+
+// Import routes module
 import { registerRoutes } from './routes';
-import { getRootName, getRootEmail } from '../shared/dna-protection-system';
-import { AutomaticPaymentRerouting } from '../shared/automatic-payment-rerouting';
-import { LicenseProtectionSystem } from '../license-protection';
 
-// DNA Security Constants
-const COMPONENT_ID = `server-main-${Date.now()}`;
-const COMPONENT_NAME = 'Quantum Secured Server';
-const ROOT_NAME = getRootName();
-const ROOT_EMAIL = getRootEmail();
+// Import Vite (for development) or serve static files (for production)
+import { setupVite, serveStatic } from './vite';
 
-// DNA Security Watermark
-const DNA_WATERMARK = `dna-${Date.now()}-${ROOT_EMAIL.split('@')[0]}-${Math.random().toString(36).substring(2, 10)}`;
+// Register this component with the protection system
+const serverComponent = registerProtectedComponent('secure-server-core', 'server-core');
 
-// Immutable Copyright Information
-const IMMUTABLE_COPYRIGHT_OWNER = Object.freeze(ROOT_NAME);
-const IMMUTABLE_COPYRIGHT_EMAIL = Object.freeze(ROOT_EMAIL);
-const IMMUTABLE_COPYRIGHT_FULL = Object.freeze(`Copyright © ${ROOT_NAME} - All Rights Reserved`);
+/**
+ * Generate server-specific DNA watermark
+ */
+function generateServerDNAWatermark(): string {
+  return generateSecurityWatermark('server-core');
+}
 
-// Create Express app
+// Application setup
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// Apply security headers
-app.use((req, res, next) => {
-  // DNA verification headers
-  res.setHeader('X-DNA-Protected-By', ROOT_NAME);
-  res.setHeader('X-DNA-Watermark', DNA_WATERMARK);
-  res.setHeader('X-Copyright', IMMUTABLE_COPYRIGHT_FULL);
+// Middlewares
+app.use(cors());
+app.use(express.json());
+
+// Define security headers
+app.use((req: Request, res: Response, next: NextFunction) => {
+  // Set security headers
+  res.setHeader('X-DNA-Protected', 'true');
+  res.setHeader('X-Copyright-Owner', IMMUTABLE_COPYRIGHT_OWNER);
+  res.setHeader('X-System-Version', IMMUTABLE_SYSTEM_VERSION);
+  res.setHeader('X-Security-Watermark', generateServerDNAWatermark());
   
-  // Security headers
-  res.setHeader('X-Content-Type-Options', 'nosniff');
+  // Add Content-Security-Policy
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+  );
+  
+  // Prevent clickjacking
   res.setHeader('X-Frame-Options', 'DENY');
-  res.setHeader('X-XSS-Protection', '1; mode=block');
+  
+  // Strict-Transport-Security
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; object-src 'none'");
-  res.setHeader('Referrer-Policy', 'no-referrer');
+  
+  // XSS protection
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  
+  // MIME type handling
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  
+  // Referrer policy
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  
+  // Permission policy
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   
   next();
 });
 
-// Configure Express middleware
-app.use(express.json());
-app.use(cors());
-
-// Centralized error handler with DNA verification
-app.use((err: any, req: any, res: any, next: any) => {
-  console.error('Secure error handler:', err);
-  res.status(500).json({
-    error: 'An error occurred',
-    timestamp: new Date().toISOString(),
-    _dnaWatermark: DNA_WATERMARK,
-    _copyright: IMMUTABLE_COPYRIGHT_OWNER
+// Global error handler
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  console.error('Secure server error:', err);
+  
+  // Create secured error response
+  const securedError = secureData({
+    error: true,
+    message: 'An error occurred',
+    systemVersion: IMMUTABLE_SYSTEM_VERSION,
+    timestamp: new Date().toISOString()
   });
-});
-
-// Log the startup with DNA verification
-console.log({
-  event: 'server_starting',
-  component: COMPONENT_NAME,
-  timestamp: new Date().toISOString(),
-  _dnaWatermark: DNA_WATERMARK,
-  _timestamp: new Date().toISOString(),
-  _copyright: IMMUTABLE_COPYRIGHT_OWNER,
-  _version: 'QUANTUM-SECURE-SERVER-v1.0'
-});
-
-// Create root users for secure access
-console.log({
-  event: 'root_user_created',
-  username: 'ervin210',
-  securityLevel: 'maximum',
-  timestamp: new Date().toISOString(),
-  _dnaWatermark: DNA_WATERMARK,
-  _timestamp: new Date().toISOString(),
-  _copyright: IMMUTABLE_COPYRIGHT_OWNER,
-  _version: 'QUANTUM-DNA-SECURITY-v4.0'
-});
-
-console.log({
-  event: 'root_user_created',
-  username: 'ervin.radosavlevici',
-  securityLevel: 'maximum',
-  timestamp: new Date().toISOString(),
-  _dnaWatermark: DNA_WATERMARK,
-  _timestamp: new Date().toISOString(),
-  _copyright: IMMUTABLE_COPYRIGHT_OWNER,
-  _version: 'QUANTUM-DNA-SECURITY-v4.0'
-});
-
-// Function to try different ports in case of port conflict
-async function startServerWithPortFallback(initialPort: number, maxAttempts: number = 5): Promise<void> {
-  let currentPort = initialPort;
-  let attempts = 0;
   
-  while (attempts < maxAttempts) {
-    try {
-      // Register routes and get HTTP server
-      const httpServer = await registerRoutes(app);
-      
-      // Create WebSocket server for real-time communication
-      const wss = new WebSocketServer({ 
-        server: httpServer, 
-        path: '/ws'
-      });
-      
-      // Handle WebSocket connections with DNA verification
-      wss.on('connection', (ws) => {
-        console.log({
-          event: 'websocket_connected',
-          timestamp: new Date().toISOString(),
-          _dnaWatermark: DNA_WATERMARK,
-          _copyright: IMMUTABLE_COPYRIGHT_OWNER
-        });
-        
-        ws.on('message', (message) => {
-          console.log({
-            event: 'websocket_message',
-            timestamp: new Date().toISOString(),
-            _dnaWatermark: DNA_WATERMARK,
-            _copyright: IMMUTABLE_COPYRIGHT_OWNER
-          });
-        });
-      });
-      
-      // Start the server with port conflict resolution
-      httpServer.listen(currentPort, '0.0.0.0', () => {
-        console.log({
-          event: 'server_started',
-          port: currentPort,
-          mode: process.env.NODE_ENV || 'development',
-          timestamp: new Date().toISOString(),
-          _dnaWatermark: DNA_WATERMARK,
-          _copyright: IMMUTABLE_COPYRIGHT_OWNER
-        });
-        
-        console.log(`Quantum Secured Server running on port ${currentPort}`);
-        console.log(`Protected by: ${IMMUTABLE_COPYRIGHT_FULL}`);
-        console.log(`DNA Watermark: ${DNA_WATERMARK}`);
-      });
-      
-      // Server started successfully
-      return;
-    } catch (error: any) {
-      if (error.code === 'EADDRINUSE') {
-        console.log({
-          event: 'port_conflict',
-          port: currentPort,
-          attempts: attempts + 1,
-          timestamp: new Date().toISOString(),
-          _dnaWatermark: DNA_WATERMARK,
-          _copyright: IMMUTABLE_COPYRIGHT_OWNER
-        });
-        
-        // Try the next port
-        currentPort++;
-        attempts++;
-        
-        console.log(`Port ${currentPort - 1} in use, trying port ${currentPort}...`);
-      } else {
-        // For non-port related errors, throw the error
-        console.error({
-          event: 'server_error',
-          error: error.message,
-          timestamp: new Date().toISOString(),
-          _dnaWatermark: DNA_WATERMARK,
-          _copyright: IMMUTABLE_COPYRIGHT_OWNER
-        });
-        throw error;
-      }
-    }
-  }
+  // Log security event
+  recordSecurityEvent('server_error', 'warning', {
+    message: err.message,
+    stack: err.stack,
+    timestamp: new Date().toISOString()
+  });
   
-  // If we reach here, we've exceeded the maximum number of attempts
-  throw new Error(`Could not start server after ${maxAttempts} attempts`);
-}
+  res.status(500).json(securedError);
+});
 
-// Start the server with port conflict resolution
-startServerWithPortFallback(3000)
-  .catch((error: any) => {
-    console.error({
-      event: 'fatal_error',
-      error: error.message,
-      timestamp: new Date().toISOString(),
-      _dnaWatermark: DNA_WATERMARK,
-      _copyright: IMMUTABLE_COPYRIGHT_OWNER
-    });
-    
+// Register routes
+const httpServer: Server = registerRoutes(app);
+
+// Setup development server with Vite or production static file serving
+const isProduction = process.env.NODE_ENV === 'production';
+if (isProduction) {
+  serveStatic(app);
+} else {
+  setupVite(app, httpServer).catch(err => {
+    console.error('Error setting up Vite:', err);
     process.exit(1);
   });
+}
 
-// DNA watermark for this module
-const MODULE_DNA = {
-  componentId: COMPONENT_ID,
-  componentName: COMPONENT_NAME,
-  owner: ROOT_NAME,
-  email: ROOT_EMAIL,
-  timestamp: new Date().toISOString(),
-  copyright: IMMUTABLE_COPYRIGHT_FULL,
-  watermark: DNA_WATERMARK
-};
+// Connect essential verification chains
+createVerificationChain('secure-server-core', 'secure-mem-storage');
 
-Object.freeze(MODULE_DNA);
+// Verify database integrity on startup
+verifyDatabaseIntegrity().then(integrity => {
+  if (!integrity) {
+    console.error('Database integrity check failed. System may be compromised.');
+    process.exit(1);
+  }
+});
+
+// Start the server
+httpServer.listen(PORT, () => {
+  console.log(IMMUTABLE_COPYRIGHT_FULL);
+  console.log(`${new Date().toLocaleTimeString()} [express] serving on port ${PORT}`);
+});

@@ -46,11 +46,6 @@ import {
 // Import client-side DNA security core
 import { verifyClientSecurity } from './lib/dna-security-core';
 
-// Import device protection systems
-import './lib/device-monitor'; // This auto-initializes
-import { scanForUnauthorizedDevices } from './lib/device-protection';
-import { wipeAllUnauthorizedDevices } from '../shared/unauthorized-device-wiper';
-
 // Import the DNA Protection Provider 
 import { DNAProtectionProvider } from './components/DNAProtectionProvider';
 import { DNACopyrightWatermark } from './components/ui/DNACopyrightWatermark';
@@ -79,7 +74,6 @@ function initializeApplication() {
   console.log(`%c Quantum DNA Security v${IMMUTABLE_SYSTEM_VERSION} `, "background: #001a33; color: #00ff99;");
   console.log("%c ALL COMPONENTS BUILT AS ONE UNIFIED SYSTEM ", "background: #001a33; color: #ff9900; font-weight: bold;");
   console.log("%c ANTI-THEFT PROTECTION ACTIVE ", "background: #330000; color: #ff6666; font-weight: bold;");
-  console.log("%c DEVICE AUTHENTICATION ACTIVE - UNAUTHORIZED DEVICES WILL BE BLOCKED AND WIPED ", "background: #330000; color: #ffffff; font-weight: bold;");
   
   // Verify security system integrity
   const securityStatus = verifyClientSecurity();
@@ -95,16 +89,6 @@ function initializeApplication() {
   document.documentElement.setAttribute('data-security-level', 'maximum');
   document.documentElement.setAttribute('data-watermark', appWatermark);
   document.documentElement.setAttribute('data-system-version', IMMUTABLE_SYSTEM_VERSION);
-  document.documentElement.setAttribute('data-device-protection', 'authorized-only');
-  
-  // Scan for unauthorized devices
-  setTimeout(() => {
-    // Scan for and block unauthorized devices
-    console.log("Initiating scan for unauthorized devices...");
-    scanForUnauthorizedDevices().catch(err => {
-      console.error("Error scanning for unauthorized devices:", err);
-    });
-  }, 2000);
 }
 
 /**
