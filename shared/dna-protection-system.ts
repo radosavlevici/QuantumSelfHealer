@@ -192,22 +192,70 @@ export const selfRepair = {
   }
 };
 
-// Self-defense capabilities
+// Self-defense capabilities - Advanced Anti-Replica Protection
 export const selfDefense = {
   /**
    * Respond to security threat
    */
-  respondToThreat: (details: string): void => {
+  respondToThreat: function(details: string): void {
     console.error(`[Self-Defense] Security threat detected: ${details}`);
-    // In a real system, this would take protective measures
+    // Take immediate protective measures
+    this.initiateAntiTheftProtocol(details);
   },
   
   /**
    * Disable functionality in response to tampering
    */
-  disableFunctionality: (component: string): void => {
+  disableFunctionality: function(component: string): void {
     console.error(`[Self-Defense] Disabling functionality for: ${component}`);
-    // In a real system, this would disable features
+    // Permanently disable the component
+    this.corruptComponentData(component);
+  },
+
+  /**
+   * Initiate the anti-theft protocol which makes unauthorized copies unusable
+   */
+  initiateAntiTheftProtocol: function(details: string): void {
+    console.error(`[CRITICAL] Anti-theft protocol initiated: ${details}`);
+    // Log the unauthorized access attempt with timestamp and location data
+    const timestamp = new Date().toISOString();
+    const eventId = Math.random().toString(36).substring(2, 15);
+    
+    // In a real system, this would:
+    // 1. Send alert to original owner's email (ervin210@icloud.com)
+    // 2. Corrupt application data structures
+    // 3. Insert false information in code execution paths
+    // 4. Block all network connections
+    // 5. Trigger progressive shutdown of components
+    
+    // Simulate progressive shutdown
+    setTimeout(() => {
+      console.error('[CRITICAL] Anti-theft measures active - Stage 1');
+    }, 1000);
+    
+    setTimeout(() => {
+      console.error('[CRITICAL] Anti-theft measures active - Stage 2');
+    }, 3000);
+    
+    setTimeout(() => {
+      console.error('[CRITICAL] Anti-theft measures active - Final stage');
+      // In a real implementation, this would make the application completely non-functional
+    }, 5000);
+  },
+
+  /**
+   * Corrupt component data to permanently disable functionality in unauthorized copies
+   */
+  corruptComponentData: function(component: string): void {
+    console.error(`[CRITICAL] Implementing permanent protection for: ${component}`);
+    
+    // In a real implementation, this would:
+    // 1. Scramble critical data structures
+    // 2. Replace functional code with non-functional equivalents
+    // 3. Break component dependencies
+    // 4. Create logical errors in execution paths
+    
+    // While preserving full functionality in the original authorized version
   }
 };
 
@@ -252,6 +300,8 @@ export function initializeProtectionSystem(): void {
 export interface SelfDefenseCapabilities {
   respondToThreat: (details: string) => void;
   disableFunctionality: (component: string) => void;
+  initiateAntiTheftProtocol: (details: string) => void;
+  corruptComponentData: (component: string) => void;
 }
 
 export interface SelfRepairCapabilities {
