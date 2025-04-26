@@ -201,8 +201,9 @@ const QuantumNLPTerminal: React.FC = () => {
           ]);
           setIsProcessing(false);
         }, 1500);
-      } catch (error: any) {
-        setLogs(prev => [...prev, `ERROR: ${error?.message || 'Unknown error occurred'}`]);
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        setLogs(prev => [...prev, `ERROR: ${errorMessage}`]);
         setIsProcessing(false);
       }
       
