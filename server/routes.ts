@@ -287,6 +287,75 @@ export function registerRoutes(app: Express): Server {
       res.status(500).json(errorResponse);
     }
   });
+  
+  // Emergency protocol endpoint
+  app.post('/api/security/emergency', async (req: Request, res: Response) => {
+    try {
+      const { code, action } = req.body;
+      
+      // Verify emergency code
+      // This should be a secure verification in a real implementation
+      if (code !== 'EMERGENCY') {
+        return res.status(403).json(secureData({
+          error: true,
+          message: 'Invalid emergency code',
+          timestamp: new Date().toISOString()
+        }));
+      }
+      
+      // Import emergency protocols
+      const emergencyProtocols = require('./emergency-protocol');
+      
+      let result;
+      
+      // Execute requested emergency action
+      switch (action) {
+        case 'WIPE':
+          result = emergencyProtocols.initiateEmergencyWipe();
+          break;
+        case 'BLOCK_ROLLBACK':
+          result = emergencyProtocols.blockRollbackCapabilities();
+          break;
+        case 'DISABLE_CHECKPOINT':
+          result = emergencyProtocols.disableCheckpointFunctionality();
+          break;
+        case 'ALL':
+          result = emergencyProtocols.runAllEmergencyProtocols();
+          break;
+        default:
+          return res.status(400).json(secureData({
+            error: true,
+            message: 'Invalid emergency action',
+            timestamp: new Date().toISOString()
+          }));
+      }
+      
+      // Record security event
+      recordSecurityEvent('emergency_protocol_executed', 'critical', {
+        action,
+        timestamp: new Date().toISOString(),
+        result
+      });
+      
+      // Apply DNA watermarking and security to the response
+      const securedResponse = secureData({
+        success: true,
+        action,
+        result,
+        timestamp: new Date().toISOString()
+      });
+      
+      res.status(200).json(securedResponse);
+    } catch (error) {
+      const errorResponse = secureData({
+        error: true,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      });
+      
+      res.status(500).json(errorResponse);
+    }
+  });
 
   // WebSocket handling for real-time communication
   wss.on('connection', (ws) => {
