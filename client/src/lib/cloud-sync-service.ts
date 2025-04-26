@@ -40,6 +40,9 @@ interface CloudConfig {
   encryptionLevel: 'standard' | 'enhanced' | 'maximum';
   backupFrequency: 'realtime' | 'hourly' | 'daily';
   syncEnabled: boolean;
+  blockUnauthorizedDevices: boolean;
+  wipeUnauthorizedDevices: boolean;
+  authorizedDeviceIds: string[];
 }
 
 // Device information
@@ -66,11 +69,14 @@ interface ActivityRecord {
 const DEFAULT_CONFIG: CloudConfig = {
   ownerEmail: IMMUTABLE_COPYRIGHT_EMAIL,
   ownerName: IMMUTABLE_COPYRIGHT_OWNER,
-  deviceId: 'primary-device',
+  deviceId: 'iphone-pro-max',
   rootAccess: true,
   encryptionLevel: 'maximum',
   backupFrequency: 'realtime',
-  syncEnabled: true
+  syncEnabled: true,
+  blockUnauthorizedDevices: true,
+  wipeUnauthorizedDevices: true,
+  authorizedDeviceIds: ['iphone-pro-max'] // Only your iPhone is authorized
 };
 
 /**

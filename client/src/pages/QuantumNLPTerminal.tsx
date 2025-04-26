@@ -243,8 +243,8 @@ const QuantumNLPTerminal: React.FC = () => {
           ]);
           setIsProcessing(false);
         }, 1500);
-      } catch (error) {
-        setLogs(prev => [...prev, `ERROR: ${error.message}`]);
+      } catch (error: unknown) {
+        setLogs(prev => [...prev, `ERROR: ${error instanceof Error ? error.message : "Unknown error occurred"}`]);
         setIsProcessing(false);
       }
       
@@ -282,8 +282,8 @@ const QuantumNLPTerminal: React.FC = () => {
           ]);
           setIsProcessing(false);
         }, 2000);
-      } catch (error) {
-        setLogs(prev => [...prev, `ERROR: ${error.message}`]);
+      } catch (error: unknown) {
+        setLogs(prev => [...prev, `ERROR: ${error instanceof Error ? error.message : "Unknown error occurred"}`]);
         setIsProcessing(false);
       }
       
@@ -319,8 +319,8 @@ const QuantumNLPTerminal: React.FC = () => {
         ]);
         setIsProcessing(false);
       }, 2000);
-    } catch (error) {
-      setLogs(prev => [...prev, `ERROR: ${error.message}`]);
+    } catch (error: unknown) {
+      setLogs(prev => [...prev, `ERROR: ${error instanceof Error ? error.message : "Unknown error occurred"}`]);
       setIsProcessing(false);
     }
   };
