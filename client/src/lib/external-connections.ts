@@ -221,13 +221,15 @@ class ExternalConnectionsService {
       return false;
     }
     
-    for (const status of this.connectionStatus.values()) {
+    // Use forEach instead of for...of to avoid MapIterator compatibility issues
+    let allConnected = true;
+    this.connectionStatus.forEach(status => {
       if (!status.connected) {
-        return false;
+        allConnected = false;
       }
-    }
+    });
     
-    return true;
+    return allConnected;
   }
   
   /**

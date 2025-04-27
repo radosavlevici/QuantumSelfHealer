@@ -133,9 +133,10 @@ class DeploymentService {
     console.log(`Deployment DNA watermark: ${dnaWatermark}`);
     
     // Begin deployment process
-    this.startDeployment(id, options).catch(error => {
+    this.startDeployment(id, options).catch((error: unknown) => {
       console.error(`Deployment ${id} failed:`, error);
-      this.updateDeploymentStatus(id, 'failed', `Deployment failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.updateDeploymentStatus(id, 'failed', `Deployment failed: ${errorMessage}`);
     });
     
     return status;
@@ -188,9 +189,10 @@ class DeploymentService {
       // Final update
       this.updateDeploymentStatus(id, 'completed', `Deployment to ${options.target} completed successfully`);
       console.log(`Deployment ${id} completed successfully`);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(`Deployment ${id} failed:`, error);
-      this.updateDeploymentStatus(id, 'failed', `Deployment failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.updateDeploymentStatus(id, 'failed', `Deployment failed: ${errorMessage}`);
     }
   }
   

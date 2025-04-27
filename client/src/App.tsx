@@ -53,6 +53,7 @@ import { verifyClientSecurity } from './lib/dna-security-core';
 // Import the DNA Protection Provider 
 import { DNAProtectionProvider } from './components/DNAProtectionProvider';
 import { DNACopyrightWatermark } from './components/ui/DNACopyrightWatermark';
+import NavigationBar from './components/NavigationBar';
 
 // Import DNA-protected pages
 import HomePage from './pages/HomePage';
@@ -61,6 +62,7 @@ import QuantumPage from './pages/QuantumPage';
 import QuantumTerminal from './pages/QuantumTerminal';
 import QuantumNLPTerminal from './pages/QuantumNLPTerminal';
 import SecurityDashboard from './pages/SecurityDashboard';
+import DeploymentDashboard from './pages/DeploymentDashboard';
 import NotFound from './pages/not-found';
 
 // Component identity constants
@@ -121,11 +123,13 @@ function App() {
               data-security-level="maximum"
             >
               <Toaster />
-              <main className="container mx-auto py-0 px-0">
+              <NavigationBar />
+              <main className="container mx-auto py-4 px-4">
                 <Switch>
                   <Route path="/" component={QuantumTerminal} />
                   <Route path="/nlp" component={QuantumNLPTerminal} />
                   <Route path="/security" component={SecurityDashboard} />
+                  <Route path="/deployment" component={DeploymentDashboard} />
                   <Route path="/terminal" component={TerminalPage} />
                   <Route path="/quantum" component={QuantumPage} />
                   <Route path="/home" component={HomePage} />
