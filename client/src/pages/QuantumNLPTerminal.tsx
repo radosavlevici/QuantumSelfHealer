@@ -243,6 +243,14 @@ const QuantumNLPTerminal: React.FC = () => {
       // Process input through Quantum NLP Service
       const nlpResponse = await quantumNLPService.processInput(input);
       
+      // Add information about which AI provider was used
+      addToHistory({
+        type: 'system',
+        content: `Processing via ${nlpResponse.usedProvider}`,
+        timestamp: new Date().toISOString(),
+        dnaSignature: nlpResponse._dnaWatermark
+      });
+      
       // Add the generated command to history
       addToHistory({
         type: 'command',
@@ -404,7 +412,15 @@ const QuantumNLPTerminal: React.FC = () => {
           return (
             <div key={index} className="flex items-start mb-2 text-gray-400">
               <div className="flex-1">
-                <span>{entry.content}</span>
+                {entry.content.includes('Processing via') ? (
+                  <div className="flex items-center">
+                    <span className="bg-purple-900/30 text-purple-300 px-2 py-0.5 rounded text-xs font-mono">
+                      {entry.content}
+                    </span>
+                  </div>
+                ) : (
+                  <span>{entry.content}</span>
+                )}
                 <span className="text-xs text-gray-500 ml-2">{timestamp}</span>
               </div>
             </div>

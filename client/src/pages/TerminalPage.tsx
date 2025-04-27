@@ -39,10 +39,21 @@ interface TerminalEntry {
 
 const TerminalPage: React.FC = () => {
   // Get protection from context
-  const { copyrightInfo, applyProtection } = useDNAProtection();
+  const dnaProtection = useDNAProtection();
   
   // Apply protection to this component
-  const protection = applyProtection('terminal-page', 'page');
+  const protection = {
+    watermark: dnaProtection.watermark,
+    dnaSignature: dnaProtection.generateComponentSignature('terminal-page', 'page')
+  };
+  
+  // Copyright info
+  const copyrightInfo = {
+    owner: dnaProtection.ownerInfo.name,
+    birthdate: dnaProtection.ownerInfo.birthdate,
+    version: dnaProtection.systemVersion,
+    full: `Copyright © ${dnaProtection.ownerInfo.name} (${dnaProtection.ownerInfo.birthdate}) - Email: ${dnaProtection.ownerInfo.email} - All Rights Reserved.`
+  };
   
   // Terminal state
   const [command, setCommand] = useState('');

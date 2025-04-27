@@ -88,15 +88,14 @@ const NavigationBar: React.FC = () => {
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex md:items-center md:space-x-2">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <a className={`flex items-center py-2 px-3 rounded-md text-sm font-medium transition duration-150 ease-in-out ${
+              <Link key={link.href} href={link.href} 
+                className={`flex items-center py-2 px-3 rounded-md text-sm font-medium transition duration-150 ease-in-out ${
                   location === link.href 
                     ? 'bg-blue-900/50 text-blue-300'
                     : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                 }`}>
-                  {link.icon}
-                  {link.label}
-                </a>
+                {link.icon}
+                {link.label}
               </Link>
             ))}
           </div>
@@ -120,18 +119,18 @@ const NavigationBar: React.FC = () => {
         <div className="md:hidden bg-gray-900 border-t border-gray-800 pb-3 pt-2">
           <div className="space-y-1 px-2">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <a 
-                  className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
-                    location === link.href 
-                      ? 'bg-blue-900/50 text-blue-300'
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.icon}
-                  {link.label}
-                </a>
+              <Link 
+                key={link.href} 
+                href={link.href}
+                className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
+                  location === link.href 
+                    ? 'bg-blue-900/50 text-blue-300'
+                    : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.icon}
+                {link.label}
               </Link>
             ))}
           </div>

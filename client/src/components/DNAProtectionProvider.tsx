@@ -106,7 +106,7 @@ export const DNAProtectionProvider: React.FC<DNAProtectionProviderProps> = ({ ch
   return (
     <div
       data-component-id={COMPONENT_ID}
-      data-component-name={COMPONENT_NAME}
+      data-component-type={COMPONENT_NAME}
       data-dna-signature={componentDNASignature}
       data-security-watermark={componentWatermark}
       className="dna-protection-wrapper"
