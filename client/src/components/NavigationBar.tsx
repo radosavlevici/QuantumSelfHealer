@@ -82,7 +82,7 @@ const NavigationBar: React.FC = () => {
           {navItems.map(item => (
             <li key={item.path}>
               <Link href={item.path}>
-                <a 
+                <button 
                   className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors
                     ${location === item.path 
                       ? 'bg-blue-900/50 text-blue-300' 
@@ -90,7 +90,7 @@ const NavigationBar: React.FC = () => {
                 >
                   {item.icon}
                   <span>{item.label}</span>
-                </a>
+                </button>
               </Link>
             </li>
           ))}

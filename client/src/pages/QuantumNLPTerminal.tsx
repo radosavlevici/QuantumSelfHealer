@@ -1,471 +1,469 @@
 /**
- * !!! QUANTUM NLP TERMINAL - DNA PROTECTED INTERFACE !!!
- * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * !!! DNA PROTECTED COMPONENT - DO NOT COPY !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
  * Email: ervin210@icloud.com
+ * 
+ * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
+ * This software is subject to royalty payments for commercial use.
+ * Unauthorized past and present commercial use is subject to retroactive royalties.
+ * 
+ * QUANTUM NATURAL LANGUAGE TERMINAL
+ * This component provides a natural language interface to the quantum terminal,
+ * allowing users without knowledge of quantum commands to interact with the
+ * quantum computer using plain English. It translates natural language requests
+ * into precise quantum computing instructions.
+ * 
+ * This component is part of the unified security system with DNA-based protection.
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Loader2, Send, Terminal as TerminalIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
-  Terminal, 
-  BrainCircuit, 
-  MessageSquare,
-  Shield,
-  Lock,
-  Sparkles,
-  Bot,
-  Code,
-  Zap,
-  Loader
-} from 'lucide-react';
-// Define NLP model enum temporarily until we set up proper imports
-enum NLPModel {
-  // OpenAI models
-  GPT4o = "gpt-4o",
-  GPT35Turbo = "gpt-3.5-turbo",
-  
-  // Anthropic models
-  Claude = "claude-3-7-sonnet-20250219",
-  
-  // Google models
-  Gemini = "gemini-1.5-pro",
-  
-  // Meta models
-  Llama = "llama-3-70b",
-  
-  // Combined approaches
-  Quantum = "quantum-nlp",
-  MegaQuantum = "mega-quantum-nlp"
+  IMMUTABLE_COPYRIGHT_OWNER, 
+  IMMUTABLE_COPYRIGHT_FULL, 
+  generateDNASignature,
+  IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS,
+  IMMUTABLE_SYSTEM_VERSION
+} from '@shared/quantum-dna-security';
+import { quantumNLPService } from '@/lib/quantum-nlp-service';
+
+// Component identifier for DNA protection
+const COMPONENT_ID = 'quantum-nlp-terminal';
+const COMPONENT_NAME = 'Quantum Natural Language Processing Terminal';
+
+// Generate component DNA signature
+const componentDNA = generateDNASignature(COMPONENT_ID, 'component');
+
+// Terminal entry types
+type EntryType = 'input' | 'translation' | 'command' | 'output' | 'error' | 'info';
+
+// Terminal entry interface
+interface TerminalEntry {
+  id: string;
+  type: EntryType;
+  content: string;
+  timestamp: Date;
+  confidence?: number;
+  _dnaWatermark?: string;
 }
 
-// QuantumNLPTerminal component
+// Examples of natural language queries
+const nlExamples = [
+  "Run Shor's algorithm with 5 qubits",
+  "Create a new quantum circuit named my_algorithm",
+  "Connect to IBM Quantum computer",
+  "Show me a visualization of my results",
+  "Analyze the current circuit in the Z basis",
+  "Optimize my circuit to reduce gate count",
+  "Simulate the circuit with realistic noise"
+];
+
 const QuantumNLPTerminal: React.FC = () => {
-  const [logs, setLogs] = useState<string[]>([]);
+  // Terminal state
+  const [history, setHistory] = useState<TerminalEntry[]>([
+    {
+      id: `startup-${Date.now()}`,
+      type: 'info',
+      content: `MegaQuantum NLP Terminal v${IMMUTABLE_SYSTEM_VERSION}\nCopyright © ${IMMUTABLE_COPYRIGHT_OWNER} (1987), ${IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS.join(', ')}\nType your questions or commands in natural language.\nExample: "Run Shor's algorithm with 5 qubits"`,
+      timestamp: new Date(),
+      _dnaWatermark: componentDNA
+    }
+  ]);
+  
+  // Input state
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [currentModel, setCurrentModel] = useState<NLPModel>(NLPModel.MegaQuantum);
+  
+  // References
+  const inputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
   
-  // Initialize terminal with welcome message
+  // Focus input on mount
   useEffect(() => {
-    const initialLogs = [
-      'QUANTUM NLP TERMINAL v4.0 INITIALIZED',
-      'Copyright © Ervin Remus Radosavlevici (01/09/1987)',
-      'Email: ervin210@icloud.com - All Rights Reserved.',
-      '-------------------------------------------',
-      'NATURAL LANGUAGE PROCESSING SYSTEM ONLINE',
-      'MEGA-QUANTUM AI MODEL ACTIVE',
-      'DNA PROTECTION SYSTEMS ENGAGED',
-      '-------------------------------------------',
-      'Type your message and press Enter to interact with the AI.',
-      'Type "help" for available commands.'
-    ];
-    setLogs(initialLogs);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+    
+    // Initialize the NLP service
+    quantumNLPService.initialize().catch(error => {
+      console.error("Failed to initialize NLP service:", error);
+      addEntry({
+        type: 'error',
+        content: `Error initializing NLP service: ${error.message}`
+      });
+    });
   }, []);
   
-  // Scroll to bottom when logs update
+  // Scroll to bottom when history changes
   useEffect(() => {
     if (terminalRef.current) {
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
     }
-  }, [logs]);
+  }, [history]);
   
-  // Process natural language input
-  const processInput = async (e: React.FormEvent) => {
+  // Add entry to terminal history
+  const addEntry = (entry: Omit<TerminalEntry, 'id' | 'timestamp'>) => {
+    const newEntry: TerminalEntry = {
+      id: `entry-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      timestamp: new Date(),
+      ...entry
+    };
+    
+    setHistory(prev => [...prev, newEntry]);
+  };
+  
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!input.trim()) return;
     
+    // Add user input to history
+    addEntry({
+      type: 'input',
+      content: input
+    });
+    
+    // Clear input and set processing state
     const userInput = input;
-    const inputLower = userInput.toLowerCase();
-    
-    // Add user input to logs
-    setLogs(prev => [...prev, `> ${userInput}`]);
     setInput('');
-    
-    // Process commands
-    if (inputLower === 'help') {
-      setLogs(prev => [
-        ...prev,
-        'AVAILABLE COMMANDS:',
-        '- help: Show this help message',
-        '- clear: Clear the terminal screen',
-        '- models: Show available AI models',
-        '- use [model]: Switch to specified AI model',
-        '- analyze [text]: Analyze sentiment of text',
-        '- classify [text]: Classify text by category',
-        '- creative [prompt]: Generate creative content',
-        '- status: Show system status',
-        '- Any other text will be processed as a natural language query'
-      ]);
-      return;
-    }
-    
-    if (inputLower === 'clear') {
-      setLogs([
-        'QUANTUM NLP TERMINAL CLEARED',
-        'Copyright © Ervin Remus Radosavlevici (01/09/1987)',
-        'Type "help" for available commands.'
-      ]);
-      return;
-    }
-    
-    if (inputLower === 'models') {
-      setLogs(prev => [
-        ...prev,
-        'AVAILABLE AI MODELS:',
-        '- OpenAI Models:',
-        `  • ${NLPModel.GPT4o} (OpenAI's most powerful model)`,
-        `  • ${NLPModel.GPT35Turbo} (Faster, more efficient model)`,
-        '- Anthropic Models:',
-        `  • ${NLPModel.Claude} (Advanced reasoning capabilities)`,
-        '- Google Models:',
-        `  • ${NLPModel.Gemini} (Google's advanced AI)`,
-        '- Meta Models:',
-        `  • ${NLPModel.Llama} (Open weights large language model)`,
-        '- Combined Approaches:',
-        `  • ${NLPModel.Quantum} (Hybrid approach using 2 models)`,
-        `  • ${NLPModel.MegaQuantum} (Revolutionary hybrid with all models)`,
-        '',
-        `Current model: ${currentModel}`
-      ]);
-      return;
-    }
-    
-    if (inputLower.startsWith('use ')) {
-      const requestedModel = inputLower.substring(4).trim();
-      let foundModel = false;
-      
-      // Check if the requested model exists in the NLPModel enum
-      for (const model of Object.values(NLPModel)) {
-        if (model.toLowerCase().includes(requestedModel.toLowerCase())) {
-          setCurrentModel(model as NLPModel);
-          setLogs(prev => [...prev, `AI MODEL SWITCHED TO: ${model}`]);
-          foundModel = true;
-          break;
-        }
-      }
-      
-      if (!foundModel) {
-        setLogs(prev => [...prev, `ERROR: Unknown AI model: ${requestedModel}`, 'Use "models" to see available models']);
-      }
-      
-      return;
-    }
-    
-    if (inputLower === 'status') {
-      setLogs(prev => [
-        ...prev,
-        'SYSTEM STATUS:',
-        `- Current AI Model: ${currentModel}`,
-        '- DNA Protection: ACTIVE',
-        '- Copyright Security: MAXIMUM',
-        '- System Integrity: VERIFIED',
-        '- Quantum Encryption: ENABLED',
-        '- Natural Language Processing: ACTIVE',
-        '- Connection Status: SECURE',
-        '- Copyright: Ervin Remus Radosavlevici (01/09/1987)',
-        '- Email: ervin210@icloud.com'
-      ]);
-      return;
-    }
-    
-    if (inputLower.startsWith('analyze ')) {
-      const text = userInput.substring(8).trim();
-      
-      if (!text) {
-        setLogs(prev => [...prev, 'ERROR: Please provide text to analyze']);
-        return;
-      }
-      
-      setLogs(prev => [...prev, 'ANALYZING SENTIMENT...']);
-      setIsProcessing(true);
-      
-      try {
-        // In a real implementation, this would call the actual NLP service
-        // For now, simulate a response
-        const sentiments = ['positive', 'negative', 'neutral'];
-        const sentiment = sentiments[Math.floor(Math.random() * sentiments.length)];
-        const score = Math.random() * 2 - 1; // -1 to 1
-        const confidence = 0.7 + Math.random() * 0.29; // 0.7 to 0.99
-        
-        setTimeout(() => {
-          setLogs(prev => [
-            ...prev,
-            'SENTIMENT ANALYSIS RESULTS:',
-            `- Text: "${text}"`,
-            `- Sentiment: ${sentiment.toUpperCase()}`,
-            `- Score: ${score.toFixed(2)} (-1 to 1 scale)`,
-            `- Confidence: ${(confidence * 100).toFixed(1)}%`,
-            '-------------------------------------------',
-            'Copyright © Ervin Remus Radosavlevici - All rights reserved.'
-          ]);
-          setIsProcessing(false);
-        }, 1500);
-      } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-        setLogs(prev => [...prev, `ERROR: ${errorMessage}`]);
-        setIsProcessing(false);
-      }
-      
-      return;
-    }
-    
-    if (inputLower.startsWith('classify ')) {
-      const text = userInput.substring(9).trim();
-      
-      if (!text) {
-        setLogs(prev => [...prev, 'ERROR: Please provide text to classify']);
-        return;
-      }
-      
-      setLogs(prev => [...prev, 'CLASSIFYING TEXT...']);
-      setIsProcessing(true);
-      
-      try {
-        // In a real implementation, this would call the actual NLP service
-        // For now, simulate a response
-        const categories = ['Technology', 'Science', 'Business', 'Health', 'Entertainment'];
-        const mainCategory = categories[Math.floor(Math.random() * categories.length)];
-        const confidence = 0.7 + Math.random() * 0.29; // 0.7 to 0.99
-        
-        setTimeout(() => {
-          setLogs(prev => [
-            ...prev,
-            'TEXT CLASSIFICATION RESULTS:',
-            `- Text: "${text}"`,
-            `- Primary Category: ${mainCategory}`,
-            `- Confidence: ${(confidence * 100).toFixed(1)}%`,
-            '- Alternative Categories:',
-            `  • ${categories[(categories.indexOf(mainCategory) + 1) % categories.length]}: ${(Math.random() * 40 + 10).toFixed(1)}%`,
-            `  • ${categories[(categories.indexOf(mainCategory) + 2) % categories.length]}: ${(Math.random() * 30 + 5).toFixed(1)}%`,
-            '-------------------------------------------',
-            'Copyright © Ervin Remus Radosavlevici - All rights reserved.'
-          ]);
-          setIsProcessing(false);
-        }, 1500);
-      } catch (error: unknown) {
-        setLogs(prev => [...prev, `ERROR: ${error instanceof Error ? error.message : "Unknown error occurred"}`]);
-        setIsProcessing(false);
-      }
-      
-      return;
-    }
-    
-    if (inputLower.startsWith('creative ')) {
-      const prompt = userInput.substring(9).trim();
-      
-      if (!prompt) {
-        setLogs(prev => [...prev, 'ERROR: Please provide a creative prompt']);
-        return;
-      }
-      
-      setLogs(prev => [...prev, `GENERATING CREATIVE CONTENT FOR: "${prompt}"...`]);
-      setIsProcessing(true);
-      
-      try {
-        // In a real implementation, this would call the actual NLP service
-        // For now, simulate a response
-        setTimeout(() => {
-          setLogs(prev => [
-            ...prev,
-            'CREATIVE GENERATION RESULTS:',
-            `PROMPT: "${prompt}"`,
-            '-------------------------------------------',
-            `Here is a creative response to your prompt using ${currentModel}:`,
-            '',
-            `${prompt.charAt(0).toUpperCase() + prompt.slice(1)} is like a quantum particle, existing in multiple states simultaneously until observed. It requires both scientific understanding and artistic appreciation to fully comprehend its significance in our universe.`,
-            '',
-            'The quantum nature of creativity allows us to see beyond conventional boundaries, much like how quantum computers can process multiple possibilities at once.',
-            '',
-            '-------------------------------------------',
-            'Copyright © Ervin Remus Radosavlevici - All rights reserved.'
-          ]);
-          setIsProcessing(false);
-        }, 2000);
-      } catch (error: unknown) {
-        setLogs(prev => [...prev, `ERROR: ${error instanceof Error ? error instanceof Error ? error.message : "Unknown error occurred" : "Unknown error occurred"}`]);
-        setIsProcessing(false);
-      }
-      
-      return;
-    }
-    
-    // Handle regular natural language input
-    setLogs(prev => [...prev, `PROCESSING WITH ${currentModel}...`]);
     setIsProcessing(true);
     
     try {
-      // In a real implementation, this would call the actual NLP service
-      // For now, simulate a response
+      // Process natural language input
+      const result = await quantumNLPService.processInput(userInput);
+      
+      // Add translation to history
+      addEntry({
+        type: 'translation',
+        content: result.explanation,
+        confidence: result.confidence,
+        _dnaWatermark: result._dnaWatermark
+      });
+      
+      // Add command to history
+      addEntry({
+        type: 'command',
+        content: `$ ${result.command}`
+      });
+      
+      // Simulate command execution
       setTimeout(() => {
-        const responses = [
-          `I've analyzed your query using quantum-enhanced natural language processing. Your input: "${userInput}" has been processed with advanced contextual understanding.`,
-          `Based on my analysis, I can provide you with the following insights regarding your question about "${userInput}". This response is generated using multiple AI models working in concert.`,
-          `Your query has been processed using the ${currentModel} system. Here's what I can tell you about "${userInput}" based on my training and quantum-enhanced reasoning capabilities.`,
-          `The MegaQuantum system has analyzed your message with multiple AI models simultaneously. Regarding "${userInput}", I can provide a comprehensive response that combines the strengths of each model.`
-        ];
+        // Generate a simulated response based on the command
+        const responseContent = generateSimulatedResponse(result.command);
         
-        const responseText = responses[Math.floor(Math.random() * responses.length)];
+        // Add command output to history
+        addEntry({
+          type: 'output',
+          content: responseContent
+        });
         
-        setLogs(prev => [
-          ...prev,
-          `AI RESPONSE (${currentModel}):`,
-          '-------------------------------------------',
-          responseText,
-          '',
-          'This response was generated using quantum-enhanced natural language processing with DNA-protected security.',
-          '-------------------------------------------',
-          'Copyright © Ervin Remus Radosavlevici - All rights reserved.'
-        ]);
         setIsProcessing(false);
-      }, 2000);
-    } catch (error: unknown) {
-      setLogs(prev => [...prev, `ERROR: ${error instanceof Error ? error instanceof Error ? error.message : "Unknown error occurred" : "Unknown error occurred"}`]);
+      }, 1000);
+    } catch (error) {
+      console.error("Error processing input:", error);
+      
+      // Add error to history
+      addEntry({
+        type: 'error',
+        content: `Error processing input: ${error.message || 'Unknown error'}`
+      });
+      
       setIsProcessing(false);
     }
   };
   
-  // Get icon for AI model
-  const getModelIcon = (model: NLPModel) => {
-    if (model === NLPModel.MegaQuantum) return <Sparkles className="text-purple-400" />;
-    if (model === NLPModel.Quantum) return <BrainCircuit className="text-cyan-400" />;
-    if (model.includes('gpt')) return <BrainCircuit className="text-green-400" />;
-    if (model.includes('claude')) return <Bot className="text-orange-400" />;
-    if (model.includes('gemini')) return <BrainCircuit className="text-red-400" />;
-    if (model.includes('llama')) return <Bot className="text-blue-400" />;
-    return <BrainCircuit className="text-gray-400" />;
+  // Generate a simulated response based on the command
+  const generateSimulatedResponse = (command: string): string => {
+    // Extract the command type and parameters
+    const cmdParts = command.split(' ');
+    const cmdType = cmdParts[0].toLowerCase();
+    
+    // Generate a response based on command type
+    switch (cmdType) {
+      case 'run':
+        return `Executing quantum algorithm...\n\nResults:\n- Quantum state prepared successfully\n- Circuit depth: 12\n- Total gates: 27\n- Execution time: 0.82s\n- Success probability: 94.3%\n\nMeasurement outcomes:\n|00⟩: 21.4%\n|01⟩: 3.7%\n|10⟩: 4.2%\n|11⟩: 70.7%\n\nQuantum algorithm executed successfully.`;
+        
+      case 'analyze':
+        return `Analysis complete.\n\nCircuit characteristics:\n- Entanglement entropy: 1.47\n- Qubit utilization: 78.2%\n- Quantum volume: 32\n- Clifford gate count: 18\n- Non-Clifford gate count: 5\n\nNo errors detected in circuit structure.`;
+        
+      case 'create':
+        return `New quantum object created successfully.\n\nObject details:\n- Type: Quantum Circuit\n- Name: ${command.includes('--name=') ? command.split('--name=')[1].split(' ')[0] : 'quantum-object'}\n- Qubits: ${command.includes('--size=') ? command.split('--size=')[1].split(' ')[0] : '3'}\n- Default gates: H, X, Y, Z, CNOT\n\nThe object is ready for use.`;
+        
+      case 'connect':
+        return `Connecting to quantum provider...\n\nConnection established.\n- Provider: ${command.includes('ibm') ? 'IBM Quantum Experience' : command.includes('azure') ? 'Microsoft Azure Quantum' : 'Quantum Provider'}\n- Available quantum processors: 5\n- Max qubits available: 127\n- Connection latency: 43ms\n\nReady to accept quantum tasks.`;
+        
+      case 'simulate':
+        return `Simulation running...\n\nSimulation complete.\n- Simulated qubits: 8\n- Simulation fidelity: 99.7%\n- Gate error rate: ${command.includes('noise') ? '1.2e-3' : '0 (perfect)'}\n- Decoherence model: ${command.includes('noise') ? 'Realistic T1/T2' : 'None'}\n\nResults available for analysis.`;
+        
+      case 'optimize':
+        return `Optimizing quantum circuit...\n\nOptimization complete.\n- Original gate count: 42\n- Optimized gate count: 28\n- Reduction: 33.3%\n- Depth reduced: 18.7%\n- Optimizations applied: gate cancellation, rotation merging, commutation rules\n\nOptimized circuit is now active.`;
+        
+      case 'visualize':
+        return `Generating visualization...\n\n[Visualization generated]\nThe visualization shows:\n- Circuit structure with ${command.includes('circuit') ? '14 gates across 5 qubits' : 'measurement results'}\n- ${command.includes('histogram') ? 'Probability distribution of outcomes' : 'Quantum state evolution'}\n- Color-coded gate operations\n\nVisualization complete.`;
+        
+      case 'help':
+        return `Quantum Terminal Help System\n\nAvailable commands:\n- run: Execute quantum algorithms\n- analyze: Analyze quantum circuits\n- create: Create quantum objects\n- connect: Connect to quantum providers\n- simulate: Run quantum simulations\n- optimize: Optimize quantum circuits\n- visualize: Visualize quantum data\n- help: Show help information\n- clear: Clear terminal\n- exit: Exit terminal\n\nUse natural language to describe what you want to do.`;
+        
+      case 'clear':
+        // Clear the terminal in the next render cycle
+        setTimeout(() => {
+          setHistory([{
+            id: `clear-${Date.now()}`,
+            type: 'info',
+            content: `Terminal cleared. MegaQuantum NLP Terminal v${IMMUTABLE_SYSTEM_VERSION}`,
+            timestamp: new Date(),
+            _dnaWatermark: componentDNA
+          }]);
+        }, 10);
+        return 'Clearing terminal...';
+        
+      case 'exit':
+        return 'Exiting terminal session...\nThank you for using the MegaQuantum NLP Terminal.\nSession ended.';
+        
+      default:
+        return `Command executed.\nOutput: Command "${cmdType}" processed successfully.`;
+    }
+  };
+  
+  // Handle use of example query
+  const handleUseExample = (example: string) => {
+    setInput(example);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+  
+  // Render terminal entry based on type
+  const renderEntry = (entry: TerminalEntry) => {
+    switch (entry.type) {
+      case 'input':
+        return (
+          <div className="flex items-start mb-2" key={entry.id}>
+            <div className="flex-shrink-0 mr-2 text-green-400">
+              <span className="font-bold">You:</span>
+            </div>
+            <div className="flex-grow text-green-100">{entry.content}</div>
+          </div>
+        );
+        
+      case 'translation':
+        return (
+          <div className="flex items-start mb-2 bg-blue-950/30 p-2 rounded-md" key={entry.id}>
+            <div className="flex-grow text-blue-200">
+              <div className="flex justify-between items-center mb-1">
+                <span className="font-semibold text-blue-300">Translation</span>
+                {entry.confidence !== undefined && (
+                  <Badge variant="outline" className="text-xs">
+                    Confidence: {Math.round(entry.confidence * 100)}%
+                  </Badge>
+                )}
+              </div>
+              <div className="whitespace-pre-line">{entry.content}</div>
+            </div>
+          </div>
+        );
+        
+      case 'command':
+        return (
+          <div className="flex items-start mb-2" key={entry.id}>
+            <div className="flex-shrink-0 mr-2 text-cyan-500">
+              <span className="font-mono">$</span>
+            </div>
+            <div className="flex-grow font-mono text-cyan-300">
+              {entry.content.startsWith('$') ? entry.content.substring(2) : entry.content}
+            </div>
+          </div>
+        );
+        
+      case 'output':
+        return (
+          <div className="mb-4 whitespace-pre-line pl-4 border-l-2 border-gray-700 text-gray-100" key={entry.id}>
+            {entry.content}
+          </div>
+        );
+        
+      case 'error':
+        return (
+          <div className="mb-2 p-2 bg-red-900/30 text-red-200 rounded-md whitespace-pre-line" key={entry.id}>
+            <span className="font-bold text-red-400">Error: </span>
+            {entry.content}
+          </div>
+        );
+        
+      case 'info':
+        return (
+          <div className="mb-4 p-2 bg-gray-800/50 text-gray-200 rounded-md whitespace-pre-line" key={entry.id}>
+            {entry.content}
+          </div>
+        );
+        
+      default:
+        return (
+          <div className="mb-2" key={entry.id}>
+            {entry.content}
+          </div>
+        );
+    }
   };
   
   return (
-    <div className="flex flex-col h-screen bg-black text-green-400 p-4 font-mono">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4 border-b border-green-700 pb-2">
-        <div className="flex items-center">
-          <Terminal className="mr-2" />
-          <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
-            QUANTUM NLP TERMINAL v4.0
-          </h1>
-        </div>
-        <div className="flex items-center">
-          <div className="flex items-center mr-4">
-            {getModelIcon(currentModel)}
-            <span className="ml-1 text-sm">{currentModel}</span>
-          </div>
-          <Shield className="mr-1 text-red-500" />
-          <span className="mr-4 text-sm">MAXIMUM SECURITY</span>
-          <Lock className="mr-1 text-yellow-500" />
-          <span className="text-sm">DNA PROTECTED</span>
-        </div>
-      </div>
-      
-      {/* Main content */}
-      <div className="flex flex-1 gap-4">
-        {/* Terminal */}
-        <div className="flex-1 bg-gray-900 rounded-md border border-green-700 p-2 overflow-hidden flex flex-col">
-          <div className="flex-1 overflow-y-auto text-sm" ref={terminalRef}>
-            {logs.map((log, i) => (
-              <div 
-                key={i} 
-                className={`mb-1 ${
-                  log.startsWith('>') ? 'text-blue-400' : 
-                  log.includes('SUCCESS') ? 'text-green-500' :
-                  log.includes('ERROR') ? 'text-red-500' :
-                  log.includes('ANALYZING') || log.includes('PROCESSING') || log.includes('CLASSIFYING') || log.includes('GENERATING') ? 'text-yellow-400' :
-                  log.includes('Copyright') ? 'text-purple-400' :
-                  log.includes('QUANTUM') ? 'font-bold text-cyan-400' :
-                  log.includes('AI RESPONSE') ? 'text-purple-300 font-semibold' :
-                  log.includes('AI MODEL SWITCHED') ? 'text-blue-300' :
-                  log.includes('AVAILABLE AI MODELS') ? 'text-cyan-300 font-semibold' :
-                  ''
-                }`}
-              >
-                {log}
-              </div>
-            ))}
-            {isProcessing && (
-              <div className="flex items-center text-yellow-400">
-                <Loader className="animate-spin h-4 w-4 mr-2" />
-                Processing with {currentModel}...
-              </div>
-            )}
-          </div>
-          <form onSubmit={processInput} className="mt-2 flex">
-            <span className="mr-2 text-yellow-500">{'>'}</span>
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="flex-1 bg-transparent outline-none"
-              autoFocus
-              disabled={isProcessing}
-              placeholder={isProcessing ? "Processing..." : "Type your message..."}
-            />
-          </form>
-        </div>
+    <div 
+      className="w-full max-w-6xl mx-auto"
+      data-component-id={COMPONENT_ID}
+      data-component-name={COMPONENT_NAME}
+      data-copyright-owner={IMMUTABLE_COPYRIGHT_OWNER}
+      data-copyright-full={IMMUTABLE_COPYRIGHT_FULL}
+      data-dna-signature={componentDNA}
+    >
+      <Tabs defaultValue="terminal" className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="terminal" className="flex items-center gap-2">
+            <TerminalIcon className="h-4 w-4" />
+            <span>Natural Language Terminal</span>
+          </TabsTrigger>
+          <TabsTrigger value="examples">Examples</TabsTrigger>
+          <TabsTrigger value="help">Help</TabsTrigger>
+        </TabsList>
         
-        {/* Info Panel */}
-        <div className="w-72 bg-gray-900 rounded-md border border-green-700 p-2 text-sm overflow-y-auto">
-          <h2 className="font-bold border-b border-green-700 pb-1 mb-2 text-center bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
-            NLP SYSTEM STATUS
-          </h2>
-          
-          <div className="space-y-3">
-            <div>
-              <h3 className="font-semibold flex items-center">
-                <BrainCircuit className="h-4 w-4 mr-1 text-blue-400" />
-                Current Model
-              </h3>
-              <div className="ml-5 text-gray-300">{currentModel}</div>
-            </div>
+        <TabsContent value="terminal" className="mt-0">
+          <Card className="border-blue-900/20 bg-gradient-to-b from-gray-900 to-blue-950">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-blue-300 flex items-center gap-2">
+                <TerminalIcon className="h-5 w-5" />
+                Quantum NLP Terminal
+              </CardTitle>
+              <CardDescription>
+                Interact with quantum computing using natural language
+              </CardDescription>
+            </CardHeader>
             
-            <div>
-              <h3 className="font-semibold flex items-center">
-                <MessageSquare className="h-4 w-4 mr-1 text-green-400" />
-                NLP Capabilities
-              </h3>
-              <div className="ml-5 space-y-1">
-                <div className="text-gray-300">• Text Analysis</div>
-                <div className="text-gray-300">• Sentiment Analysis</div>
-                <div className="text-gray-300">• Classification</div>
-                <div className="text-gray-300">• Creative Generation</div>
-              </div>
-            </div>
+            <CardContent>
+              <ScrollArea 
+                ref={terminalRef}
+                className="h-[60vh] rounded-md bg-black/70 p-4 mb-4 font-mono text-sm border border-blue-900/30"
+              >
+                {history.map(renderEntry)}
+                {isProcessing && (
+                  <div className="flex items-center gap-2 text-gray-400">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Processing...</span>
+                  </div>
+                )}
+              </ScrollArea>
+              
+              <form onSubmit={handleSubmit} className="flex gap-2">
+                <Input
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Type your natural language command here..."
+                  className="flex-grow bg-gray-900 border-blue-900/50 focus-visible:ring-blue-600"
+                  disabled={isProcessing}
+                />
+                <Button 
+                  type="submit" 
+                  disabled={isProcessing || !input.trim()}
+                  className="bg-blue-700 hover:bg-blue-600"
+                >
+                  {isProcessing ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                  <span className="ml-2">Send</span>
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="examples" className="mt-0">
+          <Card className="border-indigo-900/20 bg-gradient-to-b from-gray-900 to-indigo-950">
+            <CardHeader>
+              <CardTitle>Example Queries</CardTitle>
+              <CardDescription>
+                Click on any example to use it in the terminal
+              </CardDescription>
+            </CardHeader>
             
-            <div>
-              <h3 className="font-semibold flex items-center">
-                <Shield className="h-4 w-4 mr-1 text-red-400" />
-                Security Features
-              </h3>
-              <div className="ml-5 space-y-1">
-                <div className="text-gray-300">• DNA Protection</div>
-                <div className="text-gray-300">• Quantum Encryption</div>
-                <div className="text-gray-300">• Copyright Enforcement</div>
-                <div className="text-gray-300">• Authenticity Verification</div>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                {nlExamples.map((example, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    className="justify-start h-auto py-2 text-left border-indigo-900/50 hover:bg-indigo-900/30"
+                    onClick={() => handleUseExample(example)}
+                  >
+                    {example}
+                  </Button>
+                ))}
               </div>
-            </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="help" className="mt-0">
+          <Card className="border-purple-900/20 bg-gradient-to-b from-gray-900 to-purple-950">
+            <CardHeader>
+              <CardTitle>How to Use the Quantum NLP Terminal</CardTitle>
+              <CardDescription>
+                A guide to interacting with quantum computing using natural language
+              </CardDescription>
+            </CardHeader>
             
-            <div>
-              <h3 className="font-semibold flex items-center">
-                <Code className="h-4 w-4 mr-1 text-yellow-400" />
-                Commands
-              </h3>
-              <div className="ml-5 space-y-1">
-                <div className="text-gray-300">Type <span className="text-blue-300">help</span> for list</div>
+            <CardContent className="space-y-4">
+              <div>
+                <h3 className="text-lg font-medium text-purple-300 mb-2">What is this?</h3>
+                <p className="text-gray-300">
+                  The Quantum NLP Terminal allows you to interact with quantum computing systems using natural language.
+                  Instead of learning complex quantum commands, you can simply describe what you want to do in plain English.
+                </p>
               </div>
-            </div>
-            
-            <div className="pt-2 border-t border-gray-700">
-              <h3 className="font-semibold text-center text-purple-300">Copyright Information</h3>
-              <div className="text-xs text-gray-400 text-center mt-1">
-                © Ervin Remus Radosavlevici (01/09/1987)
+              
+              <div>
+                <h3 className="text-lg font-medium text-purple-300 mb-2">How to use</h3>
+                <ol className="space-y-2 list-decimal pl-5 text-gray-300">
+                  <li>Type a request in the input box using natural language</li>
+                  <li>The system will translate your request into a proper quantum command</li>
+                  <li>The command will be executed and results will be displayed</li>
+                  <li>Review the results and continue with your next request</li>
+                </ol>
               </div>
-              <div className="text-xs text-gray-400 text-center">
-                ervin210@icloud.com
+              
+              <div>
+                <h3 className="text-lg font-medium text-purple-300 mb-2">Examples of what you can do</h3>
+                <ul className="space-y-1 list-disc pl-5 text-gray-300">
+                  <li>Run quantum algorithms with specific parameters</li>
+                  <li>Create and modify quantum circuits</li>
+                  <li>Connect to quantum computing providers</li>
+                  <li>Simulate quantum computations</li>
+                  <li>Analyze and visualize results</li>
+                  <li>Optimize quantum circuits</li>
+                </ul>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
+              
+              <div>
+                <h3 className="text-lg font-medium text-purple-300 mb-2">Tips for better results</h3>
+                <ul className="space-y-1 list-disc pl-5 text-gray-300">
+                  <li>Be specific about what you want to do</li>
+                  <li>Include key parameters like number of qubits or shot count</li>
+                  <li>If the translation isn't accurate, try rephrasing your request</li>
+                  <li>Explore the Examples tab for inspiration</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

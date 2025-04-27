@@ -54,7 +54,7 @@ const COMPONENT_ID = 'client-quantum-dna-security';
 const COMPONENT_TYPE = 'security-core';
 
 // Security state
-interface SecurityState {
+export interface SecurityState {
   initialized: boolean;
   securityLevel: SecurityLevel;
   deviceVerified: boolean;
@@ -321,7 +321,7 @@ export function getCopyrightInfo(): {
 }
 
 // Create singleton instance
-class QuantumDNASecurity {
+export class QuantumDNASecurity {
   private static instance: QuantumDNASecurity;
   
   private constructor() {
@@ -370,6 +370,26 @@ class QuantumDNASecurity {
     build: string;
   } {
     return getCopyrightInfo();
+  }
+  
+  /**
+   * Initialize the security system if not already initialized
+   * This is used by services that depend on the security system
+   */
+  public initialize(): Promise<boolean> {
+    console.log('Initializing Quantum DNA Security...');
+    
+    // If already initialized, just return success
+    if (securityState.initialized) {
+      console.log('Quantum DNA Security already initialized');
+      return Promise.resolve(true);
+    }
+    
+    // Initialize security
+    initializeQuantumDNASecurity();
+    
+    // Return successful initialization
+    return Promise.resolve(true);
   }
 }
 

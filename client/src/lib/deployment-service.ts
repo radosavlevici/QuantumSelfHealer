@@ -18,7 +18,7 @@
 
 import { externalConnections, ExternalServiceType } from './external-connections';
 import { generateDNASignature, ROOT_USER_EMAIL, ADDITIONAL_COPYRIGHT_HOLDERS } from '@shared/dna-protection-system';
-import { quantumDNASecurity } from './quantum-dna-security';
+import { quantumDNASecurity, type QuantumDNASecurity } from './quantum-dna-security';
 
 // Deployment status interface
 export interface DeploymentStatus {
