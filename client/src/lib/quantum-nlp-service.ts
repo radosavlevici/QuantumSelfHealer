@@ -40,6 +40,7 @@ interface AIProvider {
 interface NLPResponse {
   command: string;
   explanation: string;
+  usedProvider: string;
   _dnaWatermark: string;
 }
 
@@ -389,9 +390,15 @@ class QuantumNLPService {
       
       console.log(`Processed using providers: ${usedProviders.join(', ')}`);
       
+      // Select the provider name to display
+      const providerName = usedProviders.length > 0 
+        ? usedProviders[0] 
+        : 'Fallback Processor';
+        
       return {
         command,
         explanation,
+        usedProvider: providerName,
         _dnaWatermark: watermark
       };
     } catch (error) {
