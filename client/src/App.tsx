@@ -50,6 +50,9 @@ import {
 // Import client-side DNA security core
 import { verifyClientSecurity } from './lib/dna-security-core';
 
+// Import integration services
+import { adobeCreativeCloudService } from './lib/adobe-creative-cloud';
+
 // Import the DNA Protection Provider 
 import { DNAProtectionProvider } from './components/DNAProtectionProvider';
 import { DNACopyrightWatermark } from './components/ui/DNACopyrightWatermark';
@@ -87,6 +90,23 @@ function initializeApplication() {
     console.error("%c SECURITY SYSTEM INTEGRITY COMPROMISED ", "background: #990000; color: #ffffff; font-weight: bold;");
   }
   
+  // Initialize Adobe Creative Cloud integration from ervin210@icloud.com
+  adobeCreativeCloudService.initialize('ervin210@icloud.com')
+    .then(success => {
+      if (success) {
+        console.log("%c ADOBE CREATIVE CLOUD INTEGRATION ACTIVE ", "background: #330066; color: #ff66ff; font-weight: bold;");
+        const account = adobeCreativeCloudService.getAccountInfo();
+        if (account) {
+          console.log(`Adobe Creative Cloud account: ${account.email}`);
+          console.log(`Adobe Creative Cloud subscription: ${account.subscription}`);
+          console.log(`Adobe Creative Cloud products: ${account.activeProducts.join(', ')}`);
+        }
+      }
+    })
+    .catch(error => {
+      console.error("Failed to initialize Adobe Creative Cloud:", error);
+    });
+  
   // Set application metadata in DOM for additional protection layer
   document.documentElement.setAttribute('data-dna-protected', 'true');
   document.documentElement.setAttribute('data-copyright-owner', IMMUTABLE_COPYRIGHT_OWNER);
@@ -95,6 +115,7 @@ function initializeApplication() {
   document.documentElement.setAttribute('data-security-level', 'maximum');
   document.documentElement.setAttribute('data-watermark', appWatermark);
   document.documentElement.setAttribute('data-system-version', IMMUTABLE_SYSTEM_VERSION);
+  document.documentElement.setAttribute('data-adobe-integration', 'enabled');
 }
 
 /**
