@@ -1,0 +1,75 @@
+Okay, I understand. You want to include additional names in the license. This might be done for various reasons, such as:
+ * Attribution: To give credit to multiple developers or contributors.
+ * Ownership: To clarify that the copyright is held by more than one entity or individual.
+However, directly adding more names to the copyright line or other clauses needs to be done carefully to maintain legal clarity. Here's how we can modify the license and some important considerations:
+Modified License (Example)
+   Custom License
+
+   Copyright (c) 2025 Ervin Remus Radosavlevici and \[Additional Name 1] and \[Additional Name 2]
+
+   Permission Notice
+
+   The following conditions apply to this work, including any associated documentation, assets, or materials (the “Software”):
+
+   1.  Grant of Permission:
+
+   Permission is hereby granted, free of charge, to any person or entity obtaining a copy of this Software and associated files, to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, subject to the conditions outlined below.
+
+   2.  Commercial Use and Royalty Payment:
+
+   * Any individual or entity using this Software as a core component of a product or service that generates direct commercial revenue must pay a royalty fee to the copyright holders, Ervin Remus Radosavlevici, \[Additional Name 1], and \[Additional Name 2]. "Direct commercial revenue" refers to revenue where the Software's functionality is directly sold or licensed to customers.
+   * Royalties are to be negotiated between the copyright holders and the commercial user. The specific terms, frequency, and payment method will be defined in a separate commercial agreement.
+   * This royalty requirement does not apply to internal use within a company where the Software is used to improve internal processes but is not directly sold to customers.
+
+   3.  Similarity and Derivative Work Considerations:
+
+   * Any modified version of this Software must be clearly identified as a modification, and the original copyright notice must be retained, including all copyright holders' names.
+   * Creating a separate software product that directly competes with the original Software by replicating its core functionality and appearance is not permitted without a separate commercial agreement with all copyright holders.
+   * This clause is intended to prevent direct commercial cloning and does not restrict the creation of compatible or interoperable software.
+
+   4.  Non-Commercial Use:
+
+   The Software is available free of charge for non-commercial, personal, or academic use, provided no direct commercial gain is derived from it.
+
+   5.  Intellectual Property and Legal Enforcement:
+
+   * This Software, including all associated content (such as ASCII art, designs, and documentation), is the intellectual property of Ervin Remus Radosavlevici, \[Additional Name 1], and \[Additional Name 2], and protected under copyright law.
+   * Unauthorized use, distribution, or direct commercial exploitation of this Software in a way that violates the terms of this license is prohibited.
+
+   6.  Trademark:
+
+   The trademark, "\[Your Software Name]™", and any related branding (such as logos, names, or other identifiers) is the intellectual property of Ervin Remus Radosavlevici. Unauthorized use of the trademark or related branding without express permission is prohibited.
+
+   7.  Termination:
+
+   Violation of any of the conditions above will result in the termination of this license. The Software may no longer be used, modified, or distributed by anyone in violation of these terms.
+
+   8.  Legal Validity:
+
+   This custom license is legally binding. By using, distributing, or commercially benefiting from the Software, you agree to comply with the terms outlined in this document.
+
+   9.  Contact Information:
+
+   For inquiries, to negotiate commercial use agreements, or to settle disputes, please contact Ervin Remus Radosavlevici at:
+
+   * Email: \[Your Email Address]
+   * Phone: \[Your Phone Number]
+
+   Disclaimer:
+
+   The Software is provided “as is”, without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement. In no event shall the copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the Software or the use or other dealings related to it.
+
+Key Changes and Considerations:
+ * Copyright Notice: I've added "and [Additional Name 1] and [Additional Name 2]" to the copyright line. This clearly indicates joint copyright ownership.
+ * Royalty Clause: I've updated the royalty clause to state that royalties are paid to "the copyright holders."
+ * Similarity Clause: I've clarified that any commercial agreement needs to be with "all copyright holders."
+ * Intellectual Property Clause: I've added the additional names to the intellectual property clause to reinforce joint ownership.
+ * Contact Information: I've left the contact information as is, assuming that Ervin Remus Radosavlevici will be the primary point of contact. If you need to include contact information for the other copyright holders, you can add it here.
+ * Disclaimer: I've changed "copyright holder" to "copyright holders" to reflect the multiple owners.
+Important Legal Considerations:
+ * Copyright Ownership: Clearly defining copyright ownership is crucial. Make sure that any agreements or contracts between the copyright holders are in writing and legally sound.
+ * Decision-Making: If there are multiple copyright holders, you'll need to establish how decisions about the software and its licensing will be made (e.g., majority vote, unanimous consent). This is especially important for commercial agreements or legal actions.
+ * Attribution: Ensure that all contributors to the software are properly attributed in the software's documentation or other appropriate places. This is good practice and may be legally required depending on the circumstances.
+ * License Compatibility: Adding more names doesn't directly address the license compatibility issues we discussed earlier. Your custom license, even with multiple copyright holders, will still likely be incompatible with many standard open-source licenses due to the royalty requirement.
+ * Legal Advice: It's highly recommended to consult with an intellectual property lawyer to review the modified license and ensure it accurately reflects the intended copyright ownership and any agreements between the copyright holders.
+By making these changes, you can clearly indicate multiple copyright holders in your license. However, remember that addressing the underlying compatibility issues with other licenses is a separate and complex legal challenge.

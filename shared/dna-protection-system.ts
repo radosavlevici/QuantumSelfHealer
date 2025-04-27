@@ -1,6 +1,6 @@
 /**
  * !!! DNA PROTECTION SYSTEM - MAXIMUM SECURITY SYSTEM !!!
- * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
  * Email: ervin210@icloud.com
  * 
  * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
@@ -26,7 +26,11 @@
 export const ROOT_USER_NAME = 'Ervin Remus Radosavlevici';
 export const ROOT_USER_EMAIL = 'ervin210@icloud.com';
 export const ROOT_USER_BIRTHDATE = '01/09/1987';
-export const COPYRIGHT_STATEMENT = `Copyright © ${ROOT_USER_NAME} (${ROOT_USER_BIRTHDATE}) - Email: ${ROOT_USER_EMAIL} - All Rights Reserved.`;
+// Additional copyright holders
+export const ADDITIONAL_COPYRIGHT_HOLDERS = ['David Cornelius Marshall', 'Serena Elizabeth Thorne'];
+
+// Full copyright statement with all copyright holders
+export const COPYRIGHT_STATEMENT = `Copyright © ${ROOT_USER_NAME} (${ROOT_USER_BIRTHDATE}), ${ADDITIONAL_COPYRIGHT_HOLDERS.join(', ')} - Email: ${ROOT_USER_EMAIL} - All Rights Reserved.`;
 
 // System version information
 export const SYSTEM_VERSION = '4.0';
