@@ -68,9 +68,9 @@ const NavigationBar: React.FC = () => {
   return (
     <nav 
       className="bg-gray-900 border-b border-gray-800 shadow-lg"
-      data-component-id={COMPONENT_ID}
-      data-component-name={COMPONENT_NAME}
-      data-dna-signature={componentDNASignature}
+      id={COMPONENT_ID}
+      data-security-id={COMPONENT_ID}
+      data-security-signature={componentDNASignature}
     >
       <div className="container mx-auto px-4">
         <div className="flex justify-between h-16">

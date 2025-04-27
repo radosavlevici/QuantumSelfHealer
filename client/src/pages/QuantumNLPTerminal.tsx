@@ -442,9 +442,8 @@ const QuantumNLPTerminal: React.FC = () => {
   return (
     <div
       className="flex flex-col h-[calc(100vh-10rem)]"
-      data-component-id={COMPONENT_ID}
-      data-component-name={COMPONENT_NAME}
-      data-dna-signature={componentSignature}
+      id={COMPONENT_ID}
+      data-security-signature={componentSignature}
     >
       <Tabs 
         defaultValue="terminal" 

@@ -78,9 +78,8 @@ const QuantumPage: React.FC = () => {
   return (
     <div
       className="space-y-4"
-      data-component-id={COMPONENT_ID}
-      data-component-name={COMPONENT_NAME}
-      data-dna-signature={componentDNASignature}
+      id={COMPONENT_ID}
+      data-security-signature={componentDNASignature}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">

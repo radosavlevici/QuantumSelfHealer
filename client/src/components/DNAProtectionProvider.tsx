@@ -104,15 +104,18 @@ export const DNAProtectionProvider: React.FC<DNAProtectionProviderProps> = ({ ch
   };
   
   return (
-    <DNAProtectionContext.Provider
-      value={contextValue}
+    <div
       data-component-id={COMPONENT_ID}
       data-component-name={COMPONENT_NAME}
       data-dna-signature={componentDNASignature}
       data-security-watermark={componentWatermark}
+      className="dna-protection-wrapper"
+      style={{ display: 'contents' }}
     >
-      {children}
-    </DNAProtectionContext.Provider>
+      <DNAProtectionContext.Provider value={contextValue}>
+        {children}
+      </DNAProtectionContext.Provider>
+    </div>
   );
 };
 

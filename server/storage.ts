@@ -185,8 +185,11 @@ class MemStorage implements IStorage {
       timestamp: new Date().toISOString()
     };
     
-    console.log(quantumDNASecurity.generateSecureObject(secEvent, 'root-user-creation'));
-    console.log(quantumDNASecurity.generateSecureObject(secEvent2, 'root-user-creation'));
+    // First initialize the quantum DNA security system
+    quantumDNASecurity.initialize().then(() => {
+      console.log(quantumDNASecurity.generateSecureObject(secEvent, 'root-user-creation'));
+      console.log(quantumDNASecurity.generateSecureObject(secEvent2, 'root-user-creation'));
+    });
   }
 
   // USER OPERATIONS
