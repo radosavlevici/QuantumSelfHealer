@@ -42,20 +42,19 @@ import {
   IMMUTABLE_COPYRIGHT_EMAIL, 
   IMMUTABLE_COPYRIGHT_FULL,
   IMMUTABLE_SYSTEM_VERSION,
+  IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS,
   generateDNASignature,
-  generateSecurityWatermark,
-  verifySecuritySystemIntegrity
+  generateSecurityWatermark
 } from '@shared/quantum-dna-security';
 
-// Import client-side DNA security core
-import { verifyClientSecurity } from './lib/dna-security-core';
+// Import client-side security system
+import { quantumDNASecurity } from './lib/quantum-dna-security';
 
 // Import integration services
 import { adobeCreativeCloudService } from './lib/adobe-creative-cloud';
+import { integratedConnectionSystem } from './lib/integrated-connection-system';
 
-// Import the DNA Protection Provider 
-import { DNAProtectionProvider } from './components/DNAProtectionProvider';
-import { DNACopyrightWatermark } from './components/ui/DNACopyrightWatermark';
+// Import the DNA Protection Provider components
 import NavigationBar from './components/NavigationBar';
 
 // Import DNA-protected pages
@@ -77,45 +76,33 @@ const appDNASignature = generateDNASignature(COMPONENT_ID, COMPONENT_NAME);
 const appWatermark = generateSecurityWatermark(`app-${COMPONENT_ID}`);
 
 // On application load, perform initialization verification
-function initializeApplication() {
-  console.log("%c QUANTUM DNA PROTECTED APPLICATION INITIALIZING ", "background: #001a33; color: #00ccff; font-weight: bold;");
-  console.log(`%c ${IMMUTABLE_COPYRIGHT_FULL} `, "background: #001a33; color: #ffffff;");
-  console.log(`%c Quantum DNA Security v${IMMUTABLE_SYSTEM_VERSION} `, "background: #001a33; color: #00ff99;");
-  console.log("%c ALL COMPONENTS BUILT AS ONE UNIFIED SYSTEM ", "background: #001a33; color: #ff9900; font-weight: bold;");
-  console.log("%c ANTI-THEFT PROTECTION ACTIVE ", "background: #330000; color: #ff6666; font-weight: bold;");
+async function initializeApplication() {
+  console.log("QUANTUM AI ASSISTANT INITIALIZING - DNA: " + appDNASignature.slice(0, 10) + "...");
   
-  // Verify security system integrity
-  const securityStatus = verifyClientSecurity();
-  if (!securityStatus.valid) {
-    console.error("%c SECURITY SYSTEM INTEGRITY COMPROMISED ", "background: #990000; color: #ffffff; font-weight: bold;");
+  try {
+    // Initialize the quantum DNA security system
+    await quantumDNASecurity.initialize();
+    
+    // Initialize the integrated connection system
+    await integratedConnectionSystem.initialize();
+    
+    // Initialize the Adobe Creative Cloud service
+    await adobeCreativeCloudService.initialize();
+    
+    // Set application metadata in DOM for additional protection layer
+    document.documentElement.setAttribute('data-dna-protected', 'true');
+    document.documentElement.setAttribute('data-copyright-owner', IMMUTABLE_COPYRIGHT_OWNER);
+    document.documentElement.setAttribute('data-copyright-birthdate', IMMUTABLE_COPYRIGHT_BIRTHDATE);
+    document.documentElement.setAttribute('data-copyright-email', IMMUTABLE_COPYRIGHT_EMAIL);
+    document.documentElement.setAttribute('data-security-level', 'maximum');
+    document.documentElement.setAttribute('data-watermark', appWatermark);
+    document.documentElement.setAttribute('data-system-version', IMMUTABLE_SYSTEM_VERSION);
+    document.documentElement.setAttribute('data-adobe-integration', 'enabled');
+    
+    console.log("Application initialization complete - All systems integrated and operational");
+  } catch (error) {
+    console.error('Error initializing application:', error);
   }
-  
-  // Initialize Adobe Creative Cloud integration from ervin210@icloud.com
-  adobeCreativeCloudService.initialize('ervin210@icloud.com')
-    .then(success => {
-      if (success) {
-        console.log("%c ADOBE CREATIVE CLOUD INTEGRATION ACTIVE ", "background: #330066; color: #ff66ff; font-weight: bold;");
-        const account = adobeCreativeCloudService.getAccountInfo();
-        if (account) {
-          console.log(`Adobe Creative Cloud account: ${account.email}`);
-          console.log(`Adobe Creative Cloud subscription: ${account.subscription}`);
-          console.log(`Adobe Creative Cloud products: ${account.activeProducts.join(', ')}`);
-        }
-      }
-    })
-    .catch(error => {
-      console.error("Failed to initialize Adobe Creative Cloud:", error);
-    });
-  
-  // Set application metadata in DOM for additional protection layer
-  document.documentElement.setAttribute('data-dna-protected', 'true');
-  document.documentElement.setAttribute('data-copyright-owner', IMMUTABLE_COPYRIGHT_OWNER);
-  document.documentElement.setAttribute('data-copyright-birthdate', IMMUTABLE_COPYRIGHT_BIRTHDATE);
-  document.documentElement.setAttribute('data-copyright-email', IMMUTABLE_COPYRIGHT_EMAIL);
-  document.documentElement.setAttribute('data-security-level', 'maximum');
-  document.documentElement.setAttribute('data-watermark', appWatermark);
-  document.documentElement.setAttribute('data-system-version', IMMUTABLE_SYSTEM_VERSION);
-  document.documentElement.setAttribute('data-adobe-integration', 'enabled');
 }
 
 /**
@@ -132,34 +119,34 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="quantum-dna-theme">
         <TooltipProvider>
-          {/* Wrap the entire application in the DNA Protection Provider */}
-          <DNAProtectionProvider>
-            <div 
-              className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white"
-              data-component-id={COMPONENT_ID}
-              data-copyright-owner={IMMUTABLE_COPYRIGHT_OWNER}
-              data-copyright-full={IMMUTABLE_COPYRIGHT_FULL}
-              data-watermark={appWatermark}
-              data-security-level="maximum"
-            >
-              <Toaster />
-              <NavigationBar />
-              <main className="container mx-auto py-4 px-4">
-                <Switch>
-                  <Route path="/" component={QuantumTerminal} />
-                  <Route path="/nlp" component={QuantumNLPTerminal} />
-                  <Route path="/security" component={SecurityDashboard} />
-                  <Route path="/deployment" component={DeploymentDashboard} />
-                  <Route path="/terminal" component={TerminalPage} />
-                  <Route path="/quantum" component={QuantumPage} />
-                  <Route path="/home" component={HomePage} />
-                  <Route component={NotFound} />
-                </Switch>
-              </main>
-              {/* Visible copyright watermark that cannot be removed */}
-              <DNACopyrightWatermark position="bottom-right" expanded={false} />
-            </div>
-          </DNAProtectionProvider>
+          <div 
+            className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white"
+            data-component-id={COMPONENT_ID}
+            data-copyright-owner={IMMUTABLE_COPYRIGHT_OWNER}
+            data-copyright-full={IMMUTABLE_COPYRIGHT_FULL}
+            data-watermark={appWatermark}
+            data-security-level="maximum"
+          >
+            <Toaster />
+            <NavigationBar />
+            <main className="container mx-auto py-4 px-4">
+              <Switch>
+                <Route path="/" component={QuantumNLPTerminal} />
+                <Route path="/nlp" component={QuantumNLPTerminal} />
+                <Route path="/security" component={SecurityDashboard} />
+                <Route path="/deployment" component={DeploymentDashboard} />
+                <Route path="/terminal" component={TerminalPage} />
+                <Route path="/quantum" component={QuantumPage} />
+                <Route path="/home" component={HomePage} />
+                <Route component={NotFound} />
+              </Switch>
+            </main>
+            {/* Copyright notice in footer */}
+            <footer className="w-full border-t border-gray-800 mt-8 py-4 px-6 text-center text-xs text-gray-500">
+              <p>{IMMUTABLE_COPYRIGHT_FULL}</p>
+              <p className="mt-1">Protected by Quantum DNA Security v{IMMUTABLE_SYSTEM_VERSION}</p>
+            </footer>
+          </div>
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>

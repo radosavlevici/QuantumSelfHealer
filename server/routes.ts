@@ -30,8 +30,13 @@ import {
   IMMUTABLE_SYSTEM_VERSION,
   generateSecurityWatermark,
   generateDNASignature,
-  secureData
+  quantumDNASecurity
 } from '@shared/quantum-dna-security';
+
+// Helper function to secure data (for clean transition from old code)
+function secureData<T extends object>(data: T, componentId: string = 'api-routes'): T & { _dnaWatermark: string } {
+  return quantumDNASecurity.generateSecureObject(data, componentId);
+}
 
 import {
   registerProtectedComponent,
@@ -75,7 +80,7 @@ export function registerRoutes(app: Express): Server {
     };
     
     // Apply DNA watermarking and protection to the response
-    const securedResponse = secureData(status);
+    const securedResponse = quantumDNASecurity.generateSecureObject(status, 'api-status');
     
     res.status(200).json(securedResponse);
   });

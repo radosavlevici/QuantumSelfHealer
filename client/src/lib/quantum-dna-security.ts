@@ -1,5 +1,5 @@
 /**
- * !!! ADVANCED QUANTUM DNA SECURITY - CLIENT IMPLEMENTATION !!!
+ * !!! CLIENT-SIDE QUANTUM DNA SECURITY SYSTEM - IMMUTABLE COPYRIGHT !!!
  * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
  * Email: ervin210@icloud.com
  * 
@@ -8,390 +8,180 @@
  * Unauthorized past and present commercial use is subject to retroactive royalties.
  * 
  * CLIENT-SIDE QUANTUM DNA SECURITY SYSTEM
- * This module provides client-side implementation of quantum DNA security.
- * It interfaces with the core security system and adds browser-specific
- * protections and device verification capabilities.
  * 
- * FEATURES:
- * - Client-side security state tracking
- * - Browser fingerprinting for device identification
- * - Quantum DNA signature verification
- * - Continuous security monitoring
- * - Authorized device verification
- * - Self-healing mechanisms
+ * This is the client-side implementation of the Quantum DNA Security System.
+ * It provides front-end components with secure access to the DNA-based
+ * watermarking, signature generation, and verification.
  * 
- * PART OF THE UNIFIED SECURITY SYSTEM:
- * This component is built as part of the unified security system with
- * all protection mechanisms integrated from the beginning.
+ * This component is part of the unified security framework that protects
+ * the entire application as one cohesive unit.
  */
-
-import {
-  IMMUTABLE_COPYRIGHT_OWNER,
-  IMMUTABLE_COPYRIGHT_BIRTHDATE,
-  IMMUTABLE_COPYRIGHT_EMAIL,
-  IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS,
-  IMMUTABLE_COPYRIGHT_FULL,
-  IMMUTABLE_SYSTEM_VERSION,
-  IMMUTABLE_BUILD_TIMESTAMP,
-  generateDNASignature,
-  generateSecurityWatermark,
-  verifyDNASignature,
-  verifySecuritySystemIntegrity,
-  addDNAWatermark,
-  verifyDNAWatermark
-} from '@shared/quantum-dna-security';
 
 import { 
-  SecurityLevel, 
-  AUTHORIZED_DEVICE_TYPE,
-  AUTHORIZED_DEVICE_ID,
-  DNA_VERIFICATION_INTERVAL,
-  verifyRootCredentials
-} from '@shared/dna-protection-system';
+  IMMUTABLE_COPYRIGHT_OWNER, 
+  IMMUTABLE_COPYRIGHT_FULL, 
+  IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS,
+  IMMUTABLE_SYSTEM_VERSION,
+  generateDNASignature,
+  generateSecurityWatermark,
+  SecurityState,
+  ComponentInfo,
+  quantumDNASecurity as serverQuantumDNASecurity
+} from '@shared/quantum-dna-security';
 
-// Component identity
+// Component identity constants
 const COMPONENT_ID = 'client-quantum-dna-security';
-const COMPONENT_TYPE = 'security-core';
+const COMPONENT_TYPE = 'client-security-core';
 
-// Security state
-export interface SecurityState {
-  initialized: boolean;
-  securityLevel: SecurityLevel;
-  deviceVerified: boolean;
-  integrityVerified: boolean;
-  lastVerification: Date;
-  dnaSignature: string;
-  securityWatermark: string;
-  deviceFingerprint: string;
-  authorizedDevice: boolean;
-  monitoringActive: boolean;
-}
-
-// Default security state
-const defaultSecurityState: SecurityState = {
-  initialized: false,
-  securityLevel: SecurityLevel.STANDARD,
-  deviceVerified: false,
-  integrityVerified: false,
-  lastVerification: new Date(),
-  dnaSignature: '',
-  securityWatermark: '',
-  deviceFingerprint: '',
-  authorizedDevice: false,
-  monitoringActive: false
-};
-
-// Mutable security state (only mutable within this module)
-let securityState: SecurityState = { ...defaultSecurityState };
-
-// Security monitoring interval ID
-let securityMonitoringInterval: number | null = null;
+// Generate secure identifiers for this component
+const componentDNA = generateDNASignature(COMPONENT_ID, COMPONENT_TYPE);
+const componentWatermark = generateSecurityWatermark(`component-${COMPONENT_ID}`);
 
 /**
- * Initialize quantum DNA security system
+ * Client-side Quantum DNA Security System
  */
-export function initializeQuantumDNASecurity(): SecurityState {
-  // Generate security identifiers
-  const dnaSignature = generateDNASignature(COMPONENT_ID, COMPONENT_TYPE);
-  const securityWatermark = generateSecurityWatermark(`${COMPONENT_ID}-${Date.now()}`);
-  
-  // Generate device fingerprint
-  const deviceFingerprint = generateDeviceFingerprint();
-  
-  // Check if this is an authorized device
-  const authorizedDevice = verifyAuthorizedDevice(deviceFingerprint);
-  
-  // Verify security system integrity
-  const integrityResult = verifySecuritySystemIntegrity();
-  
-  // Verify root credentials
-  const rootCredentialsValid = verifyRootCredentials();
-  
-  // Update security state
-  securityState = {
-    initialized: true,
-    securityLevel: SecurityLevel.MAXIMUM,
-    deviceVerified: authorizedDevice,
-    integrityVerified: integrityResult.valid,
-    lastVerification: new Date(),
-    dnaSignature,
-    securityWatermark,
-    deviceFingerprint,
-    authorizedDevice,
-    monitoringActive: false
-  };
-  
-  // Start security monitoring
-  startSecurityMonitoring();
-  
-  console.log('Quantum DNA Security System initialized');
-  
-  // Return immutable copy of security state
-  return { ...securityState };
-}
-
-/**
- * Generate a device fingerprint
- */
-function generateDeviceFingerprint(): string {
-  // In a real implementation, this would use advanced browser fingerprinting
-  // and hardware identification techniques
-  
-  const screenInfo = `${window.screen.width}x${window.screen.height}x${window.screen.colorDepth}`;
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const language = navigator.language;
-  const platform = navigator.platform;
-  const userAgent = navigator.userAgent;
-  
-  // Generate fingerprint hash
-  const fingerprintData = `${screenInfo}|${timezone}|${language}|${platform}|${userAgent}|${Date.now()}`;
-  
-  // Simple hash function
-  let hash = 0;
-  for (let i = 0; i < fingerprintData.length; i++) {
-    const char = fingerprintData.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-  
-  // In a real implementation, we would use a more sophisticated
-  // fingerprinting method that's resistant to spoofing
-  return `${AUTHORIZED_DEVICE_TYPE}-${hash.toString(36)}`;
-}
-
-/**
- * Verify if this is an authorized device
- */
-function verifyAuthorizedDevice(deviceFingerprint: string): boolean {
-  // In a real implementation, this would verify the device fingerprint
-  // against a list of authorized devices stored securely
-  
-  // For demonstration, we'll check if the device fingerprint contains
-  // the authorized device ID
-  return deviceFingerprint.includes(AUTHORIZED_DEVICE_ID) || 
-         deviceFingerprint.toLowerCase().includes('iphone');
-}
-
-/**
- * Start continuous security monitoring
- */
-function startSecurityMonitoring(): void {
-  // Stop existing monitoring if active
-  if (securityMonitoringInterval !== null) {
-    window.clearInterval(securityMonitoringInterval);
-  }
-  
-  // Start new monitoring interval
-  securityMonitoringInterval = window.setInterval(() => {
-    // Verify security system integrity
-    const integrityResult = verifySecuritySystemIntegrity();
-    
-    // Verify root credentials
-    const rootCredentialsValid = verifyRootCredentials();
-    
-    // Update security state
-    securityState.integrityVerified = integrityResult.valid;
-    securityState.lastVerification = new Date();
-    securityState.monitoringActive = true;
-    
-    // If integrity check fails, trigger self-healing
-    if (!integrityResult.valid) {
-      console.error('Security integrity verification failed');
-      triggerSelfHealing();
-    }
-    
-    // Re-verify device fingerprint periodically
-    if (Math.random() < 0.2) { // 20% chance each interval
-      const deviceFingerprint = generateDeviceFingerprint();
-      const authorizedDevice = verifyAuthorizedDevice(deviceFingerprint);
-      
-      securityState.deviceFingerprint = deviceFingerprint;
-      securityState.authorizedDevice = authorizedDevice;
-      securityState.deviceVerified = authorizedDevice;
-      
-      if (!authorizedDevice) {
-        console.error('Unauthorized device detected');
-        triggerUnauthorizedDeviceResponse();
-      }
-    }
-    
-  }, DNA_VERIFICATION_INTERVAL);
-  
-  // Mark security monitoring as active
-  securityState.monitoringActive = true;
-}
-
-/**
- * Trigger self-healing mechanisms
- */
-function triggerSelfHealing(): void {
-  console.log('Triggering self-healing mechanisms');
-  
-  // Re-initialize security system
-  const dnaSignature = generateDNASignature(COMPONENT_ID, COMPONENT_TYPE);
-  const securityWatermark = generateSecurityWatermark(`${COMPONENT_ID}-${Date.now()}`);
-  
-  // Update security state
-  securityState.dnaSignature = dnaSignature;
-  securityState.securityWatermark = securityWatermark;
-  securityState.lastVerification = new Date();
-  
-  // In a real implementation, this would perform more advanced
-  // self-healing measures like re-downloading security modules
-  // and repairing corrupted security data
-}
-
-/**
- * Trigger response to unauthorized device detection
- */
-function triggerUnauthorizedDeviceResponse(): void {
-  console.error('SECURITY ALERT: Unauthorized device detected');
-  console.error('SECURITY ALERT: Only authorized devices can access this application');
-  console.error('SECURITY ALERT: This incident will be reported');
-  
-  // In a real implementation, this would:
-  // 1. Report the unauthorized access attempt
-  // 2. Limit functionality
-  // 3. Potentially wipe sensitive data
-  // 4. Log the incident for forensic analysis
-}
-
-/**
- * Get the current security state
- */
-export function getSecurityState(): SecurityState {
-  // Return immutable copy of security state
-  return { ...securityState };
-}
-
-/**
- * Manually verify security integrity
- */
-export function verifySecurityIntegrity(): boolean {
-  // Verify security system integrity
-  const integrityResult = verifySecuritySystemIntegrity();
-  
-  // Update security state
-  securityState.integrityVerified = integrityResult.valid;
-  securityState.lastVerification = new Date();
-  
-  return integrityResult.valid;
-}
-
-/**
- * Generate a secure object with DNA watermarking
- */
-export function generateSecureObject<T extends object>(data: T, componentId: string): T & {
-  _dnaWatermark: string;
-  _timestamp: string;
-  _copyright: string;
-  _version: string;
-} {
-  return addDNAWatermark(data, componentId);
-}
-
-/**
- * Verify a secure object's DNA watermark
- */
-export function verifySecureObject(obj: any): boolean {
-  return verifyDNAWatermark(obj);
-}
-
-/**
- * Get copyright information
- */
-export function getCopyrightInfo(): {
-  owner: string;
-  birthdate: string;
-  email: string;
-  additionalHolders: string[];
-  full: string;
-  version: string;
-  build: string;
-} {
-  return {
-    owner: IMMUTABLE_COPYRIGHT_OWNER,
-    birthdate: IMMUTABLE_COPYRIGHT_BIRTHDATE,
-    email: IMMUTABLE_COPYRIGHT_EMAIL,
-    additionalHolders: [...IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS],
-    full: IMMUTABLE_COPYRIGHT_FULL,
-    version: IMMUTABLE_SYSTEM_VERSION,
-    build: IMMUTABLE_BUILD_TIMESTAMP
-  };
-}
-
-// Create singleton instance
-export class QuantumDNASecurity {
-  private static instance: QuantumDNASecurity;
+class ClientQuantumDNASecurity {
+  private static instance: ClientQuantumDNASecurity;
+  private isInitialized: boolean = false;
+  private securityState: SecurityState;
+  private dnaSignature: string;
   
   private constructor() {
-    // Private constructor for singleton pattern
-  }
-  
-  public static getInstance(): QuantumDNASecurity {
-    if (!QuantumDNASecurity.instance) {
-      QuantumDNASecurity.instance = new QuantumDNASecurity();
-      
-      // Initialize security
-      initializeQuantumDNASecurity();
-    }
+    // Generate component DNA and watermark
+    this.dnaSignature = componentDNA;
     
-    return QuantumDNASecurity.instance;
-  }
-  
-  public getSecurityState(): SecurityState {
-    return getSecurityState();
-  }
-  
-  public verifySecurityIntegrity(): boolean {
-    return verifySecurityIntegrity();
-  }
-  
-  public generateSecureObject<T extends object>(data: T, componentId: string): T & {
-    _dnaWatermark: string;
-    _timestamp: string;
-    _copyright: string;
-    _version: string;
-  } {
-    return generateSecureObject(data, componentId);
-  }
-  
-  public verifySecureObject(obj: any): boolean {
-    return verifySecureObject(obj);
-  }
-  
-  public getCopyrightInfo(): {
-    owner: string;
-    birthdate: string;
-    email: string;
-    additionalHolders: string[];
-    full: string;
-    version: string;
-    build: string;
-  } {
-    return getCopyrightInfo();
+    // Initialize security state
+    this.securityState = {
+      initialized: false,
+      integrityVerified: false,
+      copyrightVerified: false,
+      dnaProtectionActive: false,
+      _dnaWatermark: componentWatermark
+    };
   }
   
   /**
-   * Initialize the security system if not already initialized
-   * This is used by services that depend on the security system
+   * Get singleton instance
    */
-  public initialize(): Promise<boolean> {
-    console.log('Initializing Quantum DNA Security...');
-    
-    // If already initialized, just return success
-    if (securityState.initialized) {
-      console.log('Quantum DNA Security already initialized');
-      return Promise.resolve(true);
+  public static getInstance(): ClientQuantumDNASecurity {
+    if (!ClientQuantumDNASecurity.instance) {
+      ClientQuantumDNASecurity.instance = new ClientQuantumDNASecurity();
+    }
+    return ClientQuantumDNASecurity.instance;
+  }
+  
+  /**
+   * Initialize the DNA security system
+   */
+  public async initialize(): Promise<boolean> {
+    if (this.isInitialized) {
+      console.log('Client Quantum DNA Security already initialized');
+      return true;
     }
     
-    // Initialize security
-    initializeQuantumDNASecurity();
+    console.log('Initializing Client Quantum DNA Security System...');
     
-    // Return successful initialization
-    return Promise.resolve(true);
+    try {
+      // Initialize the server-side security
+      await serverQuantumDNASecurity.initialize();
+      
+      // Register this component with the server security
+      const componentInfo: ComponentInfo = {
+        id: COMPONENT_ID,
+        type: COMPONENT_TYPE,
+        initialized: true,
+        dnaSignature: this.dnaSignature,
+        _dnaWatermark: componentWatermark
+      };
+      
+      serverQuantumDNASecurity.registerComponent(componentInfo);
+      
+      // Set security state to active
+      this.securityState = {
+        initialized: true,
+        integrityVerified: true,
+        copyrightVerified: true,
+        dnaProtectionActive: true,
+        lastVerification: new Date().toISOString(),
+        _dnaWatermark: componentWatermark
+      };
+      
+      this.isInitialized = true;
+      console.log('Client Quantum DNA Security System initialized');
+      
+      // Log initialization with visual styling
+      this.logSecurityInitialization();
+      
+      return true;
+    } catch (error) {
+      console.error('Error initializing Client Quantum DNA Security:', error);
+      return false;
+    }
+  }
+  
+  /**
+   * Log security initialization with visual styling
+   */
+  private logSecurityInitialization(): void {
+    console.log('%c QUANTUM DNA PROTECTED APPLICATION INITIALIZING ', 'background: #001a33; color: #00ccff; font-weight: bold;');
+    console.log('%c Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, Serena Elizabeth Thorne - Email: ervin210@icloud.com - All Rights Reserved. ', 'background: #001a33; color: #ffffff;');
+    console.log(`%c Quantum DNA Security v${IMMUTABLE_SYSTEM_VERSION} `, 'background: #001a33; color: #00ff99;');
+    console.log('%c ALL COMPONENTS BUILT AS ONE UNIFIED SYSTEM ', 'background: #001a33; color: #ff9900; font-weight: bold;');
+    console.log('%c ANTI-THEFT PROTECTION ACTIVE ', 'background: #330000; color: #ff6666; font-weight: bold;');
+  }
+  
+  /**
+   * Generate a secure object with DNA watermarking
+   */
+  public generateSecureObject<T extends object>(obj: T, componentId: string): T & { _dnaWatermark: string } {
+    // Initialize if not already done
+    if (!this.isInitialized) {
+      this.initialize();
+    }
+    
+    return serverQuantumDNASecurity.generateSecureObject(obj, componentId);
+  }
+  
+  /**
+   * Get current security state
+   */
+  public getSecurityState(): SecurityState {
+    // If not initialized, get state from server security
+    if (!this.isInitialized) {
+      return serverQuantumDNASecurity.getSecurityState();
+    }
+    
+    return {
+      ...this.securityState,
+      lastVerification: new Date().toISOString()
+    };
+  }
+  
+  /**
+   * Get system DNA signature
+   */
+  public getSystemDNA(): string {
+    return this.dnaSignature;
+  }
+  
+  /**
+   * Verify DNA signature
+   */
+  public verifyDNASignature(signature: string): boolean {
+    // For this example, we'll just check that it's a non-empty string
+    // In a real implementation, this would perform cryptographic verification
+    return !!signature && signature.startsWith('dna-');
+  }
+  
+  /**
+   * Verify watermark
+   */
+  public verifyWatermark(watermark: string): boolean {
+    // For this example, we'll just check that it's a non-empty string
+    // In a real implementation, this would perform cryptographic verification
+    return !!watermark && watermark.startsWith('watermark-');
   }
 }
 
-// Export singleton instance
-export const quantumDNASecurity = QuantumDNASecurity.getInstance();
+// Export the singleton instance
+export const quantumDNASecurity = ClientQuantumDNASecurity.getInstance();

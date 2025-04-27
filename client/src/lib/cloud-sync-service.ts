@@ -24,9 +24,9 @@
 import { 
   IMMUTABLE_COPYRIGHT_OWNER,
   IMMUTABLE_COPYRIGHT_EMAIL,
-  generateSecurityWatermark,
-  secureData
+  generateSecurityWatermark
 } from '@shared/quantum-dna-security';
+import { quantumDNASecurity } from './quantum-dna-security';
 
 // Real iCloud connection for actual cross-device synchronization
 // This ensures the system connects to actual iCloud services
@@ -263,7 +263,7 @@ class CloudSyncService {
     
     try {
       // Apply DNA protection and quantum encryption before sending to iCloud
-      const securedData = secureData(data, `cloud-${key}`);
+      const securedData = quantumDNASecurity.generateSecureObject(data, `cloud-${key}`);
       
       // Add copyright and ownership watermarks
       const dataWithWatermarks = {

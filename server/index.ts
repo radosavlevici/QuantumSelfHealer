@@ -40,8 +40,13 @@ import {
   IMMUTABLE_SYSTEM_VERSION,
   generateSecurityWatermark,
   generateDNASignature,
-  secureData
+  quantumDNASecurity
 } from '@shared/quantum-dna-security';
+
+// Helper function to secure data (for clean transition from old code)
+function secureData<T extends object>(data: T, componentId: string = 'server-core'): T & { _dnaWatermark: string } {
+  return quantumDNASecurity.generateSecureObject(data, componentId);
+}
 
 import {
   registerProtectedComponent,

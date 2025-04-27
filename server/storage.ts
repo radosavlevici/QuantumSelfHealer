@@ -48,7 +48,7 @@ import {
   IMMUTABLE_SYSTEM_VERSION,
   generateSecurityWatermark,
   generateDNASignature,
-  secureData
+  quantumDNASecurity
 } from '@shared/quantum-dna-security';
 
 import {
@@ -185,8 +185,8 @@ class MemStorage implements IStorage {
       timestamp: new Date().toISOString()
     };
     
-    console.log(secureData(secEvent));
-    console.log(secureData(secEvent2));
+    console.log(quantumDNASecurity.generateSecureObject(secEvent, 'root-user-creation'));
+    console.log(quantumDNASecurity.generateSecureObject(secEvent2, 'root-user-creation'));
   }
 
   // USER OPERATIONS

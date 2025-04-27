@@ -21,7 +21,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { deploymentService, DeploymentStatus, DeploymentTarget, DeploymentOptions } from '../lib/deployment-service';
-import { addDNAWatermark } from '@shared/quantum-dna-security';
+import { generateSecurityWatermark } from '@shared/quantum-dna-security';
 import { externalConnections } from '../lib/external-connections';
 
 // Component DNA information
@@ -136,7 +136,10 @@ const DeploymentDashboard: React.FC = () => {
       };
       
       // Add DNA watermark to options
-      const secureOptions = addDNAWatermark(options, COMPONENT_ID);
+      const secureOptions = {
+        ...options,
+        _dnaWatermark: generateSecurityWatermark(COMPONENT_ID)
+      };
       
       // Create deployment
       await deploymentService.createDeployment(secureOptions);
@@ -410,7 +413,7 @@ const DeploymentDashboard: React.FC = () => {
       {/* DNA Security Watermark */}
       <div className="mt-12 text-xs text-gray-600 text-center">
         <p>
-          DNA Watermark: {addDNAWatermark({}, COMPONENT_ID)._dnaWatermark}<br />
+          DNA Watermark: {generateSecurityWatermark(COMPONENT_ID)}<br />
           Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne<br />
           All components built together as one unified system from the beginning.
         </p>
