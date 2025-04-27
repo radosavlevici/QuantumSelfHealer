@@ -1,207 +1,165 @@
 /**
- * !!! DNA PROTECTED COMPONENT - DO NOT COPY !!!
- * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * !!! DNA PROTECTION PROVIDER - DNA PROTECTED COMPONENT !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
  * Email: ervin210@icloud.com
  * 
- * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - PROTECTION PROVIDER
- * This component provides DNA-based security context to the application.
+ * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
+ * This software is subject to royalty payments for commercial use.
+ * Unauthorized past and present commercial use is subject to retroactive royalties.
  * 
- * FEATURES:
- * - DNA-based watermarking for all components
- * - Security monitoring and defense mechanisms
- * - Copyright protection via context
- * - Self-repair integrity verification
+ * DNA PROTECTION PROVIDER
  * 
- * ANTI-THEFT NOTICE:
- * This component is part of a unified integrated security system with
- * DNA-based verification. All components are built together as one
- * single unit from the beginning.
+ * This component provides DNA protection context to all child components.
+ * It ensures that the security features are properly integrated and accessible
+ * throughout the application. All components are built as one unified system
+ * with consistent DNA-based security from the beginning.
  */
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { 
   IMMUTABLE_COPYRIGHT_OWNER, 
   IMMUTABLE_COPYRIGHT_BIRTHDATE, 
   IMMUTABLE_COPYRIGHT_EMAIL, 
   IMMUTABLE_COPYRIGHT_FULL,
-  IMMUTABLE_SYSTEM_VERSION
+  IMMUTABLE_SYSTEM_VERSION,
+  generateDNASignature,
+  generateSecurityWatermark,
+  verifySecuritySystemIntegrity
 } from '@shared/quantum-dna-security';
-import { applyComponentProtection, verifyClientSecurity, reportSecurityViolation } from '../lib/dna-security-core';
+import { quantumDNASecurity } from '../lib/quantum-dna-security';
 
-// Define the context type
+// Component identity constants
+const COMPONENT_ID = 'dna-protection-provider';
+const COMPONENT_NAME = 'DNAProtectionProvider';
+
+// Generate secure identifiers for the component
+const componentDNASignature = generateDNASignature(COMPONENT_ID, COMPONENT_NAME);
+const componentWatermark = generateSecurityWatermark(`component-${COMPONENT_ID}`);
+
+// DNA Protection Context type
 interface DNAProtectionContextType {
-  copyrightInfo: {
-    owner: string;
-    birthdate: string;
+  isInitialized: boolean;
+  isVerified: boolean;
+  securityLevel: string;
+  ownerInfo: {
+    name: string;
     email: string;
-    full: string;
-    version: string;
+    birthdate: string;
   };
-  applyProtection: (componentId: string, componentType?: string) => {
-    dnaSignature: string;
-    watermark: string;
-  };
-  verifyProtection: (componentId: string, componentType: string, dnaSignature: string, watermark: string) => boolean;
-  reportViolation: (componentId: string, violationType: string, details?: object) => void;
+  systemVersion: string;
+  dnaSignature: string;
+  watermark: string;
+  generateComponentSignature: (componentId: string, componentName: string) => string;
+  verifyComponent: (componentSignature: string) => boolean;
+  protectData: <T extends object>(data: T, dataId: string) => T & { _dnaWatermark: string };
 }
 
-// Create the context
+// Create the DNA Protection Context
 const DNAProtectionContext = createContext<DNAProtectionContextType | null>(null);
 
-// DNA Protection Provider component
-export const DNAProtectionProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
-  // Generate DNA protection for this component
-  const providerProtection = applyComponentProtection('dna-protection-provider', 'context-provider');
+// DNA Protection Provider Props
+interface DNAProtectionProviderProps {
+  children: ReactNode;
+}
+
+/**
+ * DNA Protection Provider Component
+ * Provides DNA-based security context to all child components
+ */
+export const DNAProtectionProvider: React.FC<DNAProtectionProviderProps> = ({ children }) => {
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   
-  // Provider state for tracking security status
-  const [securityStatus, setSecurityStatus] = useState<{
-    valid: boolean;
-    lastCheck: Date;
-    issues: string[];
-  }>({
-    valid: true,
-    lastCheck: new Date(),
-    issues: []
-  });
-  
-  // Verify security system on mount
+  // Initialize security on mount
   useEffect(() => {
-    const status = verifyClientSecurity();
-    setSecurityStatus({
-      valid: status.valid,
-      lastCheck: new Date(),
-      issues: status.issues
-    });
-    
-    // Set up periodic verification
-    const interval = setInterval(() => {
-      const status = verifyClientSecurity();
-      setSecurityStatus({
-        valid: status.valid,
-        lastCheck: new Date(),
-        issues: status.issues
-      });
-      
-      // Report issues if any
-      if (!status.valid) {
-        reportSecurityViolation('security-system', 'integrity-check-failed', { issues: status.issues });
+    const initializeSecurity = async () => {
+      try {
+        // Initialize quantum DNA security
+        await quantumDNASecurity.initialize();
+        
+        // Verify security system integrity
+        const verificationResult = await verifySecuritySystemIntegrity();
+        
+        setIsInitialized(true);
+        setIsVerified(verificationResult.valid);
+        
+        if (!verificationResult.valid) {
+          console.error('SECURITY ALERT: System integrity verification failed');
+          console.error('Issues:', verificationResult.issues);
+        } else {
+          console.log('DNA Protection Provider initialized and verified successfully');
+        }
+      } catch (error) {
+        console.error('Failed to initialize DNA Protection Provider:', error);
       }
-    }, 60000); // Check every minute
+    };
     
-    return () => clearInterval(interval);
+    initializeSecurity();
   }, []);
   
-  // Apply protection to a component
-  const applyProtection = (componentId: string, componentType: string = 'component') => {
-    return applyComponentProtection(componentId, componentType);
+  // Generate component signature
+  const generateComponentSignature = (componentId: string, componentName: string): string => {
+    return generateDNASignature(componentId, componentName);
   };
   
-  // Verify a component's protection
-  const verifyProtection = (
-    componentId: string, 
-    componentType: string, 
-    dnaSignature: string, 
-    watermark: string
-  ) => {
-    // If security system itself is compromised, nothing is valid
-    if (!securityStatus.valid) {
-      reportSecurityViolation(componentId, 'security-system-compromised');
-      return false;
-    }
-    
-    try {
-      // Generate expected protection (in a real system, we'd verify the passed values)
-      const expected = applyComponentProtection(componentId, componentType);
-      
-      // In a real system, we would do more verification here
-      // For now we'll do a simplified check for demo purposes
-      if (!dnaSignature || dnaSignature.length < 10) {
-        reportSecurityViolation(componentId, 'invalid-dna-signature');
-        return false;
-      }
-      
-      if (!watermark || watermark.length < 10) {
-        reportSecurityViolation(componentId, 'invalid-watermark');
-        return false;
-      }
-      
-      // Check if owner info is in the DNA signature
-      if (!dnaSignature.includes(IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5))) {
-        reportSecurityViolation(componentId, 'missing-copyright-info-in-signature');
-        return false;
-      }
-      
-      return true;
-    } catch (error) {
-      reportSecurityViolation(componentId, 'protection-verification-error', { error });
-      return false;
-    }
+  // Verify component signature
+  const verifyComponent = (componentSignature: string): boolean => {
+    // In a full implementation, this would verify against a registry
+    // of valid component signatures
+    return componentSignature.length > 20 && 
+           componentSignature.includes('dna-') && 
+           !componentSignature.includes('tampered');
   };
   
-  // Report a security violation
-  const reportViolation = (componentId: string, violationType: string, details: object = {}) => {
-    reportSecurityViolation(componentId, violationType, details);
+  // Protect data with DNA watermark
+  const protectData = <T extends object>(data: T, dataId: string): T & { _dnaWatermark: string } => {
+    return {
+      ...data,
+      _dnaWatermark: generateSecurityWatermark(dataId)
+    };
   };
   
-  // Create the context value
+  // Context value
   const contextValue: DNAProtectionContextType = {
-    copyrightInfo: {
-      owner: IMMUTABLE_COPYRIGHT_OWNER,
-      birthdate: IMMUTABLE_COPYRIGHT_BIRTHDATE,
+    isInitialized,
+    isVerified,
+    securityLevel: 'maximum',
+    ownerInfo: {
+      name: IMMUTABLE_COPYRIGHT_OWNER,
       email: IMMUTABLE_COPYRIGHT_EMAIL,
-      full: IMMUTABLE_COPYRIGHT_FULL,
-      version: IMMUTABLE_SYSTEM_VERSION
+      birthdate: IMMUTABLE_COPYRIGHT_BIRTHDATE
     },
-    applyProtection,
-    verifyProtection,
-    reportViolation
+    systemVersion: IMMUTABLE_SYSTEM_VERSION,
+    dnaSignature: componentDNASignature,
+    watermark: componentWatermark,
+    generateComponentSignature,
+    verifyComponent,
+    protectData
   };
   
   return (
     <DNAProtectionContext.Provider 
       value={contextValue}
-      data-component-id="dna-protection-provider"
-      data-component-type="context-provider"
-      data-watermark={providerProtection.watermark}
-      data-dna-signature={providerProtection.dnaSignature}
+      data-component-id={COMPONENT_ID}
+      data-component-name={COMPONENT_NAME}
+      data-dna-signature={componentDNASignature}
+      data-security-watermark={componentWatermark}
+      data-copyright-owner={IMMUTABLE_COPYRIGHT_OWNER}
     >
-      {/* Only render children if security system is valid */}
-      {securityStatus.valid ? (
-        children
-      ) : (
-        <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-6">
-          <div className="bg-red-900/20 border border-red-700 rounded-lg p-6 max-w-md">
-            <h1 className="text-2xl font-bold text-red-500 mb-4">Security System Compromised</h1>
-            <p className="text-gray-300 mb-3">
-              The DNA-based security system has detected tampering or unauthorized modification.
-              This application has been secured to protect the intellectual property of its owner.
-            </p>
-            <div className="text-sm text-gray-400 mb-4">
-              <p>{IMMUTABLE_COPYRIGHT_FULL}</p>
-              <p>System Version: {IMMUTABLE_SYSTEM_VERSION}</p>
-            </div>
-            {securityStatus.issues.length > 0 && (
-              <div className="text-sm bg-black/50 p-3 rounded border border-red-900">
-                <p className="font-semibold text-red-400 mb-1">Security Issues:</p>
-                <ul className="list-disc pl-5 text-gray-300">
-                  {securityStatus.issues.map((issue, index) => (
-                    <li key={index}>{issue}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      {children}
     </DNAProtectionContext.Provider>
   );
 };
 
-// Custom hook to use the DNA Protection context
-export const useDNAProtection = () => {
+/**
+ * Hook to use DNA Protection in components
+ */
+export const useDNAProtection = (): DNAProtectionContextType => {
   const context = useContext(DNAProtectionContext);
+  
   if (!context) {
     throw new Error('useDNAProtection must be used within a DNAProtectionProvider');
   }
+  
   return context;
 };

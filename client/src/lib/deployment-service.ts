@@ -113,7 +113,7 @@ class DeploymentService {
     const id = `deploy-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     
     // Create DNA watermark for this deployment
-    const dnaWatermark = generateDNASignature(`deployment-${id}`);
+    const dnaWatermark = generateDNASignature(`deployment-${id}`, 'deployment');
     
     // Create deployment status
     const status: DeploymentStatus = {

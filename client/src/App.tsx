@@ -34,6 +34,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { queryClient } from './lib/queryClient';
+import { DNAProtectionProvider } from '@/components/DNAProtectionProvider';
 
 // Import the DNA security constants and functions
 import { 
@@ -119,34 +120,36 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="quantum-dna-theme">
         <TooltipProvider>
-          <div 
-            className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white"
-            data-component-id={COMPONENT_ID}
-            data-copyright-owner={IMMUTABLE_COPYRIGHT_OWNER}
-            data-copyright-full={IMMUTABLE_COPYRIGHT_FULL}
-            data-watermark={appWatermark}
-            data-security-level="maximum"
-          >
-            <Toaster />
-            <NavigationBar />
-            <main className="container mx-auto py-4 px-4">
-              <Switch>
-                <Route path="/" component={QuantumNLPTerminal} />
-                <Route path="/nlp" component={QuantumNLPTerminal} />
-                <Route path="/security" component={SecurityDashboard} />
-                <Route path="/deployment" component={DeploymentDashboard} />
-                <Route path="/terminal" component={TerminalPage} />
-                <Route path="/quantum" component={QuantumPage} />
-                <Route path="/home" component={HomePage} />
-                <Route component={NotFound} />
-              </Switch>
-            </main>
-            {/* Copyright notice in footer */}
-            <footer className="w-full border-t border-gray-800 mt-8 py-4 px-6 text-center text-xs text-gray-500">
-              <p>{IMMUTABLE_COPYRIGHT_FULL}</p>
-              <p className="mt-1">Protected by Quantum DNA Security v{IMMUTABLE_SYSTEM_VERSION}</p>
-            </footer>
-          </div>
+          <DNAProtectionProvider>
+            <div 
+              className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white"
+              data-component-id={COMPONENT_ID}
+              data-copyright-owner={IMMUTABLE_COPYRIGHT_OWNER}
+              data-copyright-full={IMMUTABLE_COPYRIGHT_FULL}
+              data-watermark={appWatermark}
+              data-security-level="maximum"
+            >
+              <Toaster />
+              <NavigationBar />
+              <main className="container mx-auto py-4 px-4">
+                <Switch>
+                  <Route path="/" component={QuantumNLPTerminal} />
+                  <Route path="/nlp" component={QuantumNLPTerminal} />
+                  <Route path="/security" component={SecurityDashboard} />
+                  <Route path="/deployment" component={DeploymentDashboard} />
+                  <Route path="/terminal" component={TerminalPage} />
+                  <Route path="/quantum" component={QuantumPage} />
+                  <Route path="/home" component={HomePage} />
+                  <Route component={NotFound} />
+                </Switch>
+              </main>
+              {/* Copyright notice in footer */}
+              <footer className="w-full border-t border-gray-800 mt-8 py-4 px-6 text-center text-xs text-gray-500">
+                <p>{IMMUTABLE_COPYRIGHT_FULL}</p>
+                <p className="mt-1">Protected by Quantum DNA Security v{IMMUTABLE_SYSTEM_VERSION}</p>
+              </footer>
+            </div>
+          </DNAProtectionProvider>
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
