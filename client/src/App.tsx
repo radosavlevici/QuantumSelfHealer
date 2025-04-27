@@ -1,6 +1,6 @@
 /**
  * !!! DNA PROTECTED APPLICATION - DO NOT COPY !!!
- * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
  * Email: ervin210@icloud.com
  * 
  * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT

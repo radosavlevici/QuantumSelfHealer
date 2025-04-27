@@ -1,6 +1,6 @@
 /**
  * !!! ABSOLUTE IMMUTABLE DNA PROTECTED CORE SECURITY - DO NOT COPY !!!
- * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
  * Email: ervin210@icloud.com
  * 
  * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
@@ -97,7 +97,8 @@ class PermanentImmutableConstants {
 export const IMMUTABLE_COPYRIGHT_OWNER = PermanentImmutableConstants.OWNER;
 export const IMMUTABLE_COPYRIGHT_BIRTHDATE = PermanentImmutableConstants.BIRTHDATE;
 export const IMMUTABLE_COPYRIGHT_EMAIL = PermanentImmutableConstants.EMAIL;
-export const IMMUTABLE_COPYRIGHT_FULL = `Copyright © ${IMMUTABLE_COPYRIGHT_OWNER} (${IMMUTABLE_COPYRIGHT_BIRTHDATE}) - Email: ${IMMUTABLE_COPYRIGHT_EMAIL} - All Rights Reserved.`;
+export const IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS = ['David Cornelius Marshall', 'Serena Elizabeth Thorne'];
+export const IMMUTABLE_COPYRIGHT_FULL = `Copyright © ${IMMUTABLE_COPYRIGHT_OWNER} (${IMMUTABLE_COPYRIGHT_BIRTHDATE}), ${IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS.join(', ')} - Email: ${IMMUTABLE_COPYRIGHT_EMAIL} - All Rights Reserved.`;
 export const IMMUTABLE_SYSTEM_VERSION = PermanentImmutableConstants.VERSION;
 export const IMMUTABLE_BUILD_TIMESTAMP = PermanentImmutableConstants.BUILD;
 
@@ -259,7 +260,7 @@ export function verifySecuritySystemIntegrity(): { valid: boolean; issues: strin
   }
   
   // Verify the FULL copyright string is correctly formatted
-  const expectedFullCopyright = `Copyright © ${IMMUTABLE_COPYRIGHT_OWNER} (${IMMUTABLE_COPYRIGHT_BIRTHDATE}) - Email: ${IMMUTABLE_COPYRIGHT_EMAIL} - All Rights Reserved.`;
+  const expectedFullCopyright = `Copyright © ${IMMUTABLE_COPYRIGHT_OWNER} (${IMMUTABLE_COPYRIGHT_BIRTHDATE}), ${IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS.join(', ')} - Email: ${IMMUTABLE_COPYRIGHT_EMAIL} - All Rights Reserved.`;
   
   if (IMMUTABLE_COPYRIGHT_FULL !== expectedFullCopyright) {
     const error = 'CRITICAL: Copyright full string has been tampered with';
@@ -317,7 +318,7 @@ function triggerSecurityResponse(error: string, type: string): void {
     timestamp,
     securityLevel: 'MAXIMUM',
     status: 'CRITICAL_BREACH',
-    copyright: 'Copyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com'
+    copyright: IMMUTABLE_COPYRIGHT_FULL
   };
   
   console.error(`[IMMUNE SYSTEM] Security report generated: ${JSON.stringify(securityReport)}`);
