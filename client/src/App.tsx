@@ -116,7 +116,6 @@ function App() {
             <div 
               className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white"
               data-component-id={COMPONENT_ID}
-              data-component-name={COMPONENT_NAME}
               data-copyright-owner={IMMUTABLE_COPYRIGHT_OWNER}
               data-copyright-full={IMMUTABLE_COPYRIGHT_FULL}
               data-watermark={appWatermark}

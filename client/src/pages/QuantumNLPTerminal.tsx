@@ -71,7 +71,7 @@ const QuantumNLPTerminal: React.FC = () => {
     {
       id: `startup-${Date.now()}`,
       type: 'info',
-      content: `MegaQuantum NLP Terminal v${IMMUTABLE_SYSTEM_VERSION}\nCopyright © ${IMMUTABLE_COPYRIGHT_OWNER} (1987), ${IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS.join(', ')}\nType your questions or commands in natural language.\nExample: "Run Shor's algorithm with 5 qubits"`,
+      content: `MegaQuantum NLP Terminal v${IMMUTABLE_SYSTEM_VERSION}\nCopyright © ${IMMUTABLE_COPYRIGHT_OWNER} (1987), ${IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS.join(', ')}\n\n🌟 WELCOME TO THE NATURAL LANGUAGE QUANTUM TERMINAL 🌟\n\nThis special terminal lets you control quantum computers using everyday language.\nNo need to know complicated commands - just type what you want to do!\n\nFor example, try typing:\n- "Run Shor's algorithm with 5 qubits"\n- "Create a new quantum circuit"\n- "Connect to IBM Quantum computer"\n\nThe assistant will translate your request into proper quantum commands.`,
       timestamp: new Date(),
       _dnaWatermark: componentDNA
     }
@@ -173,7 +173,7 @@ const QuantumNLPTerminal: React.FC = () => {
       // Add error to history
       addEntry({
         type: 'error',
-        content: `Error processing input: ${error.message || 'Unknown error'}`
+        content: `Error processing input: ${error instanceof Error ? error.message : 'Unknown error'}`
       });
       
       setIsProcessing(false);
@@ -318,7 +318,6 @@ const QuantumNLPTerminal: React.FC = () => {
     <div 
       className="w-full max-w-6xl mx-auto"
       data-component-id={COMPONENT_ID}
-      data-component-name={COMPONENT_NAME}
       data-copyright-owner={IMMUTABLE_COPYRIGHT_OWNER}
       data-copyright-full={IMMUTABLE_COPYRIGHT_FULL}
       data-dna-signature={componentDNA}
@@ -364,7 +363,7 @@ const QuantumNLPTerminal: React.FC = () => {
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Type your natural language command here..."
+                  placeholder="Ask anything in plain language (e.g., 'Run a quantum algorithm with 3 qubits')..."
                   className="flex-grow bg-gray-900 border-blue-900/50 focus-visible:ring-blue-600"
                   disabled={isProcessing}
                 />
@@ -424,40 +423,41 @@ const QuantumNLPTerminal: React.FC = () => {
               <div>
                 <h3 className="text-lg font-medium text-purple-300 mb-2">What is this?</h3>
                 <p className="text-gray-300">
-                  The Quantum NLP Terminal allows you to interact with quantum computing systems using natural language.
-                  Instead of learning complex quantum commands, you can simply describe what you want to do in plain English.
+                  This is a special terminal that lets you talk to quantum computers using everyday language. 
+                  You don't need to know any technical commands - just tell it what you want to do!
                 </p>
               </div>
               
               <div>
                 <h3 className="text-lg font-medium text-purple-300 mb-2">How to use</h3>
                 <ol className="space-y-2 list-decimal pl-5 text-gray-300">
-                  <li>Type a request in the input box using natural language</li>
-                  <li>The system will translate your request into a proper quantum command</li>
-                  <li>The command will be executed and results will be displayed</li>
-                  <li>Review the results and continue with your next request</li>
+                  <li>Type what you want to do in everyday language (like "Run a quantum algorithm" or "Create a new circuit")</li>
+                  <li>The assistant will translate your request into the proper technical command</li>
+                  <li>You'll see both the translation and the results of your command</li>
+                  <li>Continue the conversation with your next request</li>
                 </ol>
               </div>
               
               <div>
-                <h3 className="text-lg font-medium text-purple-300 mb-2">Examples of what you can do</h3>
+                <h3 className="text-lg font-medium text-purple-300 mb-2">Things you can ask for</h3>
                 <ul className="space-y-1 list-disc pl-5 text-gray-300">
-                  <li>Run quantum algorithms with specific parameters</li>
-                  <li>Create and modify quantum circuits</li>
-                  <li>Connect to quantum computing providers</li>
-                  <li>Simulate quantum computations</li>
-                  <li>Analyze and visualize results</li>
-                  <li>Optimize quantum circuits</li>
+                  <li>Run a quantum algorithm (like "Run Shor's algorithm with 5 qubits")</li>
+                  <li>Create something new (like "Create a new quantum circuit named test_circuit")</li>
+                  <li>Connect to a quantum computer (like "Connect to IBM Quantum")</li>
+                  <li>Simulate a quantum program (like "Simulate my circuit with noise")</li>
+                  <li>Show visualizations (like "Show me results as a histogram")</li>
+                  <li>Optimize your quantum program (like "Make my circuit more efficient")</li>
                 </ul>
               </div>
               
               <div>
-                <h3 className="text-lg font-medium text-purple-300 mb-2">Tips for better results</h3>
+                <h3 className="text-lg font-medium text-purple-300 mb-2">Tips for best results</h3>
                 <ul className="space-y-1 list-disc pl-5 text-gray-300">
-                  <li>Be specific about what you want to do</li>
-                  <li>Include key parameters like number of qubits or shot count</li>
-                  <li>If the translation isn't accurate, try rephrasing your request</li>
-                  <li>Explore the Examples tab for inspiration</li>
+                  <li>Be clear about what you want to do (like "Run" or "Create" or "Connect")</li>
+                  <li>Include details when possible (like how many qubits to use)</li>
+                  <li>If it doesn't understand you, try saying it differently</li>
+                  <li>Check out the Examples tab to see what works well</li>
+                  <li>Remember: you don't need to use technical terms - just explain what you want!</li>
                 </ul>
               </div>
             </CardContent>
