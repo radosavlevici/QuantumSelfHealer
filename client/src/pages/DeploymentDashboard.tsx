@@ -319,6 +319,7 @@ const DeploymentDashboard: React.FC = () => {
               <option value={DeploymentTarget.DEVELOPER_PORTAL}>Apple Developer Portal</option>
               <option value={DeploymentTarget.AWS_CLOUD}>AWS Cloud</option>
               <option value={DeploymentTarget.GITHUB}>GitHub</option>
+              <option value={DeploymentTarget.XAI_SERVICE}>xAI Service (Grok)</option>
             </select>
           </div>
           

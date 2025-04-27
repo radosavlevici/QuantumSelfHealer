@@ -36,7 +36,8 @@ export enum DeploymentTarget {
   IOS_APP_STORE = 'ios_app_store',
   DEVELOPER_PORTAL = 'developer_portal',
   AWS_CLOUD = 'aws_cloud',
-  GITHUB = 'github'
+  GITHUB = 'github',
+  XAI_SERVICE = 'xai_service'
 }
 
 // Deployment options interface
@@ -180,6 +181,10 @@ class DeploymentService {
         
         case DeploymentTarget.GITHUB:
           await this.deployToGitHub(id, options);
+          break;
+          
+        case DeploymentTarget.XAI_SERVICE:
+          await this.deployToXAIService(id, options);
           break;
         
         default:
@@ -428,6 +433,49 @@ class DeploymentService {
     return this.deployments.get(id);
   }
   
+  /**
+   * Deploy to xAI Service (Grok)
+   * @param id Deployment ID
+   * @param options Deployment options
+   */
+  private async deployToXAIService(id: string, options: DeploymentOptions): Promise<void> {
+    console.log(`Deploying to xAI Service: Version ${options.version}`);
+    
+    // Check if xAI API key is available
+    if (!process.env.XAI_API_KEY) {
+      throw new Error('XAI_API_KEY is required for xAI Service deployment');
+    }
+    
+    // Update progress
+    this.updateDeploymentProgress(id, 20, 'Preparing xAI model deployment');
+    
+    // Simulate model preparation
+    await new Promise(resolve => setTimeout(resolve, 1200));
+    
+    // Update progress
+    this.updateDeploymentProgress(id, 40, 'Configuring Grok model API integration');
+    
+    // Simulate API integration
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Update progress
+    this.updateDeploymentProgress(id, 60, 'Testing model responses');
+    
+    // Simulate model testing
+    await new Promise(resolve => setTimeout(resolve, 1800));
+    
+    // Update progress
+    this.updateDeploymentProgress(id, 80, 'Deploying to xAI production environment');
+    
+    // Simulate production deployment
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Final update
+    this.updateDeploymentProgress(id, 100, 'xAI Service deployment completed');
+    
+    console.log("Deployment to xAI Service completed successfully");
+  }
+
   /**
    * Get active deployments (pending or in progress)
    */
