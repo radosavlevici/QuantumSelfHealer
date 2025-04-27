@@ -54,15 +54,37 @@ interface TerminalEntry {
   _dnaWatermark?: string;
 }
 
-// Examples of natural language queries
+// Examples of natural language queries in everyday language
 const nlExamples = [
+  // Run commands with simple language
   "Run Shor's algorithm with 5 qubits",
-  "Create a new quantum circuit named my_algorithm",
-  "Connect to IBM Quantum computer",
-  "Show me a visualization of my results",
-  "Analyze the current circuit in the Z basis",
-  "Optimize my circuit to reduce gate count",
-  "Simulate the circuit with realistic noise"
+  "Can you execute a quantum algorithm for me?",
+  "I'd like to try the Grover algorithm",
+  "Do a quantum calculation with 3 qubits",
+  
+  // Create commands with simple language
+  "Create a new quantum circuit named my_test_circuit",
+  "Make a new quantum program",
+  "I want to build a circuit with 4 qubits",
+  "Set up a quantum experiment",
+  
+  // Connect commands with simple language
+  "Connect to IBM quantum computer",
+  "Can you link me to Azure Quantum?",
+  "I want to use a real quantum computer",
+  "Access my quantum provider account",
+  
+  // Simulate and analyze with simple language
+  "Simulate a quantum circuit with noise",
+  "Can you test my circuit?",
+  "I want to see what happens in my program",
+  "Tell me about my quantum results",
+  
+  // Other commands with simple language
+  "Make my circuit more efficient",
+  "Show me results as a graph",
+  "Help me with quantum commands",
+  "What can this terminal do?"
 ];
 
 const QuantumNLPTerminal: React.FC = () => {

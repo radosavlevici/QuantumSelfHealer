@@ -120,8 +120,10 @@ export async function processNaturalLanguage(input: string): Promise<{
   let bestMatchScore = 0;
   let bestMatchParams: Record<string, string> = {};
   
-  // Simple intent matching algorithm
+  // Simple intent matching algorithm with improved flexibility
   // In a real implementation, this would use a sophisticated NLP model
+  
+  // First try exact matching
   for (const pattern of commandPatterns) {
     for (const intentWord of pattern.intent) {
       if (normalizedInput.includes(intentWord)) {
@@ -130,6 +132,40 @@ export async function processNaturalLanguage(input: string): Promise<{
           bestMatchScore = matchScore;
           bestMatch = pattern;
           bestMatchParams = extractParameters(normalizedInput, pattern);
+        }
+      }
+    }
+  }
+  
+  // If no good match found, try more flexible matching
+  if (bestMatchScore < 0.4) {
+    // Common phrases that might indicate intent
+    const runPhrases = ["do", "execute", "launch", "start", "try", "calculate", "compute", "work with"];
+    const createPhrases = ["make", "setup", "generate", "prepare", "build", "add"];
+    const analyzePhrases = ["look at", "examine", "study", "check", "understand", "see if", "tell me about"];
+    const connectPhrases = ["use", "link to", "talk to", "work with", "access"];
+    
+    // Map common phrases to intents
+    const phraseToIntentMap: Record<string, string> = {};
+    runPhrases.forEach(phrase => phraseToIntentMap[phrase] = "run");
+    createPhrases.forEach(phrase => phraseToIntentMap[phrase] = "create");
+    analyzePhrases.forEach(phrase => phraseToIntentMap[phrase] = "analyze");
+    connectPhrases.forEach(phrase => phraseToIntentMap[phrase] = "connect");
+    
+    // Check for common phrases
+    for (const [phrase, intent] of Object.entries(phraseToIntentMap)) {
+      if (normalizedInput.includes(phrase)) {
+        // Find the matching pattern for this intent
+        for (const pattern of commandPatterns) {
+          if (pattern.intent.includes(intent)) {
+            const matchScore = 0.5; // Assign a moderate confidence score
+            if (matchScore > bestMatchScore) {
+              bestMatchScore = matchScore;
+              bestMatch = pattern;
+              bestMatchParams = extractParameters(normalizedInput, pattern);
+            }
+            break;
+          }
         }
       }
     }
