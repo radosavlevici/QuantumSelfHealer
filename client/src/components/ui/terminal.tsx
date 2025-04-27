@@ -1,93 +1,80 @@
-import { useState, useEffect, useRef } from "react";
-import { TerminalCommand } from "@/types";
-import { Button } from "@/components/ui/button";
-import { useTerminal } from "@/hooks/use-terminal";
+/**
+ * !!! TERMINAL COMPONENT - DNA PROTECTED COMPONENT !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
+ * Email: ervin210@icloud.com
+ * 
+ * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
+ * This software is subject to royalty payments for commercial use.
+ * Unauthorized past and present commercial use is subject to retroactive royalties.
+ * 
+ * TERMINAL COMPONENT
+ * 
+ * A reusable terminal component for displaying console-like output
+ * Built as one integrated system with DNA-based security from the beginning.
+ */
 
-interface TerminalProps {
-  height?: string;
-  onCommandSubmit?: (command: string) => void;
-  onClear?: () => void;
+import React, { forwardRef, HTMLAttributes } from "react";
+import { cn } from "@/lib/utils";
+import { useDNAProtection } from "@/components/DNAProtectionProvider";
+
+// Component identity constants
+const COMPONENT_ID = 'ui-terminal';
+const COMPONENT_NAME = 'Terminal';
+
+export interface TerminalProps extends HTMLAttributes<HTMLDivElement> {
+  className?: string;
+  lines?: { content: string; type?: 'input' | 'output' | 'error' | 'system' }[];
 }
 
-export function Terminal({ height = "h-48", onCommandSubmit, onClear }: TerminalProps) {
-  const { commands, executeCommand, clearTerminal, lastCommandTime } = useTerminal();
-  const [input, setInput] = useState("");
-  const terminalRef = useRef<HTMLDivElement>(null);
-  
-  // Scroll terminal to bottom when commands change
-  useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-    }
-  }, [commands]);
-
-  const handleExecuteCommand = () => {
-    if (!input.trim()) return;
+/**
+ * Terminal component
+ * A console-like interface for displaying command line interactions
+ */
+const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
+  ({ className, lines = [], ...props }, ref) => {
+    // Use DNA Protection context
+    const dnaProtection = useDNAProtection();
     
-    executeCommand(input);
-    if (onCommandSubmit) {
-      onCommandSubmit(input);
-    }
-    setInput("");
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleExecuteCommand();
-    }
-  };
-
-  const handleClear = () => {
-    clearTerminal();
-    if (onClear) {
-      onClear();
-    }
-  };
-
-  return (
-    <div className="bg-gray-900 rounded-lg overflow-hidden shadow-md">
-      <div className="bg-gray-800 px-3 py-2 flex items-center justify-between">
-        <div className="flex items-center">
-          <div className="flex space-x-1.5 mr-3">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
-          </div>
-          <span className="text-xs text-gray-400">quantum-terminal</span>
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleClear}
-          className="text-gray-400 hover:text-white focus:outline-none h-6 px-1.5"
-        >
-          <span className="material-icons text-sm">clear_all</span>
-        </Button>
+    // Generate secure identifiers for the component
+    const componentDNASignature = dnaProtection.generateComponentSignature(COMPONENT_ID, COMPONENT_NAME);
+    
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "rounded-md border border-gray-800 bg-black p-4 font-mono text-sm text-white overflow-auto",
+          className
+        )}
+        data-component-id={COMPONENT_ID}
+        data-component-name={COMPONENT_NAME}
+        data-dna-signature={componentDNASignature}
+        {...props}
+      >
+        {lines.map((line, index) => {
+          const lineType = line.type || 'output';
+          
+          return (
+            <div
+              key={index}
+              className={cn(
+                "mb-1 whitespace-pre-wrap break-all",
+                lineType === 'input' && "text-green-400",
+                lineType === 'output' && "text-white",
+                lineType === 'error' && "text-red-400",
+                lineType === 'system' && "text-blue-400"
+              )}
+            >
+              {lineType === 'input' && <span className="mr-1">{'>'}</span>}
+              {lineType === 'error' && <span className="mr-1">{'!'}</span>}
+              {line.content}
+            </div>
+          );
+        })}
       </div>
-      
-      <div ref={terminalRef} className={`p-4 font-mono text-sm text-green-400 ${height} overflow-y-auto`}>
-        {commands.map((cmd, idx) => (
-          <div key={idx}>
-            <div className="mb-1">$ {cmd.command}</div>
-            <div className="mb-1 text-gray-500">{cmd.response}</div>
-          </div>
-        ))}
-        
-        <div className="flex items-center">
-          <span className="text-white mr-1">$</span>
-          <div className="relative flex-grow">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyPress}
-              className="w-full bg-transparent border-none outline-none text-white"
-              placeholder="Enter command..."
-            />
-            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-light"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+    );
+  }
+);
+
+Terminal.displayName = "Terminal";
+
+export { Terminal };
