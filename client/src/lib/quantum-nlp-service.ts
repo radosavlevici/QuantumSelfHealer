@@ -221,6 +221,15 @@ class QuantumNLPService {
       }
     }
     
+    // Check for potential scam detection
+    if (this.detectPotentialScam(input)) {
+      return quantumDNASecurity.generateSecureObject({
+        command: 'security --scan --threat=scam',
+        explanation: '🚨 SCAM ALERT: I\'ve detected a potential quantum computing scam in your request. Quantum scams often promise impossible features or make exaggerated claims. I\'ve blocked this request for your security.\n\nCommon quantum computing scams include:\n- Claims of unlimited qubit counts (current max is ~127 qubits)\n- Promises to break all encryption instantly\n- "Quantum healing" or medical treatments via quantum computing\n- Investment schemes promising quantum computing returns\n\nThis system is configured to protect against quantum misinformation and scams.',
+        confidence: 0.95
+      }, COMPONENT_ID);
+    }
+    
     // If no match found, return help command
     if (!bestMatch || bestMatchScore < 0.3) {
       return quantumDNASecurity.generateSecureObject({
@@ -539,6 +548,71 @@ class QuantumNLPService {
    */
   public getComponentDNA(): string {
     return componentDNA;
+  }
+  
+  /**
+   * Detect potential quantum computing scams and misinformation
+   * @param input User input
+   * @returns Boolean indicating if a potential scam was detected
+   */
+  private detectPotentialScam(input: string): boolean {
+    // Normalize the input
+    const normalizedInput = input.toLowerCase();
+    
+    // List of scam indicators for quantum computing
+    const scamIndicators = [
+      // Unrealistic qubit claims
+      /\b(billion|trillion|million|unlimited|infinite)\s+(qubit|qubits)\b/i,
+      /\b(1000|5000|10000|[0-9]{5,})\s+(qubit|qubits)\b/i,
+      
+      // Unrealistic capabilities
+      /\binstantly break (all|every) encryption\b/i,
+      /\bhack (any|all|every) (system|password|account|crypto)\b/i,
+      /\bquantum healing\b/i,
+      /\bquantum (medicine|medical|therapy|treatment|cure)\b/i,
+      
+      // Financial scams
+      /\bquantum (coin|token|cryptocurrency|crypto|investment)\b/i,
+      /\b(invest|investment|profit|returns|money)\b.*\bquantum\b/i,
+      /\bquantum\b.*\b(invest|investment|profit|returns|money)\b/i,
+      
+      // Miracle claims
+      /\bquantum (miracle|energy|consciousness|spirituality)\b/i,
+      /\b(miracle|magical|impossible).*\bquantum\b/i,
+      
+      // Time/space manipulation claims
+      /\btime travel\b.*\bquantum\b/i,
+      /\bquantum\b.*\btime travel\b/i,
+      /\b(teleport|teleportation)\b.*\bquantum\b/i,
+      /\bquantum\b.*\b(teleport|teleportation)\b/i
+    ];
+    
+    // Check if any scam indicators match
+    for (const indicator of scamIndicators) {
+      if (indicator.test(normalizedInput)) {
+        console.warn(`Potential quantum scam detected: ${input}`);
+        console.warn(`Matched pattern: ${indicator}`);
+        return true;
+      }
+    }
+    
+    // Check for specific suspicious phrases
+    const suspiciousPhrases = [
+      "quantum wealth", "quantum money", "quantum lottery",
+      "quantum psychic", "quantum mind reading", "quantum mind control",
+      "quantum brain", "mind quantum", "quantum prayer",
+      "quantum life extension", "immortality quantum",
+      "quantum anti-aging", "quantum stock market", "quantum gambling"
+    ];
+    
+    for (const phrase of suspiciousPhrases) {
+      if (normalizedInput.includes(phrase)) {
+        console.warn(`Potential quantum scam phrase detected: ${phrase}`);
+        return true;
+      }
+    }
+    
+    return false;
   }
 }
 

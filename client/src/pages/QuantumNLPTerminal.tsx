@@ -93,7 +93,7 @@ const QuantumNLPTerminal: React.FC = () => {
     {
       id: `startup-${Date.now()}`,
       type: 'info',
-      content: `MegaQuantum NLP Terminal v${IMMUTABLE_SYSTEM_VERSION}\nCopyright © ${IMMUTABLE_COPYRIGHT_OWNER} (1987), ${IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS.join(', ')}\n\n🌟 WELCOME TO THE NATURAL LANGUAGE QUANTUM TERMINAL 🌟\n\nThis special terminal lets you control quantum computers using everyday language.\nNo need to know complicated commands - just type what you want to do!\n\nFor example, try typing:\n- "Run Shor's algorithm with 5 qubits"\n- "Create a new quantum circuit"\n- "Connect to IBM Quantum computer"\n\nThe assistant will translate your request into proper quantum commands.`,
+      content: `MegaQuantum NLP Terminal v${IMMUTABLE_SYSTEM_VERSION}\nCopyright © ${IMMUTABLE_COPYRIGHT_OWNER} (1987), ${IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS.join(', ')}\n\n🌟 WELCOME TO THE NATURAL LANGUAGE QUANTUM ASSISTANT 🌟\n\nThis special assistant lets you control quantum computers using everyday language.\nNo need to know complicated commands - just type what you want to do in plain English!\n\nTry simple requests like:\n- "I want to run a quantum algorithm with 5 qubits"\n- "Please create a new circuit for me"\n- "Can you connect to IBM's quantum computer?"\n- "Help me analyze my results"\n- "Show me what this quantum terminal can do"\n\nThe assistant will understand what you mean and translate your request into proper quantum commands.\n\n🛡️ SCAM PROTECTION ACTIVE: This system automatically detects and blocks quantum computing scams.`,
       timestamp: new Date(),
       _dnaWatermark: componentDNA
     }
