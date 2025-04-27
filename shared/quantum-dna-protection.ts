@@ -24,9 +24,12 @@ import {
   IMMUTABLE_COPYRIGHT_EMAIL,
   IMMUTABLE_COPYRIGHT_FULL,
   IMMUTABLE_SYSTEM_VERSION,
+  IMMUTABLE_BUILD_TIMESTAMP,
   generateSecurityWatermark,
   generateDNASignature,
-  quantumDNASecurity
+  verifyDNASignature,
+  secureData,
+  verifySecuritySystemIntegrity
 } from './quantum-dna-security';
 
 /**
@@ -79,25 +82,6 @@ export function createVerificationChain(componentId: string, componentType: stri
   };
 }
 
-// Helper function to verify a DNA signature
-function verifyDNASignature(signature: string, prefix: string = 'dna-'): boolean {
-  if (!signature || typeof signature !== 'string') {
-    return false;
-  }
-  
-  // Verify the signature contains the right prefix
-  if (!signature.startsWith(prefix)) {
-    return false;
-  }
-  
-  // Verify the copyright owner identifier is present
-  if (!signature.includes(IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5))) {
-    return false;
-  }
-  
-  return true;
-}
-
 export function verifyComponentProtection(
   componentId: string,
   componentType: string,
@@ -107,13 +91,13 @@ export function verifyComponentProtection(
   // Generate expected protection data
   const expectedProtection = protectComponent(componentId, componentType);
   
-  // Verify the signature is valid
-  if (!verifyDNASignature(dnaSignature)) {
+  // Verify the signature contains the right prefix
+  if (!verifyDNASignature(dnaSignature, 'dna-sig-')) {
     return false;
   }
   
   // Verify watermark contains the right prefix
-  if (!watermark.startsWith('watermark-')) {
+  if (!watermark.startsWith('dna-')) {
     return false;
   }
   
@@ -261,25 +245,6 @@ export function verifyProtectionSystemIntegrity(): { valid: boolean; issues: str
   const issues: string[] = [];
   
   try {
-    // Get the security status from the quantum DNA security system
-    const securityState = quantumDNASecurity.getSecurityState();
-    
-    if (!securityState.initialized) {
-      issues.push('Quantum DNA Security System is not initialized');
-    }
-    
-    if (!securityState.integrityVerified) {
-      issues.push('Quantum DNA Security System integrity verification failed');
-    }
-    
-    if (!securityState.copyrightVerified) {
-      issues.push('Copyright information verification failed');
-    }
-    
-    if (!securityState.dnaProtectionActive) {
-      issues.push('DNA Protection is not active');
-    }
-    
     // Test component protection
     const testProtection = protectComponent('test-component', 'test');
     

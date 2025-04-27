@@ -67,10 +67,6 @@ export enum AIModel {
   Copilot = 'copilot',
   CopilotPro = 'copilot-pro',
   
-  // xAI models (added based on backup requirements)
-  Grok = 'grok-2-1212',
-  GrokVision = 'grok-2-vision-1212',
-  
   // Combined approaches
   Quantum = 'quantum-enhanced-hybrid',
   SuperQuantum = 'super-quantum-hybrid',
@@ -132,7 +128,7 @@ export class QuantumAIAssistant {
    * Add copyright watermark to response
    */
   private addCopyrightWatermark(text: string): string {
-    return `${text}\n\n[DNA-PROTECTED: ${aiDNASignature.substring(0, 20)}...]\nCopyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, Serena Elizabeth Thorne - Email: ervin210@icloud.com - All Rights Reserved.`;
+    return `${text}\n\n[DNA-PROTECTED: ${aiDNASignature.substring(0, 20)}...]\nCopyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com`;
   }
   
   /**
@@ -172,12 +168,12 @@ export class QuantumAIAssistant {
       const responseIntro = `Response from ${model} model:\n\n`;
       
       if (model === AIModel.MegaQuantum) {
-        responseText = `${responseIntro}I am using the revolutionary MegaQuantum hybrid approach that combines all eight AI models (OpenAI GPT-4o, Claude 3.7 Sonnet, Google Gemini 1.5 Pro, Meta LLaMA 3, DeepSeek, Alibaba Qwen, Microsoft Copilot, and xAI Grok).
+        responseText = `${responseIntro}I am using the revolutionary MegaQuantum hybrid approach that combines all seven AI models (OpenAI GPT-4o, Claude 3.7 Sonnet, Google Gemini 1.5 Pro, Meta LLaMA 3, DeepSeek, Alibaba Qwen, and Microsoft Copilot).
 
 Your query: "${query.prompt}"
 
 Analysis:
-This is a simulated response from the MegaQuantum model. In a real implementation, this would combine insights from all eight AI models to provide the most comprehensive and accurate response possible.
+This is a simulated response from the MegaQuantum model. In a real implementation, this would combine insights from all seven AI models to provide the most comprehensive and accurate response possible.
 
 The MegaQuantum system is the most advanced AI approach ever created, integrating the unique strengths of each model:
 - GPT-4o provides general reasoning and knowledge
@@ -187,7 +183,6 @@ The MegaQuantum system is the most advanced AI approach ever created, integratin
 - DeepSeek offers specialized code and technical capabilities
 - Alibaba Qwen brings multilingual expertise and cultural understanding
 - Microsoft Copilot Pro delivers practical task execution and productivity insights
-- xAI Grok contributes technical expertise with computational reasoning and wit
 
 All of these models work together through a quantum-enhanced algorithm to provide the ultimate response with unparalleled intelligence and insight.`;
       } else if (model === AIModel.UltraQuantum) {
@@ -269,13 +264,6 @@ Your query: "${query.prompt}"
 
 Analysis:
 This is a simulated response from Microsoft's ${model}. In a real implementation, this would provide practical, task-oriented responses with deep integration capabilities for productivity tools and development environments.`;
-      } else if (model.includes('grok')) {
-        responseText = `${responseIntro}I am using the ${model} model from xAI.
-
-Your query: "${query.prompt}"
-
-Analysis:
-This is a simulated response from xAI's ${model}. In a real implementation, this would leverage xAI's powerful Grok language model capabilities to provide a comprehensive and often witty response with strong technical abilities and detailed explanations.`;
       } else {
         responseText = `${responseIntro}I am using a standard AI model to process your request.
 
@@ -298,7 +286,7 @@ This is a simulated response. In a real implementation, this would provide a det
         model: model.toString(),
         watermark: aiWatermark,
         timestamp: new Date().toISOString(),
-        copyright: 'Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, Serena Elizabeth Thorne - Email: ervin210@icloud.com - All Rights Reserved.',
+        copyright: 'Copyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com',
         securityLevel,
         processingTime,
       };
@@ -309,7 +297,7 @@ This is a simulated response. In a real implementation, this would provide a det
         model: model.toString(),
         watermark: aiWatermark,
         timestamp: new Date().toISOString(),
-        copyright: 'Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, Serena Elizabeth Thorne - Email: ervin210@icloud.com - All Rights Reserved.',
+        copyright: 'Copyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com',
         securityLevel,
         processingTime: Date.now() - startTime,
       };
@@ -555,28 +543,6 @@ This is a simulated response. In a real implementation, this would provide a det
       throw new Error(`Microsoft Copilot Error: ${error.message}`);
     }
   }
-
-  /**
-   * Query xAI Grok models
-   */
-  private async queryXAI(prompt: string, options: AIQuery): Promise<string> {
-    try {
-      const response = await apiRequest('POST', '/api/ai/xai', {
-        prompt,
-        model: options.model || AIModel.Grok,
-        max_tokens: options.maxTokens || 1000,
-        temperature: options.temperature || 0.7,
-        system_message: options.systemMessage || this.getDefaultSystemMessage(),
-        watermark: aiWatermark,
-        security_level: options.securityLevel || 'maximum'
-      });
-      
-      const data = await response.json();
-      return data.text;
-    } catch (error: any) {
-      throw new Error(`xAI Grok Error: ${error.message}`);
-    }
-  }
   
   /**
    * Meta LLaMA models query
@@ -667,12 +633,12 @@ This is a simulated response. In a real implementation, this would provide a det
   }
   
   /**
-   * Mega Quantum hybrid approach - uses all eight AI models including xAI Grok, Alibaba Qwen and Microsoft Copilot
+   * Mega Quantum hybrid approach - uses all seven AI models including Alibaba Qwen and Microsoft Copilot
    */
   private async queryMegaQuantumModel(prompt: string, options: AIQuery): Promise<string> {
     try {
-      // For the mega quantum approach, we'll use all eight models and blend the results
-      const [openaiPromise, anthropicPromise, googlePromise, metaPromise, deepseekPromise, alibabaPromise, microsoftPromise, xaiPromise] = await Promise.all([
+      // For the mega quantum approach, we'll use all seven models and blend the results
+      const [openaiPromise, anthropicPromise, googlePromise, metaPromise, deepseekPromise, alibabaPromise, microsoftPromise] = await Promise.all([
         this.queryOpenAI(prompt, {
           ...options,
           model: AIModel.GPT4,
@@ -707,17 +673,12 @@ This is a simulated response. In a real implementation, this would provide a det
           ...options,
           model: AIModel.CopilotPro,
           systemMessage: options.systemMessage || this.getEnhancedSystemMessage()
-        }),
-        this.queryXAI(prompt, {
-          ...options,
-          model: AIModel.Grok,
-          systemMessage: options.systemMessage || this.getEnhancedSystemMessage()
         })
       ]);
       
-      // Blend all eight responses using a specialized prompt
+      // Blend all seven responses using a specialized prompt
       const blendedResponse = await this.queryOpenAI(
-        `I have eight AI responses to the query: "${prompt}".
+        `I have seven AI responses to the query: "${prompt}".
         
         Response 1 (OpenAI GPT-4o): ${openaiPromise}
         
@@ -733,9 +694,7 @@ This is a simulated response. In a real implementation, this would provide a det
         
         Response 7 (Microsoft Copilot Pro): ${microsoftPromise}
         
-        Response 8 (xAI Grok): ${xaiPromise}
-        
-        Please synthesize these responses into a single, coherent, comprehensive answer that leverages the strengths of all eight responses. Focus on technical accuracy, completeness, and clarity. The response should be formatted for a quantum computing terminal interface. Include any unique insights from each model.`,
+        Please synthesize these responses into a single, coherent, comprehensive answer that leverages the strengths of all seven responses. Focus on technical accuracy, completeness, and clarity. The response should be formatted for a quantum computing terminal interface. Include any unique insights from each model.`,
         {
           ...options,
           model: AIModel.GPT4,
