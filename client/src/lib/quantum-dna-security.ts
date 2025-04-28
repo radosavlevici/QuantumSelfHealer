@@ -33,28 +33,10 @@ import {
   IMMUTABLE_SYSTEM_VERSION,
   generateDNASignature,
   generateSecurityWatermark,
-  quantumDNASecurity as serverQuantumDNASecurity,
-  secureData,
-  applyDNAProtection
-} from '@shared/schema';
-
-// Define interfaces for SecurityState and ComponentInfo
-interface SecurityState {
-  initialized: boolean;
-  integrityVerified: boolean;
-  copyrightVerified: boolean;
-  dnaProtectionActive: boolean;
-  lastVerification?: string;
-  _dnaWatermark: string;
-}
-
-interface ComponentInfo {
-  id: string;
-  type: string;
-  initialized: boolean;
-  dnaSignature: string;
-  _dnaWatermark: string;
-}
+  SecurityState,
+  ComponentInfo,
+  quantumDNASecurity as serverQuantumDNASecurity
+} from '@shared/quantum-dna-security';
 
 // Component identity constants
 const COMPONENT_ID = 'client-quantum-dna-security';
@@ -112,7 +94,7 @@ class ClientQuantumDNASecurity {
       // Initialize the server-side security
       await serverQuantumDNASecurity.initialize();
       
-      // Create this component information
+      // Register this component with the server security
       const componentInfo: ComponentInfo = {
         id: COMPONENT_ID,
         type: COMPONENT_TYPE,
@@ -121,12 +103,7 @@ class ClientQuantumDNASecurity {
         _dnaWatermark: componentWatermark
       };
       
-      // Register with server security if the method exists
-      if (typeof serverQuantumDNASecurity.registerComponent === 'function') {
-        serverQuantumDNASecurity.registerComponent(componentInfo);
-      } else {
-        console.log('Component registration not available, continuing initialization');
-      }
+      serverQuantumDNASecurity.registerComponent(componentInfo);
       
       // Set security state to active
       this.securityState = {
@@ -165,27 +142,13 @@ class ClientQuantumDNASecurity {
   /**
    * Generate a secure object with DNA watermarking
    */
-  public generateSecureObject<T extends object>(obj: T, componentId: string): T & { 
-    _dnaWatermark: string;
-    _dnaProtected?: boolean;
-    _dnaSignature?: string;
-    _watermark?: string;
-  } {
+  public generateSecureObject<T extends object>(obj: T, componentId: string): T & { _dnaWatermark: string } {
     // Initialize if not already done
     if (!this.isInitialized) {
       this.initialize();
     }
     
-    const securedObject = serverQuantumDNASecurity.generateSecureObject(obj, componentId);
-    
-    // Convert to the expected return format
-    return {
-      ...obj,
-      _dnaWatermark: securedObject._watermark,
-      _dnaProtected: securedObject._dnaProtected,
-      _dnaSignature: securedObject._dnaSignature,
-      _watermark: securedObject._watermark
-    };
+    return serverQuantumDNASecurity.generateSecureObject(obj, componentId);
   }
   
   /**

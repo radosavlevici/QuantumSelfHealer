@@ -8,11 +8,6 @@ This software is licensed under the MIT License (Royalty-Free).
 
 * See the file `LICENSE.txt` for the complete license text.
 * **Copyright:** Copyright (c) 2025 Quantum AI Assistant Contributors
-* **Additional Contributors:**
-  - Ervin Remus Radosavlevici
-  - David Cornelius Marshall
-  - Serena Elizabeth Thorne
-  - Open-Source Community
 * **Royalty-Free:** This software is provided completely royalty-free. No payment, fee, or royalty of any kind is required for any use of this software, including commercial use, redistribution, or creation of derivative works.
 
 ## Features

@@ -27,15 +27,8 @@
  */
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { 
-  generateDNASignature, 
-  generateSecurityWatermark,
-  IMMUTABLE_COPYRIGHT_OWNER,
-  IMMUTABLE_COPYRIGHT_BIRTHDATE,
-  IMMUTABLE_COPYRIGHT_EMAIL,
-  IMMUTABLE_SYSTEM_VERSION,
-  IMMUTABLE_COPYRIGHT_FULL
-} from '@shared/schema';
+import { generateDNASignature, generateSecurityWatermark } from '@shared/quantum-dna-security';
+import { IMMUTABLE_COPYRIGHT_OWNER, IMMUTABLE_COPYRIGHT_BIRTHDATE, IMMUTABLE_COPYRIGHT_EMAIL, IMMUTABLE_SYSTEM_VERSION } from '@/lib/utils';
 import { quantumDNASecurity } from '@/lib/quantum-dna-security';
 
 // Component identity constants

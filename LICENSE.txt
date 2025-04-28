@@ -2,12 +2,6 @@ MIT License (Royalty-Free)
 
 Copyright (c) 2025 Quantum AI Assistant Contributors
 
-Additional Contributors:
-- Ervin Remus Radosavlevici
-- David Cornelius Marshall
-- Serena Elizabeth Thorne
-- Open-Source Community
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -23,11 +17,6 @@ This software is provided completely royalty-free. No payment, fee, or royalty
 of any kind is required for any use of this software, including commercial use, 
 redistribution, or creation of derivative works. This provision cannot be
 changed or revoked at any time in the future.
-
-ATTRIBUTION AND CONTRIBUTORS:
-This software includes contributions from the individuals and groups listed under
-"Additional Contributors" above. By using, copying, or modifying this software,
-you acknowledge the contributions of these individuals and the open-source community.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,

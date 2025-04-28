@@ -281,24 +281,10 @@ export class QuantumDNASecurity {
   private integrityVerified: boolean = false;
   private copyrightVerified: boolean = false;
   private dnaProtectionActive: boolean = false;
-  private registeredComponents: Map<string, ComponentInfo> = new Map();
   
   constructor() {
     console.log("Quantum DNA Security System initializing...");
     console.log(IMMUTABLE_COPYRIGHT_FULL);
-  }
-  
-  /**
-   * Register a component with the security system
-   * @param component The component to register
-   */
-  public registerComponent(component: ComponentInfo): boolean {
-    if (!component || !component.id || !component.dnaSignature) {
-      return false;
-    }
-    
-    this.registeredComponents.set(component.id, component);
-    return true;
   }
   
   /**
@@ -345,14 +331,17 @@ export class QuantumDNASecurity {
   /**
    * Get the security state
    */
-  public getSecurityState(): SecurityState {
+  public getSecurityState(): {
+    initialized: boolean;
+    integrityVerified: boolean;
+    copyrightVerified: boolean;
+    dnaProtectionActive: boolean;
+  } {
     return {
       initialized: this.initialized,
       integrityVerified: this.integrityVerified,
       copyrightVerified: this.copyrightVerified,
-      dnaProtectionActive: this.dnaProtectionActive,
-      lastVerification: new Date().toISOString(),
-      _dnaWatermark: generateSecurityWatermark('security-state')
+      dnaProtectionActive: this.dnaProtectionActive
     };
   }
   

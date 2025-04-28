@@ -1,23 +1,11 @@
 /**
- * Quantum AI Assistant
+ * !!! QUANTUM NLP SERVICE - DNA PROTECTED SERVICE !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
+ * Email: ervin210@icloud.com
  * 
- * MIT License (Royalty-Free)
- * Copyright (c) 2025 Quantum AI Assistant Contributors
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * ROYALTY-FREE PROVISION:
- * This software is provided completely royalty-free. No payment, fee, or royalty
- * of any kind is required for any use of this software, including commercial use, 
- * redistribution, or creation of derivative works.
+ * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
+ * This software is subject to royalty payments for commercial use.
+ * Unauthorized past and present commercial use is subject to retroactive royalties.
  * 
  * QUANTUM NLP SERVICE
  * 
@@ -25,6 +13,7 @@
  * for quantum computing operations. It translates everyday language into
  * quantum terminal commands, making quantum computing accessible without
  * requiring knowledge of complex programming languages.
+ * Built as one integrated system with DNA-based security from the beginning.
  */
 
 import { quantumDNASecurity } from '@/lib/quantum-dna-security';

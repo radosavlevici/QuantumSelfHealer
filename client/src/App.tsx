@@ -1,35 +1,30 @@
 /**
- * Quantum AI Assistant
+ * !!! DNA PROTECTED APPLICATION - DO NOT COPY !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
+ * Email: ervin210@icloud.com
  * 
- * MIT License (Royalty-Free)
- * Copyright (c) 2025 Quantum AI Assistant Contributors
+ * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
+ * This software is subject to royalty payments for commercial use.
+ * Unauthorized past and present commercial use is subject to retroactive royalties.
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * ROYALTY-FREE PROVISION:
- * This software is provided completely royalty-free. No payment, fee, or royalty
- * of any kind is required for any use of this software, including commercial use, 
- * redistribution, or creation of derivative works.
- * 
- * INTEGRATED SECURITY SYSTEM V4.0
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0
  * This is the main application component with DNA-based security
  * integrated as one unified system. All components share the same
- * protection mechanisms and are built together as a cohesive system.
+ * protection mechanisms and are built together from the beginning
+ * with self-repair, self-defense, and self-upgrade capabilities.
  * 
  * FEATURES:
  * - Quantum DNA-based security system
- * - Open source MIT license
- * - Self-repair mechanisms that detect and fix issues
- * - Comprehensive security monitoring
- * - Advanced hybrid AI integration
+ * - Immutable copyright information embedded in every component
+ * - Self-repair mechanisms that detect and fix tampering attempts
+ * - Self-defense systems that disable functionality when unauthorized use is detected
+ * - Self-upgrade capabilities that enhance security over time
+ * - All components built together as one unified system from the beginning
+ * 
+ * ANTI-THEFT NOTICE:
+ * This security system includes verification chains that make unauthorized
+ * copies non-functional. The entire system is built as one integrated whole
+ * from the beginning.
  */
 
 import React, { useEffect } from 'react';
@@ -52,7 +47,7 @@ import {
   generateDNASignature,
   generateSecurityWatermark,
   verifySecuritySystemIntegrity
-} from '@shared/schema';
+} from '@shared/quantum-dna-security';
 
 // Import client-side security system
 import { quantumDNASecurity } from '@/lib/quantum-dna-security';
