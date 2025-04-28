@@ -439,35 +439,47 @@ const QuantumNLPTerminal: React.FC = () => {
   };
   
   // Emergency fallback processor when all other methods fail
+  // Add debug messages to help track issues
+  const logDebug = (message: string, ...args: any[]) => {
+    console.log(`[QuantumNLPTerminal] ${message}`, ...args);
+  };
+  
+  // Emergency fallback processor when all other methods fail
   const simulateEmergencyFallback = (input: string): string => {
-    console.log("Using emergency fallback processor for input:", input);
+    logDebug("Using emergency fallback processor for input:", input);
     
-    const normalizedInput = input.toLowerCase();
-    
-    // Very simple pattern matching for bare minimum functionality
-    if (normalizedInput.includes('circuit') || normalizedInput.includes('qubits')) {
-      return `createCircuit(3)`;
-    } else if (normalizedInput.includes('hadamard') || normalizedInput.includes('superposition')) {
-      return `H(0)`;
-    } else if (normalizedInput.includes('entangle') || normalizedInput.includes('entanglement')) {
-      return `CNOT(0, 1)`;
-    } else if (normalizedInput.includes('measure')) {
-      return `measure(0)`;
-    } else if (normalizedInput.includes('simulate') || normalizedInput.includes('run')) {
-      return `simulate(shots=1024)`;
-    } else if (normalizedInput.includes('random')) {
-      return `generateRandomNumber(bits=8)`;
-    } else if (normalizedInput.includes('connect') || normalizedInput.includes('ibm')) {
-      return `connectToBackend("ibm_oslo")`;
-    } else if (normalizedInput.includes('search') || normalizedInput.includes('find')) {
-      return `executeGrover(items=8, target=3)`;
-    } else if (normalizedInput.includes('explain')) {
-      return `showDocumentation("quantum_computing")`;
-    } else if (normalizedInput.includes('machine learning') || normalizedInput.includes('ai')) {
-      return `initQML(qubits=4, dataset="basic")`;
-    } else {
-      // Complete fallback for anything else
-      return `process("${input.replace(/"/g, '\\"')}")`;
+    try {
+      const normalizedInput = input.toLowerCase();
+      
+      // Very simple pattern matching for bare minimum functionality
+      if (normalizedInput.includes('circuit') || normalizedInput.includes('qubits')) {
+        return `createCircuit(3)`;
+      } else if (normalizedInput.includes('hadamard') || normalizedInput.includes('superposition')) {
+        return `H(0)`;
+      } else if (normalizedInput.includes('entangle') || normalizedInput.includes('entanglement')) {
+        return `CNOT(0, 1)`;
+      } else if (normalizedInput.includes('measure')) {
+        return `measure(0)`;
+      } else if (normalizedInput.includes('simulate') || normalizedInput.includes('run')) {
+        return `simulate(shots=1024)`;
+      } else if (normalizedInput.includes('random')) {
+        return `generateRandomNumber(bits=8)`;
+      } else if (normalizedInput.includes('connect') || normalizedInput.includes('ibm')) {
+        return `connectToBackend("ibm_oslo")`;
+      } else if (normalizedInput.includes('search') || normalizedInput.includes('find')) {
+        return `executeGrover(items=8, target=3)`;
+      } else if (normalizedInput.includes('explain')) {
+        return `showDocumentation("quantum_computing")`;
+      } else if (normalizedInput.includes('machine learning') || normalizedInput.includes('ai')) {
+        return `initQML(qubits=4, dataset="basic")`;
+      } else {
+        // Complete fallback for anything else
+        return `process("${input.replace(/"/g, '\\"')}")`;
+      }
+    } catch (error) {
+      logDebug("Error in emergency fallback processor:", error);
+      // Ultimate fallback in case everything fails
+      return `execute("${Date.now()}")`;
     }
   };
   
