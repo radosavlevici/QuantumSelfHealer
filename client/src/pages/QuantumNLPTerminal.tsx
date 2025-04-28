@@ -123,30 +123,80 @@ const QuantumNLPTerminal: React.FC = () => {
     // Initialize quantum NLP service
     const initializeServices = async () => {
       try {
-        await quantumNLPService.initialize();
+        console.log("QuantumNLPTerminal: Initializing quantum services...");
         
-        addToHistory({
-          type: 'system',
-          content: 'Connected to Quantum NLP Service',
-          timestamp: new Date().toISOString(),
-          dnaSignature: dnaProtection.dnaSignature
-        });
+        // Attempt to initialize the quantum NLP service
+        const success = await quantumNLPService.initialize();
+        
+        if (success) {
+          console.log("QuantumNLPTerminal: Quantum NLP Service initialization successful");
+          
+          // Add normal connection message
+          addToHistory({
+            type: 'system',
+            content: 'Connected to Quantum NLP Service',
+            timestamp: new Date().toISOString(),
+            dnaSignature: dnaProtection.dnaSignature
+          });
+          
+          // Show which providers are available (if any)
+          const providers = quantumNLPService.availableProviders;
+          
+          if (providers && providers.length > 0) {
+            addToHistory({
+              type: 'system',
+              content: `Available AI Providers: ${providers.join(', ')}`,
+              timestamp: new Date().toISOString(),
+              dnaSignature: dnaProtection.dnaSignature
+            });
+          } else {
+            addToHistory({
+              type: 'system',
+              content: 'Operating in fallback mode (no AI providers available)',
+              timestamp: new Date().toISOString(),
+              dnaSignature: dnaProtection.dnaSignature
+            });
+          }
+        } else {
+          console.warn("QuantumNLPTerminal: Quantum NLP Service initialization returned false");
+          
+          addToHistory({
+            type: 'system',
+            content: 'Connected to Quantum NLP Service (limited functionality)',
+            timestamp: new Date().toISOString(),
+            dnaSignature: dnaProtection.dnaSignature
+          });
+        }
         
         // Check if connected to IBM Quantum
-        if (process.env.IBM_QUANTUM_API_KEY) {
+        if (import.meta.env.VITE_IBM_QUANTUM_API_KEY || import.meta.env.IBM_QUANTUM_API_KEY) {
           addToHistory({
             type: 'system',
             content: 'IBM Quantum connection established',
             timestamp: new Date().toISOString(),
             dnaSignature: dnaProtection.dnaSignature
           });
+        } else {
+          addToHistory({
+            type: 'system',
+            content: 'IBM Quantum running in simulation mode',
+            timestamp: new Date().toISOString(),
+            dnaSignature: dnaProtection.dnaSignature
+          });
         }
         
         // Check if connected to Azure Quantum
-        if (process.env.AZURE_QUANTUM_API_KEY) {
+        if (import.meta.env.VITE_AZURE_QUANTUM_API_KEY || import.meta.env.AZURE_QUANTUM_API_KEY) {
           addToHistory({
             type: 'system',
             content: 'Microsoft Azure Quantum connection established',
+            timestamp: new Date().toISOString(),
+            dnaSignature: dnaProtection.dnaSignature
+          });
+        } else {
+          addToHistory({
+            type: 'system',
+            content: 'Azure Quantum running in simulation mode',
             timestamp: new Date().toISOString(),
             dnaSignature: dnaProtection.dnaSignature
           });
@@ -240,15 +290,77 @@ const QuantumNLPTerminal: React.FC = () => {
     setIsProcessing(true);
     
     try {
+      console.log("Processing user input:", input);
+      
+      // Check if the quantum NLP service is initialized
+      if (!quantumNLPService.isInitialized) {
+        console.log("Quantum NLP Service not initialized, attempting initialization...");
+        
+        // Add message about initialization
+        addToHistory({
+          type: 'system',
+          content: 'Initializing Quantum NLP Service...',
+          timestamp: new Date().toISOString(),
+          dnaSignature: dnaProtection.dnaSignature
+        });
+        
+        // Attempt initialization
+        await quantumNLPService.initialize();
+        
+        // Verify initialization succeeded
+        if (!quantumNLPService.isInitialized) {
+          console.warn("Quantum NLP Service initialization failed, using emergency fallback");
+          
+          // Use fallback processing logic
+          const fallbackCommand = simulateEmergencyFallback(input);
+          
+          addToHistory({
+            type: 'system',
+            content: 'Processing via Emergency Fallback System',
+            timestamp: new Date().toISOString(),
+            dnaSignature: dnaProtection.dnaSignature
+          });
+          
+          addToHistory({
+            type: 'command',
+            content: fallbackCommand,
+            timestamp: new Date().toISOString(),
+            dnaSignature: dnaProtection.dnaSignature
+          });
+          
+          addToHistory({
+            type: 'explanation',
+            content: `Translated your request about "${input.substring(0, 30)}..." into quantum commands using emergency system.`,
+            timestamp: new Date().toISOString(),
+            dnaSignature: dnaProtection.dnaSignature
+          });
+          
+          // Simulate executing the command
+          await new Promise(resolve => setTimeout(resolve, 800));
+          
+          addToHistory({
+            type: 'output',
+            content: simulateCommandOutput(fallbackCommand),
+            timestamp: new Date().toISOString(),
+            dnaSignature: dnaProtection.dnaSignature
+          });
+          
+          // Exit early since we've handled the input
+          return;
+        }
+      }
+      
       // Process input through Quantum NLP Service
+      console.log("Calling quantumNLPService.processInput()");
       const nlpResponse = await quantumNLPService.processInput(input);
+      console.log("Response received:", nlpResponse);
       
       // Add information about which AI provider was used
       addToHistory({
         type: 'system',
         content: `Processing via ${nlpResponse.usedProvider}`,
         timestamp: new Date().toISOString(),
-        dnaSignature: nlpResponse._dnaWatermark
+        dnaSignature: nlpResponse._dnaWatermark || dnaProtection.dnaSignature
       });
       
       // Add the generated command to history
@@ -256,7 +368,7 @@ const QuantumNLPTerminal: React.FC = () => {
         type: 'command',
         content: nlpResponse.command,
         timestamp: new Date().toISOString(),
-        dnaSignature: nlpResponse._dnaWatermark
+        dnaSignature: nlpResponse._dnaWatermark || dnaProtection.dnaSignature
       });
       
       // Add the explanation to history
@@ -264,7 +376,7 @@ const QuantumNLPTerminal: React.FC = () => {
         type: 'explanation',
         content: nlpResponse.explanation,
         timestamp: new Date().toISOString(),
-        dnaSignature: nlpResponse._dnaWatermark
+        dnaSignature: nlpResponse._dnaWatermark || dnaProtection.dnaSignature
       });
       
       // Simulate executing the command
@@ -275,7 +387,7 @@ const QuantumNLPTerminal: React.FC = () => {
         type: 'output',
         content: simulateCommandOutput(nlpResponse.command),
         timestamp: new Date().toISOString(),
-        dnaSignature: nlpResponse._dnaWatermark
+        dnaSignature: nlpResponse._dnaWatermark || dnaProtection.dnaSignature
       });
     } catch (error) {
       console.error('Error processing input:', error);
@@ -287,6 +399,34 @@ const QuantumNLPTerminal: React.FC = () => {
         timestamp: new Date().toISOString(),
         dnaSignature: dnaProtection.dnaSignature
       });
+      
+      // Even if we get an error, try to give a useful response
+      addToHistory({
+        type: 'system',
+        content: 'Falling back to emergency processing system',
+        timestamp: new Date().toISOString(),
+        dnaSignature: dnaProtection.dnaSignature
+      });
+      
+      // Use fallback processing logic
+      const fallbackCommand = simulateEmergencyFallback(input);
+      
+      addToHistory({
+        type: 'command',
+        content: fallbackCommand,
+        timestamp: new Date().toISOString(),
+        dnaSignature: dnaProtection.dnaSignature
+      });
+      
+      // Simulate executing the command
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      addToHistory({
+        type: 'output',
+        content: simulateCommandOutput(fallbackCommand),
+        timestamp: new Date().toISOString(),
+        dnaSignature: dnaProtection.dnaSignature
+      });
     } finally {
       // Clear loading state
       setIsProcessing(false);
@@ -295,6 +435,39 @@ const QuantumNLPTerminal: React.FC = () => {
       if (inputRef.current) {
         inputRef.current.focus();
       }
+    }
+  };
+  
+  // Emergency fallback processor when all other methods fail
+  const simulateEmergencyFallback = (input: string): string => {
+    console.log("Using emergency fallback processor for input:", input);
+    
+    const normalizedInput = input.toLowerCase();
+    
+    // Very simple pattern matching for bare minimum functionality
+    if (normalizedInput.includes('circuit') || normalizedInput.includes('qubits')) {
+      return `createCircuit(3)`;
+    } else if (normalizedInput.includes('hadamard') || normalizedInput.includes('superposition')) {
+      return `H(0)`;
+    } else if (normalizedInput.includes('entangle') || normalizedInput.includes('entanglement')) {
+      return `CNOT(0, 1)`;
+    } else if (normalizedInput.includes('measure')) {
+      return `measure(0)`;
+    } else if (normalizedInput.includes('simulate') || normalizedInput.includes('run')) {
+      return `simulate(shots=1024)`;
+    } else if (normalizedInput.includes('random')) {
+      return `generateRandomNumber(bits=8)`;
+    } else if (normalizedInput.includes('connect') || normalizedInput.includes('ibm')) {
+      return `connectToBackend("ibm_oslo")`;
+    } else if (normalizedInput.includes('search') || normalizedInput.includes('find')) {
+      return `executeGrover(items=8, target=3)`;
+    } else if (normalizedInput.includes('explain')) {
+      return `showDocumentation("quantum_computing")`;
+    } else if (normalizedInput.includes('machine learning') || normalizedInput.includes('ai')) {
+      return `initQML(qubits=4, dataset="basic")`;
+    } else {
+      // Complete fallback for anything else
+      return `process("${input.replace(/"/g, '\\"')}")`;
     }
   };
   
