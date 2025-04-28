@@ -67,6 +67,7 @@ import QuantumTerminal from './pages/QuantumTerminal';
 import QuantumNLPTerminal from './pages/QuantumNLPTerminal';
 import SecurityDashboard from './pages/SecurityDashboard';
 import DeploymentDashboard from './pages/DeploymentDashboard';
+import DeploymentManager from './pages/DeploymentManager';
 import NotFound from './pages/not-found';
 
 // Component identity constants
@@ -145,6 +146,7 @@ function App() {
                   <Route path="/nlp" component={QuantumNLPTerminal} />
                   <Route path="/security" component={SecurityDashboard} />
                   <Route path="/deployment" component={DeploymentDashboard} />
+                  <Route path="/deploy-manager" component={DeploymentManager} />
                   <Route path="/terminal" component={TerminalPage} />
                   <Route path="/quantum" component={QuantumPage} />
                   <Route path="/home" component={HomePage} />
