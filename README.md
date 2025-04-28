@@ -1,43 +1,109 @@
-# Quantum Natural Language Processor
+# Quantum AI Assistant
 
-An advanced hybrid AI integration system with comprehensive security and intelligent development capabilities, designed to enhance developer workflow and system resilience.
+An advanced hybrid AI integration system with comprehensive natural language processing and intelligent terminal interaction capabilities, designed to simplify complex technical workflows for developers of all skill levels.
+
+## Overview
+
+Quantum AI Assistant is a sophisticated application that integrates multiple AI providers with quantum computing capabilities. It features a terminal-like interface with self-repair algorithms, persistent memory via iCloud, and custom quantum algorithms. Built with security at its core, it provides a natural language interface that translates everyday language into quantum terminal commands, making quantum computing accessible to users without technical knowledge.
+
+## Copyright & Ownership
+
+Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, Serena Elizabeth Thorne
+Email: ervin210@icloud.com - All Rights Reserved.
 
 ## License
 
-This software is licensed under the Quantum Natural Language Processor Custom License.
+This software is available under two license options:
 
-* See the file `LICENSE.txt` for the complete license agreement.
-* **Copyright Holder:** The copyright for this software is held by Ervin Remus Radosavlevici (see the copyright notice at the beginning of the `LICENSE.txt` file).
+### 1. Personal/Non-Commercial License
+
+* See the file `LICENSE.txt` for the complete personal license agreement.
+* This license grants usage rights for non-commercial, personal use only.
+* No redistribution, modification or derivative works allowed without explicit permission.
+
+### 2. Business/Commercial License
+
+* See the file `LICENSE-BUSINESS.txt` for the complete business license agreement.
+* **Required for any commercial use of the software.**
+* **Royalty payments required** based on business revenue tiers:
+  * Small businesses (under $1M annual revenue): 5% of attributable revenue
+  * Medium businesses ($1M-$10M annual revenue): 3% of attributable revenue
+  * Large businesses (over $10M annual revenue): Custom terms
+* Quarterly royalty payments due within 30 days of quarter end.
 
 **Important Licensing Notes:**
 
-* This is a custom license. Please read it carefully, as it contains specific requirements, including royalty payments for commercial use and restrictions on derivative works.
+* This software uses custom licensing with strict terms. Please read both license files carefully.
 * **Past Unauthorized Commercial Use:**
-    * This license update addresses a history of unauthorized commercial use of this software.
-    * Section 2 of the `LICENSE.txt` file explicitly states that individuals or entities who have previously used this Software or derivative works for commercial purposes without proper authorization are subject to the royalty payment obligations.
-    * If you have used this software commercially in the past without a valid license, you are encouraged to contact the copyright holder to discuss a resolution.
-* **Commercial Use:**
-    * Any current or future commercial use of this software requires adherence to the royalty payment terms as detailed in Section 2 of the `LICENSE.txt` file.
-* **Derivative Works:**
-    * This license includes specific restrictions on the creation and use of derivative works. Please refer to Section 3 of the `LICENSE.txt` file for information on similarity and derivative work protections.
+    * Both licenses address unauthorized commercial use of this software.
+    * Entities who have previously used this Software commercially without authorization are subject to retroactive royalty payments at double the standard rates plus interest.
+    * Contact the copyright holders immediately to resolve any past unauthorized usage.
+* **Security and Anti-Theft Features:**
+    * The software contains DNA-based security systems and anti-theft mechanisms.
+    * Attempts to bypass these features constitute license violation and will trigger security responses.
+    * The software will only function on authorized devices (primarily iPhone).
 
 ## Features
 
-- TypeScript as primary language
-- Multi-model AI integration (OpenAI, Anthropic Claude, Google Gemini, DeepSeek, Meta's LLaMA, Alibaba, Microsoft Copilot)
+### AI Integration
+- Eight AI providers with sequential fallback system for reliability:
+  - OpenAI (GPT-4o)
+  - Anthropic Claude (Claude 3.7 Sonnet)
+  - xAI's Grok (Grok-2)
+  - Google Gemini
+  - DeepSeek
+  - Meta's LLaMA
+  - Alibaba
+  - Microsoft Copilot
+- Direct live connections between all services for seamless operation
+- Natural language processing that translates everyday language to quantum commands
+
+### Quantum Computing
 - Integration with IBM Qiskit and Microsoft Azure Quantum services
-- React-based frontend with advanced security protocols
+- Quantum terminal with intuitive natural language interface
+- Custom quantum algorithms with self-repair capabilities
+
+### Technical Foundation
+- TypeScript/React-based frontend with responsive design
 - Quantum-inspired security architecture
-- Modular system design with emergency response capabilities
-- License protection mechanisms
-- DNA-based verification and protection
+- Adobe Creative Cloud integration for visual assets
+- Terminal-like interface for iPhone with quantum computing capabilities
+
+### Security Features
+- DNA-based verification and watermarking
+- Multi-layered security including quantum barriers
 - Self-repair and self-defense mechanisms
-- Secure iCloud synchronization (iPhone only)
+- Persistent memory via iCloud for authorized users only
+- Anti-theft protection with unauthorized device detection
 
-## Usage
+## System Requirements
 
-The Quantum Natural Language Processor can only be used on authorized devices with proper licensing. Unauthorized usage or attempts to access from non-authorized devices will trigger security measures including data wiping and component corruption.
+- **Primary Device**: iPhone (recommended)
+- **Internet Connection**: Required for AI provider connections
+- **Accounts Needed**:
+  - iCloud account for synchronization
+  - API keys for selected AI providers (included in environment)
+  - IBM Quantum account (for quantum computing features)
+  - Microsoft Azure Quantum account (for advanced quantum features)
+  - Adobe Creative Cloud account (for creative assets integration)
 
-## Contact
+## Installation & Usage
 
-For any licensing inquiries, including questions about past usage or commercial use, please contact Ervin Remus Radosavlevici (see LICENSE.txt for contact details).
+1. Install on authorized device only (primarily iPhone)
+2. Launch the application and complete the authorization process
+3. Use natural language in the Quantum NLP Terminal to:
+   - Create and manipulate quantum circuits
+   - Execute quantum algorithms
+   - Generate data visualizations
+   - Perform quantum simulations
+4. All commands are translated automatically into quantum operations
+
+**IMPORTANT**: The Quantum AI Assistant can only be used on authorized devices with proper licensing. Unauthorized usage or attempts to access from non-authorized devices will trigger automatic security measures including data wiping and component corruption.
+
+## Support & Contact
+
+For licensing inquiries, authorization requests, or to report unauthorized usage:
+
+**Email**: ervin210@icloud.com
+
+For business licensing and royalty payment arrangements, please include your company details and intended usage scope in your inquiry.
