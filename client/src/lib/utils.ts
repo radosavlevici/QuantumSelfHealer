@@ -1,16 +1,27 @@
 /**
- * !!! UTILITY FUNCTIONS - DNA PROTECTED FILE !!!
- * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
- * Email: ervin210@icloud.com
+ * Quantum AI Assistant
  * 
- * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
- * This software is subject to royalty payments for commercial use.
- * Unauthorized past and present commercial use is subject to retroactive royalties.
+ * MIT License (Royalty-Free)
+ * Copyright (c) 2025 Quantum AI Assistant Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * ROYALTY-FREE PROVISION:
+ * This software is provided completely royalty-free. No payment, fee, or royalty
+ * of any kind is required for any use of this software, including commercial use, 
+ * redistribution, or creation of derivative works.
  * 
  * UTILITY FUNCTIONS
  * 
- * Common utilities used throughout the application
- * Built as one integrated system with DNA-based security from the beginning.
+ * Common utilities used throughout the application with integrated security features.
  */
 
 import { type ClassValue, clsx } from "clsx";
@@ -314,12 +325,12 @@ export function generateSecureId(): string {
   });
   
   // Add DNA protection
-  const protectedUuid = `${uuid}-dna-${IMMUTABLE_COPYRIGHT_BIRTHDATE.replace(/\//g, '')}`;
+  const protectedUuid = `${uuid}-dna-${IMMUTABLE_SYSTEM_VERSION.replace(/\./g, '')}`;
   return protectedUuid;
 }
 
 // Immutable copyright information - cannot be changed
-export const IMMUTABLE_COPYRIGHT_OWNER = "Ervin Remus Radosavlevici";
-export const IMMUTABLE_COPYRIGHT_BIRTHDATE = "01/09/1987";
-export const IMMUTABLE_COPYRIGHT_EMAIL = "ervin210@icloud.com";
+export const IMMUTABLE_COPYRIGHT_OWNER = "Quantum AI Assistant Contributors";
+export const IMMUTABLE_COPYRIGHT_BIRTHDATE = "2025";
+export const IMMUTABLE_COPYRIGHT_EMAIL = "info@example.com";
 export const IMMUTABLE_SYSTEM_VERSION = "4.0";

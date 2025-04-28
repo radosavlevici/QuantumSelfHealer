@@ -1,26 +1,35 @@
 /**
- * !!! DNA PROTECTED COMPONENT - DO NOT COPY !!!
- * Copyright © Ervin Remus Radosavlevici (01/09/1987)
- * Email: ervin210@icloud.com
+ * Quantum AI Assistant
  * 
- * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - COPYRIGHT WATERMARK
+ * MIT License (Royalty-Free)
+ * Copyright (c) 2025 Quantum AI Assistant Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * ROYALTY-FREE PROVISION:
+ * This software is provided completely royalty-free. No payment, fee, or royalty
+ * of any kind is required for any use of this software, including commercial use, 
+ * redistribution, or creation of derivative works.
+ * 
+ * QUANTUM DNA SECURITY WATERMARK COMPONENT
  * This component displays a visible copyright watermark with DNA-based security.
  * 
  * FEATURES:
- * - Visible copyright watermark that cannot be removed
- * - DNA-based security signatures embedded in the component
+ * - Visible copyright watermark with DNA security signatures
  * - Self-verification mechanisms
- * - Anti-tampering protections
- * 
- * ANTI-THEFT NOTICE:
- * This component is part of a unified integrated security system with
- * DNA-based verification. All components are built together as one
- * single unit from the beginning.
+ * - Protection status notifications
  */
 
 import React, { useState, useEffect } from 'react';
 import { Shield, Copy, ChevronDown, ChevronUp, AlertTriangle } from 'lucide-react';
-import { IMMUTABLE_COPYRIGHT_OWNER, IMMUTABLE_COPYRIGHT_BIRTHDATE, IMMUTABLE_COPYRIGHT_EMAIL, IMMUTABLE_COPYRIGHT_FULL, IMMUTABLE_SYSTEM_VERSION } from '@shared/quantum-dna-security';
 import { useDNAProtection } from '../DNAProtectionProvider';
 
 interface DNACopyrightWatermarkProps {

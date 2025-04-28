@@ -201,10 +201,10 @@ export async function createIBMQuantumEncryptionKey(bits: number = 256): Promise
     });
     
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('IBM Quantum key generation error:', error);
     return {
-      error: `Quantum key generation failed: ${error.message}`,
+      error: `Quantum key generation failed: ${error.message || 'Unknown error'}`,
       timestamp: new Date().toISOString()
     };
   }
@@ -240,14 +240,14 @@ export async function executeAzureQuantumCircuit(
     
     // Return the validated result
     return result;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Azure Quantum execution error:', error);
     
     // Return a protected error result
     return {
       id: `error-${Date.now()}`,
       status: 'Failed',
-      error: `Azure Quantum execution failed: ${error.message}`,
+      error: `Azure Quantum execution failed: ${error.message || 'Unknown error'}`,
       executedOn: 'error',
       dnaSignature: generateDNASignature(`error-${Date.now()}`, 'quantum-execution'),
       watermark: serviceProtection.watermark
@@ -275,11 +275,11 @@ export async function getAzureQuantumProviders(): Promise<any> {
     });
     
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Azure Quantum providers fetch error:', error);
     return {
       providers: [],
-      error: `Failed to fetch Azure Quantum providers: ${error.message}`,
+      error: `Failed to fetch Azure Quantum providers: ${error.message || 'Unknown error'}`,
       timestamp: new Date().toISOString()
     };
   }
@@ -313,10 +313,10 @@ export async function deployAzureQuantumAlgorithm(
     });
     
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Azure Quantum algorithm deployment error:', error);
     return {
-      error: `Quantum algorithm deployment failed: ${error.message}`,
+      error: `Quantum algorithm deployment failed: ${error.message || 'Unknown error'}`,
       timestamp: new Date().toISOString()
     };
   }
@@ -420,7 +420,7 @@ export async function checkQuantumServicesHealth(): Promise<{
       timestamp: new Date().toISOString(),
       dnaSignature: healthSignature
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Quantum services health check error:', error);
     
     // Generate error DNA signature

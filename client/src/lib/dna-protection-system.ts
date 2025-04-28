@@ -1,28 +1,43 @@
 /**
- * !!! DNA PROTECTION SYSTEM - DO NOT COPY !!!
- * Copyright © Ervin Remus Radosavlevici (01/09/1987)
- * Email: ervin210@icloud.com
+ * Quantum AI Assistant
  * 
- * INTEGRATED SECURITY SYSTEM - BUILT FROM THE BEGINNING
- * This is the core DNA security system that protects all components
- * with self-repair, self-defense, and self-upgrade capabilities.
- * All files are built together as one unified security system.
+ * MIT License (Royalty-Free)
+ * Copyright (c) 2025 Quantum AI Assistant Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * ROYALTY-FREE PROVISION:
+ * This software is provided completely royalty-free. No payment, fee, or royalty
+ * of any kind is required for any use of this software, including commercial use, 
+ * redistribution, or creation of derivative works.
+ * 
+ * DNA PROTECTION SYSTEM
+ * Security system that protects components with self-repair, 
+ * self-defense, and self-upgrade capabilities.
  */
 
-// IMMUTABLE COPYRIGHT INFORMATION - permanently embedded in all components
+// COPYRIGHT INFORMATION
 export const COPYRIGHT = {
-  OWNER: "Ervin Remus Radosavlevici",
-  BIRTHDATE: "01/09/1987",
-  EMAIL: "ervin210@icloud.com",
-  FULL: "© Ervin Remus Radosavlevici (01/09/1987)",
+  OWNER: "Quantum AI Assistant Contributors",
+  BIRTHDATE: "2025",
+  EMAIL: "info@example.com",
+  FULL: "© Quantum AI Assistant Contributors 2025 - MIT License (Royalty-Free)",
   IMMUTABLE: true
 };
 
 // SYSTEM VERSION INFORMATION
 export const SYSTEM = {
-  VERSION: "DNA-1.0.0",
-  BUILD_DATE: "2025-04-25T22:00:00.000Z",
-  NAME: "Quantum DNA Security System"
+  VERSION: "4.0",
+  BUILD_DATE: "2025-04-28T10:00:00.000Z",
+  NAME: "Quantum AI Assistant"
 };
 
 // SECURITY LEVELS
@@ -202,6 +217,18 @@ export const selfUpgrade = {
     return true;
   }
 };
+
+// Register a protected component
+export function registerProtectedComponent(componentId: string, componentType: string): {
+  dnaSignature: string;
+  watermark: string;
+} {
+  const signature = generateDNASignature(componentId, componentType);
+  return {
+    dnaSignature: signature.dnaSequence,
+    watermark: signature.watermark
+  };
+}
 
 // Initialize the protection system
 export function initializeProtectionSystem(): void {

@@ -40,6 +40,29 @@ export const IMMUTABLE_SYSTEM_VERSION = '4.0';
 export const IMMUTABLE_BUILD_TIMESTAMP = '2025-04-27T23:30:00.000Z';
 
 /**
+ * Security state interface
+ */
+export interface SecurityState {
+  initialized: boolean;
+  integrityVerified: boolean;
+  copyrightVerified: boolean;
+  dnaProtectionActive: boolean;
+  lastVerification?: string;
+  _dnaWatermark: string;
+}
+
+/**
+ * Component information interface
+ */
+export interface ComponentInfo {
+  id: string;
+  type: string;
+  initialized: boolean;
+  dnaSignature: string;
+  _dnaWatermark: string;
+}
+
+/**
  * Generate a DNA-based security watermark
  * @param seedData Seed data for the watermark
  */
