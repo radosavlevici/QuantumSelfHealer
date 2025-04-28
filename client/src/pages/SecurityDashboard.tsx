@@ -668,9 +668,9 @@ const SecurityDashboard: React.FC = () => {
                       </div>
                       <div className="text-gray-400 flex flex-col">
                         <div>ID: {device.id}</div>
-                        <div>Type: {device.type}</div>
-                        <div>Last attempt: {formatTimestamp(device.lastAttempt)}</div>
-                        {device.ipAddress && <div>IP: {device.ipAddress}</div>}
+                        <div>IP: {device.ipAddress}</div>
+                        <div>Last seen: {formatTimestamp(device.lastSeen.toISOString())}</div>
+                        <div>Access attempts: {device.accessAttempts}</div>
                       </div>
                     </div>
                   ))}
