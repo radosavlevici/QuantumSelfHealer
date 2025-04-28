@@ -553,95 +553,132 @@ const QuantumNLPTerminal: React.FC = () => {
       switch (entry.type) {
         case 'input':
           return (
-            <div key={index} className="flex items-start mb-2">
+            <div key={index} className="flex items-start mb-3 group">
               <div className="flex-shrink-0 mt-1">
-                <span className="text-blue-400 mr-2">
+                <span className="text-green-500 mr-2 group-hover:text-green-400 transition-colors">
                   <ChevronRight size={16} />
                 </span>
               </div>
               <div className="flex-1">
-                <span className="text-blue-300">{entry.content}</span>
-                <span className="text-xs text-gray-500 ml-2">{timestamp}</span>
+                <span className="text-blue-300 font-mono">{entry.content}</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="text-xs text-gray-500 ml-2 cursor-default">{timestamp}</span>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <div className="text-xs">
+                        DNA Signature: {entry.dnaSignature ? entry.dnaSignature.substring(0, 8) + '...' : 'Unsigned'}
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
           );
         
         case 'command':
           return (
-            <div key={index} className="flex items-start mb-2 bg-gray-900 p-2 rounded">
+            <div key={index} className="flex items-start mb-3 bg-gray-900/40 p-2 rounded border-l-2 border-green-600 group hover:bg-gray-900/60 transition-colors">
               <div className="flex-shrink-0 mt-1">
-                <span className="text-green-400 mr-2">
+                <span className="text-green-400 mr-2 group-hover:text-green-300 transition-colors">
                   <Code size={16} />
                 </span>
               </div>
               <div className="flex-1">
-                <code className="text-green-300 font-mono">{entry.content}</code>
-                <span className="text-xs text-gray-500 ml-2">{timestamp}</span>
+                <div className="flex items-center mb-1">
+                  <Badge variant="outline" className="text-xs text-gray-400 border-gray-700 font-mono mr-2">
+                    quantum-cmd
+                  </Badge>
+                  <span className="text-xs text-gray-500">{timestamp}</span>
+                </div>
+                <code className="text-green-300 font-mono block">{entry.content}</code>
               </div>
             </div>
           );
         
         case 'output':
           return (
-            <div key={index} className="pl-6 mb-4 border-l-2 border-gray-700">
+            <div key={index} className="pl-6 mb-4 border-l-2 border-blue-700 bg-blue-950/10 p-3 rounded-r group hover:bg-blue-950/20 transition-colors">
+              <div className="flex items-center mb-2">
+                <Badge variant="outline" className="text-xs text-blue-400 border-blue-700 font-mono mr-2">
+                  quantum-result
+                </Badge>
+                <span className="text-xs text-gray-500">{timestamp}</span>
+              </div>
               <pre className="text-gray-300 font-mono whitespace-pre-wrap">
                 {entry.content}
               </pre>
-              <div className="text-xs text-gray-500">{timestamp}</div>
             </div>
           );
         
         case 'error':
           return (
-            <div key={index} className="flex items-start mb-2 bg-red-900/20 p-2 rounded">
+            <div key={index} className="flex items-start mb-3 bg-red-950/20 p-3 rounded border-l-2 border-red-700 group hover:bg-red-950/30 transition-colors">
               <div className="flex-shrink-0 mt-1">
-                <span className="text-red-400 mr-2">
+                <span className="text-red-400 mr-2 group-hover:text-red-300 transition-colors">
                   <AlertCircle size={16} />
                 </span>
               </div>
               <div className="flex-1">
-                <span className="text-red-300">{entry.content}</span>
-                <span className="text-xs text-gray-500 ml-2">{timestamp}</span>
+                <div className="flex items-center mb-1">
+                  <Badge variant="outline" className="text-xs text-red-400 border-red-700 font-mono mr-2">
+                    error
+                  </Badge>
+                  <span className="text-xs text-gray-500">{timestamp}</span>
+                </div>
+                <div className="text-red-300 font-mono">{entry.content}</div>
               </div>
             </div>
           );
         
         case 'system':
           return (
-            <div key={index} className="flex items-start mb-2 text-gray-400">
+            <div key={index} className="flex items-start mb-3 text-gray-400 group">
               <div className="flex-1">
                 {entry.content.includes('Processing via') ? (
-                  <div className="flex items-center">
-                    <span className="bg-purple-900/30 text-purple-300 px-2 py-0.5 rounded text-xs font-mono">
+                  <div className="flex items-center p-1 bg-purple-950/20 rounded border border-purple-900/50">
+                    <Badge variant="outline" className="text-xs bg-purple-900/50 text-purple-300 border-purple-700 font-mono mr-2">
+                      ai-provider
+                    </Badge>
+                    <span className="text-purple-300 text-xs font-mono">
                       {entry.content}
                     </span>
+                    <span className="text-xs text-gray-500 ml-auto">{timestamp}</span>
                   </div>
                 ) : (
-                  <span>{entry.content}</span>
+                  <div className="flex items-center">
+                    <span className="text-gray-400 text-xs">{entry.content}</span>
+                    <span className="text-xs text-gray-500 ml-2">{timestamp}</span>
+                  </div>
                 )}
-                <span className="text-xs text-gray-500 ml-2">{timestamp}</span>
               </div>
             </div>
           );
         
         case 'explanation':
           return (
-            <div key={index} className="flex items-start mb-4 bg-blue-900/10 p-2 rounded">
+            <div key={index} className="flex items-start mb-4 bg-indigo-950/10 p-3 rounded border-l-2 border-indigo-700 group hover:bg-indigo-950/20 transition-colors">
               <div className="flex-shrink-0 mt-1">
-                <span className="text-blue-400 mr-2">
+                <span className="text-indigo-400 mr-2 group-hover:text-indigo-300 transition-colors">
                   <CheckCircle size={16} />
                 </span>
               </div>
               <div className="flex-1">
-                <div className="text-blue-200 italic">{entry.content}</div>
-                <span className="text-xs text-gray-500">{timestamp}</span>
+                <div className="flex items-center mb-1">
+                  <Badge variant="outline" className="text-xs text-indigo-400 border-indigo-700 font-mono mr-2">
+                    explanation
+                  </Badge>
+                  <span className="text-xs text-gray-500">{timestamp}</span>
+                </div>
+                <div className="text-indigo-200 italic">{entry.content}</div>
               </div>
             </div>
           );
         
         default:
           return (
-            <div key={index} className="mb-2 text-gray-300">
+            <div key={index} className="mb-3 text-gray-300 p-2">
               {entry.content}
               <span className="text-xs text-gray-500 ml-2">{timestamp}</span>
             </div>
@@ -693,7 +730,7 @@ const QuantumNLPTerminal: React.FC = () => {
                     <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
                   </div>
-                  <span className="text-xs text-gray-400 font-mono">quantum@{dnaProtection.ownerDevice || 'iphone'}: ~/quantum-terminal</span>
+                  <span className="text-xs text-gray-400 font-mono">quantum@{dnaProtection.ownerInfo?.deviceId || 'iphone'}: ~/quantum-terminal</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Badge variant="outline" className="text-xs text-blue-400 border-blue-400">

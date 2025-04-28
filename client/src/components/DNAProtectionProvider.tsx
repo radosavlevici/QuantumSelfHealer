@@ -35,6 +35,7 @@ interface DNAProtectionContextType {
     name: string;
     birthdate: string;
     email: string;
+    deviceId?: string;
   };
   verifyComponent: (componentSignature: string) => boolean;
   generateComponentSignature: (componentId: string, componentName: string) => string;
@@ -88,6 +89,7 @@ export const DNAProtectionProvider: React.FC<DNAProtectionProviderProps> = ({ ch
       name: IMMUTABLE_COPYRIGHT_OWNER,
       birthdate: IMMUTABLE_COPYRIGHT_BIRTHDATE,
       email: IMMUTABLE_COPYRIGHT_EMAIL,
+      deviceId: 'iphone-pro-max',
     },
     
     // Method to verify component integrity
