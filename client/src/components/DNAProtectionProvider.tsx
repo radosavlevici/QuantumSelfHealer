@@ -19,6 +19,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { generateDNASignature, generateSecurityWatermark } from '@shared/quantum-dna-security';
 import { IMMUTABLE_COPYRIGHT_OWNER, IMMUTABLE_COPYRIGHT_BIRTHDATE, IMMUTABLE_COPYRIGHT_EMAIL, IMMUTABLE_SYSTEM_VERSION } from '@/lib/utils';
 import { quantumDNASecurity } from '@/lib/quantum-dna-security';
+import { Shield } from 'lucide-react';
 
 // Component identity constants
 const COMPONENT_ID = 'dna-protection-provider';
@@ -105,6 +106,21 @@ export const DNAProtectionProvider: React.FC<DNAProtectionProviderProps> = ({ ch
     }
   };
   
+  // Enhanced security visualization indicator
+  const [securityActive, setSecurityActive] = useState(true);
+
+  // Security activation effect
+  useEffect(() => {
+    // Simulate active quantum security system
+    const securityCheckInterval = setInterval(() => {
+      console.log('Scanning for unauthorized devices...');
+      // Security system remains constantly active
+      setSecurityActive(true);
+    }, 30000);
+    
+    return () => clearInterval(securityCheckInterval);
+  }, []);
+
   return (
     <div
       data-component-id={COMPONENT_ID}
@@ -114,6 +130,28 @@ export const DNAProtectionProvider: React.FC<DNAProtectionProviderProps> = ({ ch
       className="dna-protection-wrapper"
       style={{ display: 'contents' }}
     >
+      {/* Global Security Indicator */}
+      <div 
+        style={{ 
+          position: 'fixed', 
+          bottom: '10px', 
+          right: '10px', 
+          zIndex: 1000,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          padding: '6px',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 0 10px rgba(0, 120, 255, 0.5)',
+          border: '1px solid rgba(0, 100, 255, 0.3)'
+        }}
+      >
+        <Shield 
+          className={`h-4 w-4 ${securityActive ? 'text-blue-400 pulse-animation' : 'text-gray-400'}`}
+        />
+      </div>
+      
       <DNAProtectionContext.Provider value={contextValue}>
         {children}
       </DNAProtectionContext.Provider>

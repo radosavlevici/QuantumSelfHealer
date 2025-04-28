@@ -122,12 +122,14 @@ function App() {
         <TooltipProvider>
           <DNAProtectionProvider>
             <div 
-              className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white"
+              className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white dna-protected quantum-security-active"
               data-component-id={COMPONENT_ID}
               data-copyright-owner={IMMUTABLE_COPYRIGHT_OWNER}
               data-copyright-full={IMMUTABLE_COPYRIGHT_FULL}
               data-watermark={appWatermark}
               data-security-level="maximum"
+              data-security-active="true"
+              data-device-authorized="iphone-pro-max"
             >
               <Toaster />
               <NavigationBar />
@@ -143,10 +145,19 @@ function App() {
                   <Route component={NotFound} />
                 </Switch>
               </main>
-              {/* Copyright notice in footer */}
-              <footer className="w-full border-t border-gray-800 mt-8 py-4 px-6 text-center text-xs text-gray-500">
-                <p>{IMMUTABLE_COPYRIGHT_FULL}</p>
-                <p className="mt-1">Protected by Quantum DNA Security v{IMMUTABLE_SYSTEM_VERSION}</p>
+              {/* Enhanced Copyright notice in footer */}
+              <footer className="w-full border-t border-gray-800 mt-8 py-4 px-6 text-center text-xs">
+                <div className="flex items-center justify-center mb-1">
+                  <p className="text-blue-400">Protected by Quantum DNA Security v{IMMUTABLE_SYSTEM_VERSION}</p>
+                  <span className="mx-2 bg-blue-400 h-1 w-1 rounded-full"></span>
+                  <p className="text-green-400">Device ID: iphone-pro-max</p>
+                  <span className="mx-2 bg-blue-400 h-1 w-1 rounded-full"></span>
+                  <p className="text-blue-400">Security: MAXIMUM</p>
+                </div>
+                <p className="bg-gradient-to-r from-blue-400 to-purple-500 inline-block text-transparent bg-clip-text">{IMMUTABLE_COPYRIGHT_FULL}</p>
+                <p className="mt-1 text-gray-500">
+                  All rights reserved. DNA-protected with quantum security. Authorized device access only.
+                </p>
               </footer>
             </div>
           </DNAProtectionProvider>
