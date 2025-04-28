@@ -77,6 +77,17 @@ const QuantumNLPTerminal: React.FC = () => {
   // Loading state for processing queries
   const [isProcessing, setIsProcessing] = useState(false);
   
+  // Advanced settings for terminal configuration
+  const [advancedSettings, setAdvancedSettings] = useState({
+    quantumProvider: 'auto', // 'ibm', 'azure', or 'auto'
+    aiProvider: 'auto',      // 'anthropic', 'openai', 'xai', or 'auto'
+    verbosityLevel: 'normal', // 'minimal', 'normal', 'detailed'
+    experimentalFeatures: false,
+    saveHistory: true,
+    cloudSync: true,
+    developerMode: false
+  });
+  
   // Terminal references
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -756,6 +767,7 @@ const QuantumNLPTerminal: React.FC = () => {
             <TabsTrigger value="terminal">Terminal</TabsTrigger>
             <TabsTrigger value="help">Help & Examples</TabsTrigger>
             <TabsTrigger value="security">Security</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
         </div>
         
@@ -1377,6 +1389,375 @@ const QuantumNLPTerminal: React.FC = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Settings Tab */}
+        <TabsContent value="settings" className="h-full">
+          <Card className="border-gray-800 bg-gradient-to-b from-gray-950 to-black h-full overflow-auto">
+            <CardHeader className="bg-green-950/20 border-b border-green-900/30">
+              <CardTitle className="bg-gradient-to-r from-green-400 to-teal-500 inline-block text-transparent bg-clip-text">
+                Terminal Settings
+              </CardTitle>
+              <CardDescription>
+                Configure your quantum terminal experience and preferences
+              </CardDescription>
+            </CardHeader>
+            
+            <CardContent className="space-y-6 py-6">
+              {/* Provider Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-teal-400">Provider Settings</h3>
+                </div>
+                
+                <div className="bg-gradient-to-r from-teal-950/10 to-green-950/10 p-5 rounded-lg border border-teal-900/20">
+                  <div className="grid grid-cols-1 gap-4">
+                    {/* Quantum Provider Selection */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-teal-300">Quantum Computing Provider</label>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <Button
+                          variant={advancedSettings.quantumProvider === 'auto' ? 'default' : 'outline'}
+                          className={`justify-center text-center ${advancedSettings.quantumProvider === 'auto' ? 'bg-gradient-to-r from-teal-600 to-green-700' : 'hover:bg-teal-900/30 border border-teal-900/30'}`}
+                          onClick={() => setAdvancedSettings({...advancedSettings, quantumProvider: 'auto'})}
+                        >
+                          <span>Auto Select</span>
+                        </Button>
+                        
+                        <Button
+                          variant={advancedSettings.quantumProvider === 'ibm' ? 'default' : 'outline'}
+                          className={`justify-center text-center ${advancedSettings.quantumProvider === 'ibm' ? 'bg-gradient-to-r from-blue-600 to-indigo-700' : 'hover:bg-blue-900/30 border border-blue-900/30'}`}
+                          onClick={() => setAdvancedSettings({...advancedSettings, quantumProvider: 'ibm'})}
+                        >
+                          <span>IBM Quantum</span>
+                        </Button>
+                        
+                        <Button
+                          variant={advancedSettings.quantumProvider === 'azure' ? 'default' : 'outline'}
+                          className={`justify-center text-center ${advancedSettings.quantumProvider === 'azure' ? 'bg-gradient-to-r from-purple-600 to-indigo-700' : 'hover:bg-purple-900/30 border border-purple-900/30'}`}
+                          onClick={() => setAdvancedSettings({...advancedSettings, quantumProvider: 'azure'})}
+                        >
+                          <span>Azure Quantum</span>
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {/* AI Provider Selection */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-teal-300">Natural Language AI Provider</label>
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+                        <Button
+                          variant={advancedSettings.aiProvider === 'auto' ? 'default' : 'outline'}
+                          className={`justify-center text-center ${advancedSettings.aiProvider === 'auto' ? 'bg-gradient-to-r from-teal-600 to-green-700' : 'hover:bg-teal-900/30 border border-teal-900/30'}`}
+                          onClick={() => setAdvancedSettings({...advancedSettings, aiProvider: 'auto'})}
+                        >
+                          <span>Auto Select</span>
+                        </Button>
+                        
+                        <Button
+                          variant={advancedSettings.aiProvider === 'anthropic' ? 'default' : 'outline'}
+                          className={`justify-center text-center ${advancedSettings.aiProvider === 'anthropic' ? 'bg-gradient-to-r from-pink-600 to-rose-700' : 'hover:bg-pink-900/30 border border-pink-900/30'}`}
+                          onClick={() => setAdvancedSettings({...advancedSettings, aiProvider: 'anthropic'})}
+                        >
+                          <span>Anthropic Claude</span>
+                        </Button>
+                        
+                        <Button
+                          variant={advancedSettings.aiProvider === 'openai' ? 'default' : 'outline'}
+                          className={`justify-center text-center ${advancedSettings.aiProvider === 'openai' ? 'bg-gradient-to-r from-green-600 to-emerald-700' : 'hover:bg-green-900/30 border border-green-900/30'}`}
+                          onClick={() => setAdvancedSettings({...advancedSettings, aiProvider: 'openai'})}
+                        >
+                          <span>OpenAI GPT</span>
+                        </Button>
+                        
+                        <Button
+                          variant={advancedSettings.aiProvider === 'xai' ? 'default' : 'outline'}
+                          className={`justify-center text-center ${advancedSettings.aiProvider === 'xai' ? 'bg-gradient-to-r from-amber-600 to-yellow-700' : 'hover:bg-amber-900/30 border border-amber-900/30'}`}
+                          onClick={() => setAdvancedSettings({...advancedSettings, aiProvider: 'xai'})}
+                        >
+                          <span>xAI Grok</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Terminal Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-green-400">Terminal Preferences</h3>
+                </div>
+                
+                <div className="bg-gradient-to-r from-green-950/10 to-teal-950/10 p-5 rounded-lg border border-green-900/20">
+                  <div className="grid grid-cols-1 gap-4">
+                    {/* Verbosity Level */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-green-300">Output Verbosity</label>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <Button
+                          variant={advancedSettings.verbosityLevel === 'minimal' ? 'default' : 'outline'}
+                          className={`justify-center text-center ${advancedSettings.verbosityLevel === 'minimal' ? 'bg-gradient-to-r from-emerald-600 to-green-700' : 'hover:bg-emerald-900/30 border border-emerald-900/30'}`}
+                          onClick={() => setAdvancedSettings({...advancedSettings, verbosityLevel: 'minimal'})}
+                        >
+                          <span>Minimal</span>
+                        </Button>
+                        
+                        <Button
+                          variant={advancedSettings.verbosityLevel === 'normal' ? 'default' : 'outline'}
+                          className={`justify-center text-center ${advancedSettings.verbosityLevel === 'normal' ? 'bg-gradient-to-r from-emerald-600 to-green-700' : 'hover:bg-emerald-900/30 border border-emerald-900/30'}`}
+                          onClick={() => setAdvancedSettings({...advancedSettings, verbosityLevel: 'normal'})}
+                        >
+                          <span>Normal</span>
+                        </Button>
+                        
+                        <Button
+                          variant={advancedSettings.verbosityLevel === 'detailed' ? 'default' : 'outline'}
+                          className={`justify-center text-center ${advancedSettings.verbosityLevel === 'detailed' ? 'bg-gradient-to-r from-emerald-600 to-green-700' : 'hover:bg-emerald-900/30 border border-emerald-900/30'}`}
+                          onClick={() => setAdvancedSettings({...advancedSettings, verbosityLevel: 'detailed'})}
+                        >
+                          <span>Detailed</span>
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {/* Feature Toggles */}
+                    <div className="space-y-3">
+                      <label className="text-sm font-medium text-green-300">Feature Settings</label>
+                      <div className="grid grid-cols-1 gap-3 pl-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-gray-300">Save Command History</span>
+                            <Badge variant="outline" className="text-xs text-green-400 border-green-700">
+                              Recommended
+                            </Badge>
+                          </div>
+                          <Button
+                            variant={advancedSettings.saveHistory ? 'default' : 'outline'}
+                            size="sm"
+                            className={`h-7 px-3 ${advancedSettings.saveHistory ? 'bg-gradient-to-r from-green-600 to-emerald-700' : 'hover:bg-green-900/30 border border-green-900/30'}`}
+                            onClick={() => setAdvancedSettings({...advancedSettings, saveHistory: !advancedSettings.saveHistory})}
+                          >
+                            {advancedSettings.saveHistory ? 'Enabled' : 'Disabled'}
+                          </Button>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-gray-300">Cloud Sync (via iCloud)</span>
+                            <Badge variant="outline" className="text-xs text-blue-400 border-blue-700">
+                              Secure
+                            </Badge>
+                          </div>
+                          <Button
+                            variant={advancedSettings.cloudSync ? 'default' : 'outline'}
+                            size="sm"
+                            className={`h-7 px-3 ${advancedSettings.cloudSync ? 'bg-gradient-to-r from-blue-600 to-indigo-700' : 'hover:bg-blue-900/30 border border-blue-900/30'}`}
+                            onClick={() => setAdvancedSettings({...advancedSettings, cloudSync: !advancedSettings.cloudSync})}
+                          >
+                            {advancedSettings.cloudSync ? 'Enabled' : 'Disabled'}
+                          </Button>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-gray-300">Experimental Features</span>
+                            <Badge variant="outline" className="text-xs text-yellow-400 border-yellow-700">
+                              Beta
+                            </Badge>
+                          </div>
+                          <Button
+                            variant={advancedSettings.experimentalFeatures ? 'default' : 'outline'}
+                            size="sm"
+                            className={`h-7 px-3 ${advancedSettings.experimentalFeatures ? 'bg-gradient-to-r from-yellow-600 to-amber-700' : 'hover:bg-yellow-900/30 border border-yellow-900/30'}`}
+                            onClick={() => setAdvancedSettings({...advancedSettings, experimentalFeatures: !advancedSettings.experimentalFeatures})}
+                          >
+                            {advancedSettings.experimentalFeatures ? 'Enabled' : 'Disabled'}
+                          </Button>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-gray-300">Developer Mode</span>
+                            <Badge variant="outline" className="text-xs text-purple-400 border-purple-700">
+                              Advanced
+                            </Badge>
+                          </div>
+                          <Button
+                            variant={advancedSettings.developerMode ? 'default' : 'outline'}
+                            size="sm"
+                            className={`h-7 px-3 ${advancedSettings.developerMode ? 'bg-gradient-to-r from-purple-600 to-indigo-700' : 'hover:bg-purple-900/30 border border-purple-900/30'}`}
+                            onClick={() => setAdvancedSettings({...advancedSettings, developerMode: !advancedSettings.developerMode})}
+                          >
+                            {advancedSettings.developerMode ? 'Enabled' : 'Disabled'}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* API Keys Management */}
+              <div className="space-y-4">
+                <div className="flex items-center mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-blue-400">API Connection Status</h3>
+                </div>
+                
+                <div className="bg-gradient-to-r from-blue-950/10 to-indigo-950/10 p-5 rounded-lg border border-blue-900/20">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-blue-950/30 p-3 rounded border border-blue-900/30">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-blue-300">IBM Quantum</span>
+                        <Badge 
+                          variant="outline" 
+                          className={`text-xs ${import.meta.env.IBM_QUANTUM_API_KEY ? 'text-green-400 border-green-700' : 'text-red-400 border-red-700'}`}
+                        >
+                          {import.meta.env.IBM_QUANTUM_API_KEY ? 'Connected' : 'Not Connected'}
+                        </Badge>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full bg-blue-950/40 hover:bg-blue-900/30 border border-blue-900/30 text-xs"
+                        onClick={() => setActiveTab('terminal')}
+                      >
+                        Manage Connection
+                      </Button>
+                    </div>
+                    
+                    <div className="bg-indigo-950/30 p-3 rounded border border-indigo-900/30">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-indigo-300">Azure Quantum</span>
+                        <Badge 
+                          variant="outline" 
+                          className={`text-xs ${import.meta.env.AZURE_QUANTUM_API_KEY ? 'text-green-400 border-green-700' : 'text-red-400 border-red-700'}`}
+                        >
+                          {import.meta.env.AZURE_QUANTUM_API_KEY ? 'Connected' : 'Not Connected'}
+                        </Badge>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full bg-indigo-950/40 hover:bg-indigo-900/30 border border-indigo-900/30 text-xs"
+                        onClick={() => setActiveTab('terminal')}
+                      >
+                        Manage Connection
+                      </Button>
+                    </div>
+                    
+                    <div className="bg-green-950/30 p-3 rounded border border-green-900/30">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-green-300">OpenAI API</span>
+                        <Badge 
+                          variant="outline" 
+                          className={`text-xs ${import.meta.env.OPENAI_API_KEY ? 'text-green-400 border-green-700' : 'text-red-400 border-red-700'}`}
+                        >
+                          {import.meta.env.OPENAI_API_KEY ? 'Connected' : 'Not Connected'}
+                        </Badge>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full bg-green-950/40 hover:bg-green-900/30 border border-green-900/30 text-xs"
+                        onClick={() => setActiveTab('terminal')}
+                      >
+                        Manage Connection
+                      </Button>
+                    </div>
+                    
+                    <div className="bg-purple-950/30 p-3 rounded border border-purple-900/30">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-purple-300">Anthropic API</span>
+                        <Badge 
+                          variant="outline" 
+                          className={`text-xs ${import.meta.env.ANTHROPIC_API_KEY ? 'text-green-400 border-green-700' : 'text-red-400 border-red-700'}`}
+                        >
+                          {import.meta.env.ANTHROPIC_API_KEY ? 'Connected' : 'Not Connected'}
+                        </Badge>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full bg-purple-950/40 hover:bg-purple-900/30 border border-purple-900/30 text-xs"
+                        onClick={() => setActiveTab('terminal')}
+                      >
+                        Manage Connection
+                      </Button>
+                    </div>
+                    
+                    <div className="bg-yellow-950/30 p-3 rounded border border-yellow-900/30">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-yellow-300">xAI API</span>
+                        <Badge 
+                          variant="outline" 
+                          className={`text-xs ${import.meta.env.XAI_API_KEY ? 'text-green-400 border-green-700' : 'text-red-400 border-red-700'}`}
+                        >
+                          {import.meta.env.XAI_API_KEY ? 'Connected' : 'Not Connected'}
+                        </Badge>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full bg-yellow-950/40 hover:bg-yellow-900/30 border border-yellow-900/30 text-xs"
+                        onClick={() => setActiveTab('terminal')}
+                      >
+                        Manage Connection
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-3 mt-6">
+                <Button 
+                  variant="outline"
+                  className="border-red-900/30 hover:bg-red-900/30 text-red-400"
+                  onClick={() => {
+                    // Reset to defaults
+                    setAdvancedSettings({
+                      quantumProvider: 'auto',
+                      aiProvider: 'auto',
+                      verbosityLevel: 'normal',
+                      experimentalFeatures: false,
+                      saveHistory: true,
+                      cloudSync: true,
+                      developerMode: false
+                    });
+                  }}
+                >
+                  Reset Defaults
+                </Button>
+                
+                <Button 
+                  className="bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800"
+                  onClick={() => {
+                    // Save settings and show notification
+                    addToHistory({
+                      type: 'system',
+                      content: 'Terminal settings updated successfully',
+                      timestamp: new Date().toISOString(),
+                      dnaSignature: dnaProtection.dnaSignature
+                    });
+                    
+                    // Switch back to terminal
+                    setActiveTab('terminal');
+                  }}
+                >
+                  Save Settings
+                </Button>
               </div>
             </CardContent>
           </Card>
