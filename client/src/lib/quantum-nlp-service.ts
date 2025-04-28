@@ -50,12 +50,17 @@ interface NLPResponse {
  */
 function createOpenAIProvider(): AIProvider | null {
   // On client-side, we need to use import.meta.env instead of process.env
+  console.log('Checking for OpenAI API key...');
+  console.log('VITE_OPENAI_API_KEY exists:', !!import.meta.env.VITE_OPENAI_API_KEY);
+  console.log('OPENAI_API_KEY exists:', !!import.meta.env.OPENAI_API_KEY);
+  
   if (!import.meta.env.VITE_OPENAI_API_KEY && !import.meta.env.OPENAI_API_KEY) {
     console.log('OpenAI API key not available');
     return null;
   }
   
   const apiKey = import.meta.env.VITE_OPENAI_API_KEY || import.meta.env.OPENAI_API_KEY;
+  console.log('Using OpenAI API key:', apiKey ? 'Key is present' : 'No key found');
   
   const openai = new OpenAI({
     apiKey: apiKey as string,
@@ -296,17 +301,26 @@ class QuantumNLPService {
    */
   public async initialize(): Promise<boolean> {
     if (this._initialized) {
+      console.log("Quantum NLP Service already initialized, skipping");
       return true;
     }
     
     try {
       console.log("Quantum NLP Service initializing...");
+      console.log("Environment check for API keys:");
+      console.log("- OpenAI API key exists via environment:", !!import.meta.env.OPENAI_API_KEY);
+      console.log("- Anthropic API key exists via environment:", !!import.meta.env.ANTHROPIC_API_KEY);
+      console.log("- xAI (Grok) API key exists via environment:", !!import.meta.env.XAI_API_KEY);
       
       // Initialize Quantum DNA Security first
+      console.log("Initializing Quantum DNA Security...");
       await quantumDNASecurity.initialize();
+      console.log("Quantum DNA Security initialized");
       
       // Initialize AI providers
+      console.log("Initializing AI providers...");
       this._initializeAIProviders();
+      console.log("AI providers initialized, count:", this._aiProviders.length);
       
       this._initialized = true;
       console.log("Quantum NLP Service initialized successfully");
@@ -323,22 +337,60 @@ class QuantumNLPService {
    * Initialize AI providers
    */
   private _initializeAIProviders(): void {
+    console.log("Initializing AI providers...");
+    
     // Try to initialize OpenAI provider
+    console.log("Attempting to initialize OpenAI provider...");
     const openaiProvider = createOpenAIProvider();
     if (openaiProvider) {
+      console.log("OpenAI provider initialized successfully");
       this._aiProviders.push(openaiProvider);
+    } else {
+      console.log("Failed to initialize OpenAI provider - API key might be missing");
     }
     
     // Try to initialize Anthropic provider
+    console.log("Attempting to initialize Anthropic provider...");
     const anthropicProvider = createAnthropicProvider();
     if (anthropicProvider) {
+      console.log("Anthropic provider initialized successfully");
       this._aiProviders.push(anthropicProvider);
+    } else {
+      console.log("Failed to initialize Anthropic provider - API key might be missing");
     }
     
     // Try to initialize xAI (Grok) provider
+    console.log("Attempting to initialize xAI (Grok) provider...");
     const xaiProvider = createXAIProvider();
     if (xaiProvider) {
+      console.log("xAI (Grok) provider initialized successfully");
       this._aiProviders.push(xaiProvider);
+    } else {
+      console.log("Failed to initialize xAI provider - API key might be missing");
+    }
+    
+    // Check if we have IBM Quantum API Key
+    console.log("Checking for IBM Quantum API Key...");
+    if (import.meta.env.VITE_IBM_QUANTUM_API_KEY || import.meta.env.IBM_QUANTUM_API_KEY) {
+      console.log("IBM Quantum API key is available - quantum computing backend is accessible");
+    } else {
+      console.log("IBM Quantum API key not available - will use simulated quantum backend");
+    }
+    
+    // Check if we have Azure Quantum API Key
+    console.log("Checking for Azure Quantum API Key...");
+    if (import.meta.env.VITE_AZURE_QUANTUM_API_KEY || import.meta.env.AZURE_QUANTUM_API_KEY) {
+      console.log("Azure Quantum API key is available - quantum computing backend is accessible");
+    } else {
+      console.log("Azure Quantum API key not available - will use simulated quantum backend");
+    }
+    
+    // If no AI providers were initialized, log this clearly
+    if (this._aiProviders.length === 0) {
+      console.log("NO AI PROVIDERS INITIALIZED - using fallback rule-based system");
+      console.log("This is normal if running in development environment without API keys");
+    } else {
+      console.log(`Successfully initialized ${this._aiProviders.length} AI providers`);
     }
     
     // More providers could be added here
@@ -351,22 +403,59 @@ class QuantumNLPService {
    * @returns NLP response with command and explanation
    */
   public async processInput(input: string): Promise<NLPResponse> {
+    console.log("Processing user input:", input);
+    
+    // Check if service is initialized
     if (!this._initialized) {
-      throw new Error("Quantum NLP Service not initialized");
+      console.error("Quantum NLP Service not initialized, attempting auto-initialization");
+      
+      try {
+        // Attempt auto-initialization
+        await this.initialize();
+        
+        if (!this._initialized) {
+          console.error("Auto-initialization failed, throwing error");
+          throw new Error("Quantum NLP Service could not be initialized");
+        }
+        
+        console.log("Auto-initialization successful, proceeding with input processing");
+      } catch (error) {
+        console.error("Auto-initialization failed:", error);
+        
+        // Even if we fail, use the fallback processor to provide a response
+        console.log("Using fallback processor after initialization failure");
+        const fallbackResult = this._fallbackProcessor.process(input);
+        
+        return {
+          command: fallbackResult.command,
+          explanation: fallbackResult.explanation,
+          usedProvider: 'Emergency Fallback (Initialization Failed)',
+          _dnaWatermark: generateSecurityWatermark(`emergency-fallback-${Date.now()}`)
+        };
+      }
     }
     
     try {
+      console.log("Beginning input processing");
       let command = '';
       let usedProviders: string[] = [];
       
       // Try to use AI providers if available - attempt all of them in sequence
       // This creates a "direct connection" between all AI services
       if (this._aiProviders.length > 0) {
+        console.log(`Attempting to use ${this._aiProviders.length} available AI providers`);
+        
         // First try the primary AI provider
         for (const provider of this._aiProviders) {
           try {
             console.log(`Attempting to process with ${provider.name}...`);
             command = await provider.processNaturalLanguage(input);
+            
+            if (!command || command.trim() === '') {
+              console.log(`Provider ${provider.name} returned empty response, trying next provider`);
+              continue;
+            }
+            
             usedProviders.push(provider.name);
             console.log(`Successfully processed input using ${provider.name}`);
             break; // Successfully processed, exit the loop
@@ -377,8 +466,8 @@ class QuantumNLPService {
         }
         
         // If all providers failed, fall back to the rule-based system
-        if (!command) {
-          console.log('All AI providers failed, using fallback NLP processor');
+        if (!command || command.trim() === '') {
+          console.log('All AI providers failed or returned empty responses, using fallback NLP processor');
           const fallbackResult = this._fallbackProcessor.process(input);
           command = fallbackResult.command;
           usedProviders.push('Fallback Processor');
@@ -389,6 +478,13 @@ class QuantumNLPService {
         const fallbackResult = this._fallbackProcessor.process(input);
         command = fallbackResult.command;
         usedProviders.push('Fallback Processor');
+      }
+      
+      // Final validation - ensure we have a command
+      if (!command || command.trim() === '') {
+        console.log('No command generated, using emergency fallback');
+        command = `process("${input.replace(/"/g, '\\"')}")`;
+        usedProviders.push('Emergency Fallback');
       }
       
       // Generate explanation from command
@@ -412,7 +508,17 @@ class QuantumNLPService {
       };
     } catch (error) {
       console.error("Error processing NLP input:", error);
-      throw new Error(`Failed to process input: ${error instanceof Error ? error.message : String(error)}`);
+      
+      // Even in catastrophic failure, return something useful to prevent UI breakage
+      console.log("Using emergency fallback due to processing error");
+      const fallbackResult = this._fallbackProcessor.process(input);
+      
+      return {
+        command: fallbackResult.command,
+        explanation: `Unable to fully process your request due to an error, but I'll try my best: ${fallbackResult.explanation}`,
+        usedProvider: 'Error Recovery System',
+        _dnaWatermark: generateSecurityWatermark(`error-recovery-${Date.now()}`)
+      };
     }
   }
   
