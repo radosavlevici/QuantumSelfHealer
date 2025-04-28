@@ -49,13 +49,16 @@ interface NLPResponse {
  * @returns OpenAI AI provider or null
  */
 function createOpenAIProvider(): AIProvider | null {
-  if (!process.env.OPENAI_API_KEY) {
+  // On client-side, we need to use import.meta.env instead of process.env
+  if (!import.meta.env.VITE_OPENAI_API_KEY && !import.meta.env.OPENAI_API_KEY) {
     console.log('OpenAI API key not available');
     return null;
   }
   
+  const apiKey = import.meta.env.VITE_OPENAI_API_KEY || import.meta.env.OPENAI_API_KEY;
+  
   const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: apiKey as string,
   });
   
   return {
@@ -93,13 +96,16 @@ function createOpenAIProvider(): AIProvider | null {
  * @returns Anthropic AI provider or null
  */
 function createAnthropicProvider(): AIProvider | null {
-  if (!process.env.ANTHROPIC_API_KEY) {
+  // On client-side, we need to use import.meta.env instead of process.env
+  if (!import.meta.env.VITE_ANTHROPIC_API_KEY && !import.meta.env.ANTHROPIC_API_KEY) {
     console.log('Anthropic API key not available');
     return null;
   }
   
+  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY || import.meta.env.ANTHROPIC_API_KEY;
+  
   const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
+    apiKey: apiKey as string,
   });
   
   return {
@@ -137,15 +143,18 @@ function createAnthropicProvider(): AIProvider | null {
  * @returns xAI provider or null
  */
 function createXAIProvider(): AIProvider | null {
-  if (!process.env.XAI_API_KEY) {
+  // On client-side, we need to use import.meta.env instead of process.env
+  if (!import.meta.env.VITE_XAI_API_KEY && !import.meta.env.XAI_API_KEY) {
     console.log('xAI (Grok) API key not available');
     return null;
   }
   
+  const apiKey = import.meta.env.VITE_XAI_API_KEY || import.meta.env.XAI_API_KEY;
+  
   // xAI uses an OpenAI-compatible API with a different base URL
   const xai = new OpenAI({ 
     baseURL: "https://api.x.ai/v1",
-    apiKey: process.env.XAI_API_KEY
+    apiKey: apiKey as string
   });
   
   return {
