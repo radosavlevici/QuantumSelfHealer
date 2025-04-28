@@ -33,8 +33,9 @@ import {
   IMMUTABLE_COPYRIGHT_OWNER,
   IMMUTABLE_COPYRIGHT_BIRTHDATE,
   IMMUTABLE_COPYRIGHT_EMAIL,
-  IMMUTABLE_SYSTEM_VERSION
-} from '@shared/quantum-dna-security';
+  IMMUTABLE_SYSTEM_VERSION,
+  IMMUTABLE_COPYRIGHT_FULL
+} from '@shared/schema';
 import { quantumDNASecurity } from '@/lib/quantum-dna-security';
 
 // Component identity constants
