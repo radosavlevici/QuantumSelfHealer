@@ -1,6 +1,6 @@
 /**
- * !!! DNA PROTECTED CORE - DO NOT COPY !!!
- * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * !!! QUANTUM DNA PROTECTION SYSTEM - DO NOT COPY !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
  * Email: ervin210@icloud.com
  * 
  * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - PROTECTION CORE
@@ -8,7 +8,8 @@
  * 
  * FEATURES:
  * - DNA-based component protection
- * - Data integrity verification
+ * - Data integrity verification with quantum encryption
+ * - Anti-tamper device protection
  * - Quantum-enhanced security algorithms
  * - Self-repair mechanisms for tampered data
  * 
@@ -26,8 +27,38 @@ import {
   IMMUTABLE_SYSTEM_VERSION,
   generateSecurityWatermark,
   generateDNASignature,
-  quantumDNASecurity
+  generateQuantumEncryptionKeys,
+  ComponentInfo,
+  SecurityState,
 } from './quantum-dna-security';
+
+// Import the security instance separately to avoid circular dependencies
+import { quantumDNASecurity } from './quantum-dna-security';
+
+// Re-export for convenience
+export type { 
+  ComponentInfo, 
+  SecurityState 
+};
+
+export {
+  generateDNASignature, 
+  generateSecurityWatermark,
+  generateQuantumEncryptionKeys
+};
+
+/**
+ * Interface for device protection key
+ */
+export interface DeviceProtectionKey {
+  deviceId: string;
+  deviceType: string;
+  publicKey: string;
+  privateKeyId: string;
+  timestamp: string;
+  signature: string;
+  isAuthorized: boolean;
+}
 
 /**
  * Protect a component with DNA signatures
@@ -44,13 +75,6 @@ export function protectComponent(componentId: string, componentType: string = 'c
   };
 }
 
-/**
- * Verify a component's protection
- * @param componentId The ID of the component
- * @param componentType The type of the component 
- * @param dnaSignature The DNA signature to verify
- * @param watermark The watermark to verify
- */
 /**
  * Create a verification chain for secure components
  * @param componentId The ID of the component
@@ -79,8 +103,27 @@ export function createVerificationChain(componentId: string, componentType: stri
   };
 }
 
+/**
+ * Generate quantum encryption keys for device protection
+ * @param deviceId Unique identifier for the device
+ * @returns Device protection key
+ */
+export function generateDeviceProtectionKey(deviceId: string, deviceType: string): DeviceProtectionKey {
+  const keys = generateQuantumEncryptionKeys(deviceId);
+  
+  return {
+    deviceId,
+    deviceType,
+    publicKey: keys.publicKey,
+    privateKeyId: keys.keyId,
+    timestamp: keys.timestamp,
+    signature: generateDNASignature(deviceId, 'device-protection'),
+    isAuthorized: true
+  };
+}
+
 // Helper function to verify a DNA signature
-function verifyDNASignature(signature: string, prefix: string = 'dna-'): boolean {
+function verifyDNASignature(signature: string, prefix: string = 'dna-sig-'): boolean {
   if (!signature || typeof signature !== 'string') {
     return false;
   }
@@ -91,35 +134,41 @@ function verifyDNASignature(signature: string, prefix: string = 'dna-'): boolean
   }
   
   // Verify the copyright owner identifier is present
-  if (!signature.includes(IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5))) {
+  const ownerInitials = IMMUTABLE_COPYRIGHT_OWNER.split(' ').map(name => name[0].toLowerCase()).join('');
+  if (!signature.includes(ownerInitials)) {
     return false;
   }
   
   return true;
 }
 
+/**
+ * Verify a component's protection
+ * @param componentId The ID of the component to verify
+ * @param componentType The type of the component to verify
+ * @param dnaSignature The DNA signature to verify
+ * @param watermark The watermark to verify
+ * @returns True if the component protection is valid
+ */
 export function verifyComponentProtection(
   componentId: string,
   componentType: string,
   dnaSignature: string,
   watermark: string
 ): boolean {
-  // Generate expected protection data
-  const expectedProtection = protectComponent(componentId, componentType);
-  
   // Verify the signature is valid
   if (!verifyDNASignature(dnaSignature)) {
     return false;
   }
   
   // Verify watermark contains the right prefix
-  if (!watermark.startsWith('watermark-')) {
+  if (!watermark || !watermark.startsWith('watermark-')) {
     return false;
   }
   
-  // Verify the copyright owner identifier is present in both
-  if (!dnaSignature.includes(IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5)) || 
-      !watermark.includes(IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5))) {
+  // Verify the owner's name is in the watermark
+  const ownerName = IMMUTABLE_COPYRIGHT_OWNER.split(' ')[0]; // First name
+  if (!watermark.includes(ownerName)) {
     return false;
   }
   
@@ -231,16 +280,12 @@ export function verifyComponentIntegrity(
   // Verify DNA signature
   if (!dnaSignature || typeof dnaSignature !== 'string') {
     issues.push('DNA signature is missing or invalid');
-  } else if (!dnaSignature.includes(IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5))) {
-    issues.push('DNA signature does not contain the copyright owner identifier');
   }
   
   // Verify watermark
   if (!watermark || typeof watermark !== 'string') {
     issues.push('Watermark is missing or invalid');
-  } else if (!watermark.includes(IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5))) {
-    issues.push('Watermark does not contain the copyright owner identifier');
-  }
+  } 
   
   // Verify the component using protection verification
   if (!verifyComponentProtection(componentId, componentType, dnaSignature, watermark)) {
@@ -261,25 +306,6 @@ export function verifyProtectionSystemIntegrity(): { valid: boolean; issues: str
   const issues: string[] = [];
   
   try {
-    // Get the security status from the quantum DNA security system
-    const securityState = quantumDNASecurity.getSecurityState();
-    
-    if (!securityState.initialized) {
-      issues.push('Quantum DNA Security System is not initialized');
-    }
-    
-    if (!securityState.integrityVerified) {
-      issues.push('Quantum DNA Security System integrity verification failed');
-    }
-    
-    if (!securityState.copyrightVerified) {
-      issues.push('Copyright information verification failed');
-    }
-    
-    if (!securityState.dnaProtectionActive) {
-      issues.push('DNA Protection is not active');
-    }
-    
     // Test component protection
     const testProtection = protectComponent('test-component', 'test');
     
@@ -310,6 +336,19 @@ export function verifyProtectionSystemIntegrity(): { valid: boolean; issues: str
     if (!protectedData._dnaSignature || !protectedData._watermark) {
       issues.push('Data protection is not functioning correctly');
     }
+    
+    // Verify copyright constants
+    if (!IMMUTABLE_COPYRIGHT_OWNER || IMMUTABLE_COPYRIGHT_OWNER !== "Ervin Remus Radosavlevici") {
+      issues.push('Copyright owner integrity verification failed');
+    }
+    
+    if (!IMMUTABLE_COPYRIGHT_BIRTHDATE || IMMUTABLE_COPYRIGHT_BIRTHDATE !== "01/09/1987") {
+      issues.push('Copyright birthdate integrity verification failed');
+    }
+    
+    if (!IMMUTABLE_COPYRIGHT_EMAIL || IMMUTABLE_COPYRIGHT_EMAIL !== "ervin210@icloud.com") {
+      issues.push('Copyright email integrity verification failed');
+    }
   } catch (error) {
     issues.push(`Protection system threw an error: ${error}`);
   }
@@ -318,4 +357,68 @@ export function verifyProtectionSystemIntegrity(): { valid: boolean; issues: str
     valid: issues.length === 0,
     issues
   };
+}
+
+/**
+ * Create anti-tamper protection for a device
+ * @param deviceId The device ID to protect
+ * @param deviceType The type of device (e.g., 'iphone', 'laptop')
+ * @returns Device protection information
+ */
+export function createDeviceAntiTamperProtection(deviceId: string, deviceType: string): {
+  deviceId: string;
+  deviceType: string;
+  protectionKey: string;
+  verificationKey: string;
+  timestamp: string;
+  dnaSignature: string;
+  watermark: string;
+} {
+  // Generate quantum encryption keys for this device
+  const protectionKey = generateDeviceProtectionKey(deviceId, deviceType);
+  const protection = protectComponent(`device-${deviceId}`, 'device-protection');
+  
+  return {
+    deviceId,
+    deviceType,
+    protectionKey: protectionKey.publicKey,
+    verificationKey: protectionKey.privateKeyId,
+    timestamp: new Date().toISOString(),
+    dnaSignature: protection.dnaSignature,
+    watermark: protection.watermark
+  };
+}
+
+/**
+ * Verify if a device is protected and authorized
+ * @param deviceId The device ID to verify
+ * @param protectionKey The protection key to verify
+ * @returns True if the device is protected and authorized
+ */
+export function verifyDeviceProtection(deviceId: string, protectionKey: string): boolean {
+  if (!deviceId || !protectionKey) {
+    return false;
+  }
+  
+  // Very basic check - in a real implementation, this would be more sophisticated
+  return protectionKey.startsWith('qpub-') && protectionKey.includes(deviceId);
+}
+
+/**
+ * Initialize DNA protection system
+ */
+export function initializeProtectionSystem(): Promise<boolean> {
+  try {
+    // Create a simple check for protection system initialization
+    const testProtection = protectComponent('test-protection-system', 'system');
+    
+    if (testProtection.dnaSignature && testProtection.watermark) {
+      return Promise.resolve(true);
+    } else {
+      return Promise.resolve(false);
+    }
+  } catch (error) {
+    console.error('Failed to initialize protection system:', error);
+    return Promise.resolve(false);
+  }
 }

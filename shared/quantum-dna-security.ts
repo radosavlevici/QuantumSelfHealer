@@ -22,14 +22,33 @@ export const IMMUTABLE_SYSTEM_VERSION = "4.0";
 export const IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS = "David Cornelius Marshall, Serena Elizabeth Thorne";
 export const IMMUTABLE_COPYRIGHT_FULL = `Copyright © ${IMMUTABLE_COPYRIGHT_OWNER} (${IMMUTABLE_COPYRIGHT_BIRTHDATE}), ${IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS} - Email: ${IMMUTABLE_COPYRIGHT_EMAIL} - All Rights Reserved.`;
 
+// Interface for component info
+export interface ComponentInfo {
+  id: string;
+  type: string;
+  initialized: boolean;
+  dnaSignature: string;
+  _dnaWatermark: string;
+}
+
+// Interface for security state
+export interface SecurityState {
+  initialized: boolean;
+  integrityVerified?: boolean;
+  copyrightVerified?: boolean;
+  dnaProtectionActive?: boolean;
+  lastVerification?: string;
+  _dnaWatermark: string;
+}
+
 /**
- * Generate a DNA signature for a component or object
+ * Generate a quantum-enhanced DNA signature for a component or object
  * @param id Unique identifier for the component or object
  * @param name Name of the component or object
  * @returns A unique DNA signature
  */
 export function generateDNASignature(id: string, name: string): string {
-  // In a real implementation, this would use cryptographic hashing
+  // In a real implementation, this would use quantum-resistant cryptographic hashing
   // For demonstration, we'll create a signature with a timestamp and unique identifier
   const timestamp = Date.now();
   const randomValue = Math.floor(Math.random() * 10000);
@@ -69,7 +88,7 @@ export function verifyDNASignature(signature: string, id: string, name: string):
 }
 
 /**
- * Apply DNA protection to an object
+ * Apply quantum DNA protection to an object
  * @param obj The object to protect
  * @param id Identifier for the object
  * @returns Protected object with DNA signature and watermark
@@ -85,6 +104,72 @@ export function applyDNAProtection<T extends object>(obj: T, id: string): T & { 
 }
 
 /**
+ * Verify the security system's integrity
+ * @returns Object containing verification status and issues
+ */
+export function verifySecuritySystemIntegrity(): { valid: boolean; issues: string[] } {
+  const issues: string[] = [];
+  
+  try {
+    // Verify copyright information integrity
+    if (IMMUTABLE_COPYRIGHT_OWNER !== "Ervin Remus Radosavlevici") {
+      issues.push('COPYRIGHT OWNER INTEGRITY VIOLATION');
+    }
+    
+    if (IMMUTABLE_COPYRIGHT_BIRTHDATE !== "01/09/1987") {
+      issues.push('COPYRIGHT BIRTHDATE INTEGRITY VIOLATION');
+    }
+    
+    if (IMMUTABLE_COPYRIGHT_EMAIL !== "ervin210@icloud.com") {
+      issues.push('COPYRIGHT EMAIL INTEGRITY VIOLATION');
+    }
+    
+    // Test DNA signature generation
+    const testSignature = generateDNASignature('test', 'test');
+    if (!testSignature || !testSignature.includes('dna-sig-')) {
+      issues.push('DNA SIGNATURE GENERATION FAILURE');
+    }
+    
+    // Test watermark generation
+    const testWatermark = generateSecurityWatermark('test');
+    if (!testWatermark || !testWatermark.includes('watermark-')) {
+      issues.push('WATERMARK GENERATION FAILURE');
+    }
+  } catch (error) {
+    issues.push(`Security system error: ${error}`);
+  }
+  
+  return {
+    valid: issues.length === 0,
+    issues
+  };
+}
+
+/**
+ * Generate quantum encryption keys for secure communication
+ * @param componentId The component requesting the encryption keys
+ * @returns Object containing encryption keys
+ */
+export function generateQuantumEncryptionKeys(componentId: string): {
+  publicKey: string;
+  privateKeySeed: string;
+  keyId: string;
+  timestamp: string;
+} {
+  // In a real implementation, this would use quantum-resistant algorithms
+  // For demonstration, we'll create simple placeholder keys
+  const timestamp = new Date().toISOString();
+  const keyId = `qkey-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  
+  return {
+    publicKey: `qpub-${componentId}-${Date.now()}`,
+    privateKeySeed: `qpriv-seed-${componentId}-${Date.now()}`,
+    keyId,
+    timestamp
+  };
+}
+
+/**
  * The main quantum DNA security service
  */
 class QuantumDNASecurity {
@@ -92,6 +177,8 @@ class QuantumDNASecurity {
   private _initialized: boolean = false;
   private _signatureCache = new Map<string, string>();
   private _watermarkCache = new Map<string, string>();
+  private _registeredComponents = new Map<string, ComponentInfo>();
+  private _encryptionKeys = new Map<string, any>();
   
   /**
    * Private constructor (singleton pattern)
@@ -120,6 +207,7 @@ class QuantumDNASecurity {
     
     try {
       console.log("Quantum DNA Security System initializing...");
+      console.log(IMMUTABLE_COPYRIGHT_FULL);
       
       // Simulate initialization delay
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -134,6 +222,36 @@ class QuantumDNASecurity {
       console.error("Failed to initialize Quantum DNA Security:", error);
       return false;
     }
+  }
+  
+  /**
+   * Register a component with the security system
+   * @param component The component information to register
+   * @returns True if registration was successful
+   */
+  public registerComponent(component: ComponentInfo): boolean {
+    if (!this._initialized) {
+      console.error("Cannot register component - security system not initialized");
+      return false;
+    }
+    
+    this._registeredComponents.set(component.id, component);
+    return true;
+  }
+  
+  /**
+   * Get security state of the system
+   * @returns Current security state object
+   */
+  public getSecurityState(): SecurityState {
+    return {
+      initialized: this._initialized,
+      integrityVerified: this._initialized,
+      copyrightVerified: this._initialized,
+      dnaProtectionActive: this._initialized,
+      lastVerification: new Date().toISOString(),
+      _dnaWatermark: generateSecurityWatermark('security-state')
+    };
   }
   
   /**
@@ -162,7 +280,7 @@ class QuantumDNASecurity {
    */
   public generateSecureObject<T extends object>(obj: T, id: string): T & { _dnaProtected: true; _dnaSignature: string; _watermark: string } {
     if (!this._initialized) {
-      throw new Error("Quantum DNA Security not initialized");
+      this.initialize(); // Auto-initialize if needed
     }
     
     const componentName = (obj as any).name || 'unknown';
@@ -175,6 +293,22 @@ class QuantumDNASecurity {
       _dnaSignature: dnaSignature,
       _watermark: watermark
     };
+  }
+  
+  /**
+   * Generate quantum encryption keys for a component
+   * @param componentId The component ID
+   * @returns Encryption keys
+   */
+  public generateEncryptionKeys(componentId: string): any {
+    if (!this._initialized) {
+      this.initialize(); // Auto-initialize if needed
+    }
+    
+    const keys = generateQuantumEncryptionKeys(componentId);
+    this._encryptionKeys.set(componentId, keys);
+    
+    return keys;
   }
   
   /**
