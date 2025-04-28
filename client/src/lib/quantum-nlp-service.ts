@@ -417,28 +417,44 @@ class QuantumNLPService {
    * @param input The natural language input to process
    * @returns NLP response with command and explanation
    */
+  /**
+   * Process natural language input and convert to quantum commands
+   * Enhanced with comprehensive logging and diagnostic capabilities
+   */
   public async processInput(input: string): Promise<NLPResponse> {
-    console.log("Processing user input:", input);
+    console.log("[QuantumNLP] Processing user input:", input);
+    console.log("[QuantumNLP] Service initialized:", this._initialized);
+    console.log("[QuantumNLP] Available providers:", this._aiProviders.length);
     
     // Check if service is initialized
     if (!this._initialized) {
-      console.error("Quantum NLP Service not initialized, attempting auto-initialization");
+      console.warn("[QuantumNLP] Service not initialized, attempting auto-initialization");
       
       try {
         // Attempt auto-initialization
-        await this.initialize();
+        const initSuccess = await this.initialize();
         
-        if (!this._initialized) {
-          console.error("Auto-initialization failed, throwing error");
-          throw new Error("Quantum NLP Service could not be initialized");
+        if (!initSuccess || !this._initialized) {
+          console.error("[QuantumNLP] Auto-initialization failed, will use emergency fallback");
+          
+          // Even if we fail, use the fallback processor to provide a response
+          console.log("[QuantumNLP] Using fallback processor after initialization failure");
+          const fallbackResult = this._fallbackProcessor.process(input);
+          
+          return {
+            command: fallbackResult.command,
+            explanation: fallbackResult.explanation,
+            usedProvider: 'Emergency Fallback (Initialization Failed)',
+            _dnaWatermark: generateSecurityWatermark(`emergency-fallback-${Date.now()}`)
+          };
         }
         
-        console.log("Auto-initialization successful, proceeding with input processing");
+        console.log("[QuantumNLP] Auto-initialization successful, proceeding with input processing");
       } catch (error) {
-        console.error("Auto-initialization failed:", error);
+        console.error("[QuantumNLP] Auto-initialization failed with error:", error);
         
         // Even if we fail, use the fallback processor to provide a response
-        console.log("Using fallback processor after initialization failure");
+        console.log("[QuantumNLP] Using fallback processor after initialization error");
         const fallbackResult = this._fallbackProcessor.process(input);
         
         return {
@@ -451,45 +467,61 @@ class QuantumNLPService {
     }
     
     try {
-      console.log("Beginning input processing");
+      console.log("[QuantumNLP] Beginning input processing");
       let command = '';
       let usedProviders: string[] = [];
+      let lastError: Error | null = null;
       
       // Try to use AI providers if available - attempt all of them in sequence
       // This creates a "direct connection" between all AI services
       if (this._aiProviders.length > 0) {
-        console.log(`Attempting to use ${this._aiProviders.length} available AI providers`);
+        console.log(`[QuantumNLP] Attempting to use ${this._aiProviders.length} available AI providers`);
         
         // First try the primary AI provider
         for (const provider of this._aiProviders) {
           try {
-            console.log(`Attempting to process with ${provider.name}...`);
+            console.log(`[QuantumNLP] Attempting to process with ${provider.name}...`);
+            const startTime = Date.now();
             command = await provider.processNaturalLanguage(input);
+            const processingTime = Date.now() - startTime;
+            console.log(`[QuantumNLP] ${provider.name} response time: ${processingTime}ms`);
             
             if (!command || command.trim() === '') {
-              console.log(`Provider ${provider.name} returned empty response, trying next provider`);
+              console.warn(`[QuantumNLP] Provider ${provider.name} returned empty response, trying next provider`);
               continue;
             }
             
             usedProviders.push(provider.name);
-            console.log(`Successfully processed input using ${provider.name}`);
+            console.log(`[QuantumNLP] Successfully processed input using ${provider.name}`);
+            console.log(`[QuantumNLP] Generated command: ${command.substring(0, 100)}${command.length > 100 ? '...' : ''}`);
             break; // Successfully processed, exit the loop
           } catch (error) {
-            console.error(`AI provider ${provider.name} failed:`, error);
+            lastError = error instanceof Error ? error : new Error(String(error));
+            console.error(`[QuantumNLP] AI provider ${provider.name} failed:`, error);
+            
+            // Add detailed diagnostic information
+            console.warn(`[QuantumNLP] Provider failure details - Name: ${provider.name}, Error: ${lastError.message}`);
+            
             // Continue to the next provider
           }
         }
         
         // If all providers failed, fall back to the rule-based system
         if (!command || command.trim() === '') {
-          console.log('All AI providers failed or returned empty responses, using fallback NLP processor');
+          console.warn('[QuantumNLP] All AI providers failed or returned empty responses');
+          
+          if (lastError) {
+            console.error('[QuantumNLP] Last error before fallback:', lastError.message);
+          }
+          
+          console.log('[QuantumNLP] Using fallback NLP processor');
           const fallbackResult = this._fallbackProcessor.process(input);
           command = fallbackResult.command;
           usedProviders.push('Fallback Processor');
         }
       } else {
         // No AI providers available, use fallback
-        console.log('No AI providers available, using fallback NLP processor');
+        console.log('[QuantumNLP] No AI providers available, using fallback NLP processor');
         const fallbackResult = this._fallbackProcessor.process(input);
         command = fallbackResult.command;
         usedProviders.push('Fallback Processor');
@@ -497,7 +529,7 @@ class QuantumNLPService {
       
       // Final validation - ensure we have a command
       if (!command || command.trim() === '') {
-        console.log('No command generated, using emergency fallback');
+        console.warn('[QuantumNLP] No command generated after all attempts, using emergency fallback');
         command = `process("${input.replace(/"/g, '\\"')}")`;
         usedProviders.push('Emergency Fallback');
       }
@@ -508,29 +540,35 @@ class QuantumNLPService {
       // Generate DNA watermark for the response
       const watermark = generateSecurityWatermark(`nlp-response-${Date.now()}`);
       
-      console.log(`Processed using providers: ${usedProviders.join(', ')}`);
+      console.log(`[QuantumNLP] Successfully processed using providers: ${usedProviders.join(', ')}`);
       
       // Select the provider name to display
       const providerName = usedProviders.length > 0 
         ? usedProviders[0] 
         : 'Fallback Processor';
         
-      return {
+      // Prepare the final response
+      const response: NLPResponse = {
         command,
         explanation,
         usedProvider: providerName,
         _dnaWatermark: watermark
       };
+      
+      console.log('[QuantumNLP] Returning processed response');
+      return response;
     } catch (error) {
-      console.error("Error processing NLP input:", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("[QuantumNLP] Critical error in processInput:", errorMessage);
+      console.error("[QuantumNLP] Stack trace:", error instanceof Error ? error.stack : 'No stack trace available');
       
       // Even in catastrophic failure, return something useful to prevent UI breakage
-      console.log("Using emergency fallback due to processing error");
+      console.log("[QuantumNLP] Using emergency fallback due to critical processing error");
       const fallbackResult = this._fallbackProcessor.process(input);
       
       return {
         command: fallbackResult.command,
-        explanation: `Unable to fully process your request due to an error, but I'll try my best: ${fallbackResult.explanation}`,
+        explanation: `I encountered an issue while processing your request, but I'm providing a best-effort response: ${fallbackResult.explanation}`,
         usedProvider: 'Error Recovery System',
         _dnaWatermark: generateSecurityWatermark(`error-recovery-${Date.now()}`)
       };
@@ -539,53 +577,136 @@ class QuantumNLPService {
   
   /**
    * Generate explanation for a command
+   * Enhanced with better pattern matching and diagnostics
    * @param command The command to explain
    * @param originalInput The original natural language input
    * @returns Explanation string
    */
   private _generateExplanation(command: string, originalInput: string): string {
-    // Simple explanation generator based on command patterns
-    if (command.includes('createCircuit')) {
-      const match = command.match(/createCircuit\((\d+)\)/);
-      const qubits = match ? match[1] : '?';
-      return `Created a quantum circuit with ${qubits} qubits initialized to the |0⟩ state.`;
-    } else if (command.includes('H(')) {
-      const match = command.match(/H\((\d+)\)/);
-      const qubit = match ? match[1] : '?';
-      return `Applied a Hadamard gate to qubit ${qubit}, creating a superposition state where the qubit is in both |0⟩ and |1⟩ states simultaneously.`;
-    } else if (command.includes('CNOT')) {
-      const match = command.match(/CNOT\((\d+),\s*(\d+)\)/);
-      const control = match ? match[1] : '0';
-      const target = match ? match[2] : '1';
-      return `Applied a CNOT gate with qubit ${control} as control and qubit ${target} as target, creating quantum entanglement between the qubits.`;
-    } else if (command.includes('measure')) {
-      const match = command.match(/measure\((\d+)\)/);
-      const qubit = match ? match[1] : '?';
-      return `Measured qubit ${qubit}, collapsing its quantum state to a classical bit value (0 or 1).`;
-    } else if (command.includes('simulate')) {
-      const match = command.match(/shots=(\d+)/);
-      const shots = match ? match[1] : '1000';
-      return `Running quantum simulation with ${shots} shots to gather measurement statistics and verify quantum algorithm behavior.`;
-    } else if (command.includes('random')) {
-      const match = command.match(/bits=(\d+)/);
-      const bits = match ? match[1] : '8';
-      return `Generating a ${bits}-bit quantum random number using quantum measurement outcomes for true randomness.`;
-    } else if (command.includes('connect')) {
-      const match = command.match(/"([^"]+)"/);
-      const backend = match ? match[1] : 'quantum computer';
-      return `Connecting to the ${backend} quantum computing backend to execute quantum algorithms on real quantum hardware.`;
-    } else if (command.includes('Grover')) {
-      return `Executing Grover's quantum search algorithm to find a marked item in an unstructured database with a quadratic speedup over classical algorithms.`;
-    } else if (command.includes('QML')) {
-      return `Initializing a quantum machine learning model that leverages quantum effects like superposition and entanglement to potentially outperform classical ML models for specific tasks.`;
-    } else {
-      // Generic explanation
-      return `Translated your request about "${originalInput.substring(0, 30)}..." into quantum programming code that can be executed on a quantum computer.`;
+    console.log(`[QuantumNLP] Generating explanation for command: ${command}`);
+    
+    try {
+      // Simple explanation generator based on command patterns
+      if (!command || typeof command !== 'string') {
+        console.warn('[QuantumNLP] Invalid command passed to explanation generator:', command);
+        return `Translated your request into a quantum operation.`;
+      }
+      
+      const commandLower = command.toLowerCase();
+      
+      if (command.includes('createCircuit') || commandLower.includes('create circuit')) {
+        const match = command.match(/createCircuit\((\d+)\)/);
+        const qubits = match ? match[1] : (command.match(/(\d+)/) ? command.match(/(\d+)/)![1] : '3');
+        return `Created a quantum circuit with ${qubits} qubits initialized to the |0⟩ state.`;
+      } else if (command.includes('H(') || commandLower.includes('hadamard')) {
+        const match = command.match(/H\((\d+)\)/);
+        const qubit = match ? match[1] : (command.match(/qubit\s*(\d+)/) ? command.match(/qubit\s*(\d+)/)![1] : '0');
+        return `Applied a Hadamard gate to qubit ${qubit}, creating a superposition state where the qubit is in both |0⟩ and |1⟩ states simultaneously.`;
+      } else if (command.includes('CNOT') || commandLower.includes('entangle') || commandLower.includes('cnot')) {
+        let control = '0';
+        let target = '1';
+        
+        // Try to extract control and target qubits from different formats
+        const cnotMatch = command.match(/CNOT\((\d+),\s*(\d+)\)/);
+        if (cnotMatch) {
+          control = cnotMatch[1];
+          target = cnotMatch[2];
+        } else {
+          const controlMatch = command.match(/control\s*=?\s*(\d+)/i);
+          const targetMatch = command.match(/target\s*=?\s*(\d+)/i);
+          if (controlMatch) control = controlMatch[1];
+          if (targetMatch) target = targetMatch[1];
+        }
+        
+        return `Applied a CNOT gate with qubit ${control} as control and qubit ${target} as target, creating quantum entanglement between the qubits.`;
+      } else if (command.includes('measure') || commandLower.includes('measurement')) {
+        let qubit = '0';
+        const measureMatch = command.match(/measure\((\d+)\)/);
+        if (measureMatch) {
+          qubit = measureMatch[1];
+        } else {
+          const qubitMatch = command.match(/qubit\s*(\d+)/i);
+          if (qubitMatch) qubit = qubitMatch[1];
+        }
+        
+        return `Measured qubit ${qubit}, collapsing its quantum state to a classical bit value (0 or 1).`;
+      } else if (command.includes('simulate') || commandLower.includes('run') || commandLower.includes('execute')) {
+        let shots = '1000';
+        const shotsMatch = command.match(/shots\s*=\s*(\d+)/i);
+        if (shotsMatch) {
+          shots = shotsMatch[1];
+        }
+        
+        return `Running quantum simulation with ${shots} shots to gather measurement statistics and verify quantum algorithm behavior.`;
+      } else if (command.includes('random') || commandLower.includes('generaterandemnumber')) {
+        let bits = '8';
+        const bitsMatch = command.match(/bits\s*=\s*(\d+)/i);
+        if (bitsMatch) {
+          bits = bitsMatch[1];
+        }
+        
+        return `Generating a ${bits}-bit quantum random number using quantum measurement outcomes for true randomness.`;
+      } else if (commandLower.includes('connect') || commandLower.includes('backend') || commandLower.includes('ibm')) {
+        let backend = 'quantum computer';
+        const backendMatch = command.match(/"([^"]+)"/);
+        if (backendMatch) {
+          backend = backendMatch[1];
+        } else if (command.includes('ibm_')) {
+          const ibmMatch = command.match(/ibm_(\w+)/i);
+          if (ibmMatch) backend = `IBM ${ibmMatch[1].toUpperCase()}`;
+        }
+        
+        return `Connecting to the ${backend} quantum computing backend to execute quantum algorithms on real quantum hardware.`;
+      } else if (commandLower.includes('grover') || commandLower.includes('search')) {
+        let items = '';
+        const itemsMatch = command.match(/items\s*=\s*(\d+)/i);
+        if (itemsMatch) {
+          items = ` with ${itemsMatch[1]} items`;
+        }
+        
+        return `Executing Grover's quantum search algorithm to find a marked item in an unstructured database${items} with a quadratic speedup over classical algorithms.`;
+      } else if (commandLower.includes('qml') || commandLower.includes('machine learning')) {
+        let qubits = '';
+        const qubitsMatch = command.match(/qubits\s*=\s*(\d+)/i);
+        if (qubitsMatch) {
+          qubits = ` using ${qubitsMatch[1]} qubits`;
+        }
+        
+        let dataset = '';
+        const datasetMatch = command.match(/dataset\s*=\s*"([^"]+)"/i);
+        if (datasetMatch) {
+          dataset = ` on the ${datasetMatch[1]} dataset`;
+        }
+        
+        return `Initializing a quantum machine learning model${qubits}${dataset} that leverages quantum effects like superposition and entanglement to potentially outperform classical ML models.`;
+      } else if (commandLower.includes('documentation') || commandLower.includes('explain') || commandLower.includes('help')) {
+        let topic = 'quantum computing';
+        const topicMatch = command.match(/"([^"]+)"/);
+        if (topicMatch) {
+          topic = topicMatch[1];
+        }
+        
+        return `Displaying documentation about ${topic} to help you understand quantum concepts and operations.`;
+      } else if (commandLower.includes('process')) {
+        // For the generic process command
+        return `Processing your request: "${originalInput.substring(0, 40)}${originalInput.length > 40 ? '...' : ''}"`;
+      } else {
+        // Generic explanation with better truncation
+        const truncatedInput = originalInput.length > 30 ? 
+          originalInput.substring(0, 30) + '...' : 
+          originalInput;
+        
+        return `Translated your request about "${truncatedInput}" into quantum programming code that can be executed on a quantum computer.`;
+      }
+    } catch (error) {
+      console.error("[QuantumNLP] Error generating explanation:", error);
+      return `Translated your request into quantum operations for execution on a quantum computer.`;
     }
   }
   
   /**
    * Check if the service is initialized
+   * @returns boolean indicating if service is initialized
    */
   public get isInitialized(): boolean {
     return this._initialized;
@@ -593,6 +714,7 @@ class QuantumNLPService {
   
   /**
    * Get the available AI providers
+   * @returns string array of provider names
    */
   public get availableProviders(): string[] {
     return this._aiProviders.map(provider => provider.name);
