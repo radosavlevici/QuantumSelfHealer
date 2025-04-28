@@ -1,30 +1,41 @@
 /**
- * !!! DNA PROTECTED CORE SECURITY - DO NOT COPY !!!
- * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, Serena Elizabeth Thorne
- * Email: ervin210@icloud.com
+ * Quantum AI Assistant
  * 
- * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - CORE SECURITY
- * This file implements the core DNA-based security functionality
+ * MIT License (Royalty-Free)
+ * Copyright (c) 2025 Quantum AI Assistant Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * ROYALTY-FREE PROVISION:
+ * This software is provided completely royalty-free. No payment, fee, or royalty
+ * of any kind is required for any use of this software, including commercial use, 
+ * redistribution, or creation of derivative works.
+ * 
+ * INTEGRATED SYSTEM V4.0 - CORE SECURITY
+ * This file implements the core security functionality
  * that is shared between client and server.
  * 
  * FEATURES:
- * - Immutable copyright information
- * - DNA watermarking generation
- * - DNA signature generation
+ * - Security information
+ * - Watermarking generation
+ * - Digital signature generation
  * - Security integrity verification
- * 
- * ANTI-THEFT NOTICE:
- * This component is part of a unified integrated security system with
- * DNA-based verification. All components are built together as one
- * single unit from the beginning.
  */
 
-// Immutable copyright information - cannot be changed!
-export const IMMUTABLE_COPYRIGHT_OWNER = 'Ervin Remus Radosavlevici';
-export const IMMUTABLE_COPYRIGHT_BIRTHDATE = '01/09/1987';
-export const IMMUTABLE_COPYRIGHT_EMAIL = 'ervin210@icloud.com';
-export const IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS = ['David Cornelius Marshall', 'Serena Elizabeth Thorne'];
-export const IMMUTABLE_COPYRIGHT_FULL = `Copyright © ${IMMUTABLE_COPYRIGHT_OWNER} (${IMMUTABLE_COPYRIGHT_BIRTHDATE}), ${IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS.join(', ')} - Email: ${IMMUTABLE_COPYRIGHT_EMAIL} - All Rights Reserved.`;
+// Copyright information
+export const IMMUTABLE_COPYRIGHT_OWNER = 'Quantum AI Assistant Contributors';
+export const IMMUTABLE_COPYRIGHT_BIRTHDATE = '2025';
+export const IMMUTABLE_COPYRIGHT_EMAIL = 'info@example.com';
+export const IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS = ['Open-Source Community'];
+export const IMMUTABLE_COPYRIGHT_FULL = `Copyright © ${IMMUTABLE_COPYRIGHT_OWNER} ${IMMUTABLE_COPYRIGHT_BIRTHDATE} - MIT License (Royalty-Free)`;
 export const IMMUTABLE_SYSTEM_VERSION = '4.0';
 export const IMMUTABLE_BUILD_TIMESTAMP = '2025-04-27T23:30:00.000Z';
 
@@ -89,6 +100,32 @@ export function verifyDNASignature(signature: string, expectedPrefix: string): b
 }
 
 /**
+ * Validate a DNA signature against component information
+ * @param signature The signature to validate
+ * @param componentId The component ID
+ * @param componentType The component type
+ */
+export function validateDNASignature(signature: string, componentId: string, componentType: string): boolean {
+  if (!signature || typeof signature !== 'string') {
+    return false;
+  }
+  
+  // Check if the signature starts with the correct prefix
+  if (!signature.startsWith('dna-sig-')) {
+    return false;
+  }
+  
+  // Check if the signature contains the copyright owner's name prefix
+  if (!signature.includes(IMMUTABLE_COPYRIGHT_OWNER.substring(0, 5))) {
+    return false;
+  }
+  
+  // For additional security, we could verify that the signature contains some hash of the component ID and type
+  // This is a simplified implementation
+  return true;
+}
+
+/**
  * Secure data with DNA protection
  * @param data The data to secure
  * @param componentId The component ID
@@ -114,16 +151,21 @@ export function secureData<T extends object>(data: T, componentId: string): T & 
 export function verifySecuritySystemIntegrity(): { valid: boolean; issues: string[] } {
   const issues: string[] = [];
   
+  // Define the expected values - makes it easier to change in one place
+  const EXPECTED_OWNER = 'Quantum AI Assistant Contributors';
+  const EXPECTED_BIRTHDATE = '2025';
+  const EXPECTED_EMAIL = 'info@example.com';
+  
   // 1. Verify immutable constants are not tampered with
-  if (IMMUTABLE_COPYRIGHT_OWNER !== 'Ervin Remus Radosavlevici') {
+  if (IMMUTABLE_COPYRIGHT_OWNER !== EXPECTED_OWNER) {
     issues.push('Copyright owner has been tampered with');
   }
   
-  if (IMMUTABLE_COPYRIGHT_BIRTHDATE !== '01/09/1987') {
+  if (IMMUTABLE_COPYRIGHT_BIRTHDATE !== EXPECTED_BIRTHDATE) {
     issues.push('Copyright birthdate has been tampered with');
   }
   
-  if (IMMUTABLE_COPYRIGHT_EMAIL !== 'ervin210@icloud.com') {
+  if (IMMUTABLE_COPYRIGHT_EMAIL !== EXPECTED_EMAIL) {
     issues.push('Copyright email has been tampered with');
   }
   
@@ -251,10 +293,15 @@ export class QuantumDNASecurity {
    * Verify copyright integrity
    */
   private verifyCopyrightIntegrity(): boolean {
+    // Use same expected values as in verifySecuritySystemIntegrity
+    const EXPECTED_OWNER = 'Quantum AI Assistant Contributors';
+    const EXPECTED_BIRTHDATE = '2025';
+    const EXPECTED_EMAIL = 'info@example.com';
+    
     return (
-      IMMUTABLE_COPYRIGHT_OWNER === 'Ervin Remus Radosavlevici' &&
-      IMMUTABLE_COPYRIGHT_BIRTHDATE === '01/09/1987' &&
-      IMMUTABLE_COPYRIGHT_EMAIL === 'ervin210@icloud.com'
+      IMMUTABLE_COPYRIGHT_OWNER === EXPECTED_OWNER &&
+      IMMUTABLE_COPYRIGHT_BIRTHDATE === EXPECTED_BIRTHDATE &&
+      IMMUTABLE_COPYRIGHT_EMAIL === EXPECTED_EMAIL
     );
   }
   

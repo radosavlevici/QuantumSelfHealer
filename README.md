@@ -1,43 +1,70 @@
-# Quantum Natural Language Processor
+# Quantum AI Assistant
 
-An advanced hybrid AI integration system with comprehensive security and intelligent development capabilities, designed to enhance developer workflow and system resilience.
+An advanced hybrid AI integration system with cutting-edge quantum-inspired natural language processing, designed to provide developers with an intelligent and secure terminal interaction experience.
 
 ## License
 
-This software is licensed under the Quantum Natural Language Processor Custom License.
+This software is licensed under the MIT License (Royalty-Free).
 
-* See the file `LICENSE.txt` for the complete license agreement.
-* **Copyright Holder:** The copyright for this software is held by Ervin Remus Radosavlevici (see the copyright notice at the beginning of the `LICENSE.txt` file).
-
-**Important Licensing Notes:**
-
-* This is a custom license. Please read it carefully, as it contains specific requirements, including royalty payments for commercial use and restrictions on derivative works.
-* **Past Unauthorized Commercial Use:**
-    * This license update addresses a history of unauthorized commercial use of this software.
-    * Section 2 of the `LICENSE.txt` file explicitly states that individuals or entities who have previously used this Software or derivative works for commercial purposes without proper authorization are subject to the royalty payment obligations.
-    * If you have used this software commercially in the past without a valid license, you are encouraged to contact the copyright holder to discuss a resolution.
-* **Commercial Use:**
-    * Any current or future commercial use of this software requires adherence to the royalty payment terms as detailed in Section 2 of the `LICENSE.txt` file.
-* **Derivative Works:**
-    * This license includes specific restrictions on the creation and use of derivative works. Please refer to Section 3 of the `LICENSE.txt` file for information on similarity and derivative work protections.
+* See the file `LICENSE.txt` for the complete license text.
+* **Copyright:** Copyright (c) 2025 Quantum AI Assistant Contributors
+* **Royalty-Free:** This software is provided completely royalty-free. No payment, fee, or royalty of any kind is required for any use of this software, including commercial use, redistribution, or creation of derivative works.
 
 ## Features
 
 - TypeScript as primary language
-- Multi-model AI integration (OpenAI, Anthropic Claude, Google Gemini, DeepSeek, Meta's LLaMA, Alibaba, Microsoft Copilot)
-- Integration with IBM Qiskit and Microsoft Azure Quantum services
-- React-based frontend with advanced security protocols
-- Quantum-inspired security architecture
-- Modular system design with emergency response capabilities
-- License protection mechanisms
-- DNA-based verification and protection
-- Self-repair and self-defense mechanisms
-- Secure iCloud synchronization (iPhone only)
+- Multi-model AI integration with eight providers:
+  - OpenAI (GPT-4o)
+  - Anthropic Claude (Claude 3.7 Sonnet)
+  - xAI Grok (Grok-2)
+  - Google Gemini
+  - DeepSeek
+  - Meta's LLaMA
+  - Alibaba
+  - Microsoft Copilot
+- Integration with quantum computing services:
+  - IBM Qiskit
+  - Microsoft Azure Quantum
+- React-based frontend with advanced NLP capabilities
+- Natural language to quantum programming translation
+- Quantum-inspired terminal interface
+- Modular architecture with comprehensive accessibility features
+- Integration with Adobe Creative Cloud
+- Secure cross-device synchronization
+- Self-repair algorithms and system resilience
+- Persistent memory with cloud backup
+
+## Installation
+
+1. Clone the repository
+2. Run `npm install` to install dependencies
+3. Start the development server with `npm run dev`
 
 ## Usage
 
-The Quantum Natural Language Processor can only be used on authorized devices with proper licensing. Unauthorized usage or attempts to access from non-authorized devices will trigger security measures including data wiping and component corruption.
+The Quantum AI Assistant provides a natural language interface to quantum computing concepts and programming. Users can enter everyday language commands which are then translated into quantum programming syntax with explanations.
+
+Example commands:
+- "Create a quantum circuit with 3 qubits"
+- "Apply a Hadamard gate to qubit 0"
+- "Show me quantum entanglement between qubits"
+- "Run a quantum simulation"
+
+## API Keys
+
+To use the full capabilities of the assistant, you'll need to provide API keys for:
+- OpenAI API
+- Anthropic API
+- xAI API
+- IBM Quantum
+- Azure Quantum
+
+These can be set as environment variables.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Contact
 
-For any licensing inquiries, including questions about past usage or commercial use, please contact Ervin Remus Radosavlevici (see LICENSE.txt for contact details).
+For any questions or suggestions, please open an issue in the repository.
