@@ -92,7 +92,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   // Add Content-Security-Policy
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+    "default-src 'self' ws: wss:; connect-src 'self' ws: wss:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
   );
   
   // Prevent clickjacking

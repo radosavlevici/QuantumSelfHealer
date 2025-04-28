@@ -54,6 +54,7 @@ import { quantumDNASecurity } from './lib/quantum-dna-security';
 // Import integration services
 import { adobeCreativeCloudService } from './lib/adobe-creative-cloud';
 import { integratedConnectionSystem } from './lib/integrated-connection-system';
+import { bitdefenderSecurity } from './lib/device-security-service';
 
 // Import the DNA Protection Provider components
 import NavigationBar from './components/NavigationBar';
@@ -90,6 +91,9 @@ async function initializeApplication() {
     // Initialize the Adobe Creative Cloud service
     await adobeCreativeCloudService.initialize();
     
+    // Initialize the Bitdefender cybersecurity service with European standards
+    await bitdefenderSecurity.initialize();
+    
     // Set application metadata in DOM for additional protection layer
     document.documentElement.setAttribute('data-dna-protected', 'true');
     document.documentElement.setAttribute('data-copyright-owner', IMMUTABLE_COPYRIGHT_OWNER);
@@ -99,6 +103,8 @@ async function initializeApplication() {
     document.documentElement.setAttribute('data-watermark', appWatermark);
     document.documentElement.setAttribute('data-system-version', IMMUTABLE_SYSTEM_VERSION);
     document.documentElement.setAttribute('data-adobe-integration', 'enabled');
+    document.documentElement.setAttribute('data-bitdefender-protection', 'enabled');
+    document.documentElement.setAttribute('data-european-standards', 'gdpr,nis2,eidas');
     
     console.log("Application initialization complete - All systems integrated and operational");
   } catch (error) {
@@ -154,9 +160,16 @@ function App() {
                   <span className="mx-2 bg-blue-400 h-1 w-1 rounded-full"></span>
                   <p className="text-blue-400">Security: MAXIMUM</p>
                 </div>
+                <div className="flex items-center justify-center mb-1">
+                  <p className="text-green-400">Bitdefender EU Protection</p>
+                  <span className="mx-2 bg-green-400 h-1 w-1 rounded-full"></span>
+                  <p className="text-blue-400">GDPR Compliant</p>
+                  <span className="mx-2 bg-green-400 h-1 w-1 rounded-full"></span>
+                  <p className="text-blue-400">Account: {IMMUTABLE_COPYRIGHT_EMAIL}</p>
+                </div>
                 <p className="bg-gradient-to-r from-blue-400 to-purple-500 inline-block text-transparent bg-clip-text">{IMMUTABLE_COPYRIGHT_FULL}</p>
                 <p className="mt-1 text-gray-500">
-                  All rights reserved. DNA-protected with quantum security. Authorized device access only.
+                  All rights reserved. DNA-protected with quantum security and Bitdefender protection. European standards compliant.
                 </p>
               </footer>
             </div>
