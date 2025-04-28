@@ -52,7 +52,7 @@ import {
   generateDNASignature,
   generateSecurityWatermark,
   verifySecuritySystemIntegrity
-} from '@shared/quantum-dna-security';
+} from '@shared/schema';
 
 // Import client-side security system
 import { quantumDNASecurity } from '@/lib/quantum-dna-security';

@@ -33,10 +33,28 @@ import {
   IMMUTABLE_SYSTEM_VERSION,
   generateDNASignature,
   generateSecurityWatermark,
-  SecurityState,
-  ComponentInfo,
-  quantumDNASecurity as serverQuantumDNASecurity
-} from '@shared/quantum-dna-security';
+  quantumDNASecurity as serverQuantumDNASecurity,
+  secureData,
+  applyDNAProtection
+} from '@shared/schema';
+
+// Define interfaces for SecurityState and ComponentInfo
+interface SecurityState {
+  initialized: boolean;
+  integrityVerified: boolean;
+  copyrightVerified: boolean;
+  dnaProtectionActive: boolean;
+  lastVerification?: string;
+  _dnaWatermark: string;
+}
+
+interface ComponentInfo {
+  id: string;
+  type: string;
+  initialized: boolean;
+  dnaSignature: string;
+  _dnaWatermark: string;
+}
 
 // Component identity constants
 const COMPONENT_ID = 'client-quantum-dna-security';
