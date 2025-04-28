@@ -34,16 +34,23 @@ const COMPONENT_NAME = 'QuantumNLPTerminal';
 
 // Example suggestions for natural language inputs
 const EXAMPLE_QUERIES = [
-  "Create a quantum circuit with 3 qubits",
-  "Apply a Hadamard gate to qubit 0",
-  "Show me quantum entanglement between qubits",
-  "Run a quantum simulation",
-  "Connect to IBM Quantum computer",
-  "Generate a quantum random number",
-  "What's the current quantum decoherence rate?",
-  "Execute the Grover search algorithm",
+  // Beginner examples
+  "Create a simple quantum circuit with 3 qubits",
   "Explain quantum superposition",
-  "Create a quantum machine learning model"
+  "Apply a Hadamard gate to the first qubit",
+  "Create a Bell state",
+  
+  // Advanced examples
+  "Run Grover's algorithm on 4 qubits",
+  "Implement quantum teleportation protocol",
+  "Create a quantum random number generator",
+  "Demonstrate quantum entanglement with 2 qubits",
+  
+  // Additional examples
+  "Connect to IBM Quantum computer",
+  "What's the current quantum decoherence rate?",
+  "Create a quantum machine learning model",
+  "Show me how to implement Shor's algorithm"
 ];
 
 interface TerminalEntry {
@@ -835,51 +842,217 @@ const QuantumNLPTerminal: React.FC = () => {
         </TabsContent>
         
         <TabsContent value="help" className="h-full">
-          <Card className="border-gray-800 bg-gradient-to-b from-gray-900 to-black h-full">
-            <CardHeader>
-              <CardTitle>Examples & Help</CardTitle>
+          <Card className="border-gray-800 bg-gradient-to-b from-gray-950 to-black h-full overflow-auto">
+            <CardHeader className="bg-purple-950/20 border-b border-purple-900/30">
+              <CardTitle className="bg-gradient-to-r from-purple-400 to-blue-500 inline-block text-transparent bg-clip-text">
+                Examples & Help Guide
+              </CardTitle>
               <CardDescription>
-                Try these examples to see how the Quantum NLP Terminal translates your natural language to quantum commands
+                Learn how to interact with quantum computing using natural language
               </CardDescription>
             </CardHeader>
             
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {EXAMPLE_QUERIES.map((query, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    className="justify-start text-left bg-gray-950/50 hover:bg-gray-900 border-gray-800"
-                    onClick={() => useExampleQuery(query)}
-                  >
-                    <span className="truncate">{query}</span>
-                  </Button>
-                ))}
-              </div>
-              
-              <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-2">How It Works</h3>
-                <p className="text-gray-400 mb-4">
-                  The Quantum NLP Terminal translates your natural language questions and commands into 
-                  technical quantum computing operations, making quantum computing accessible without 
-                  requiring knowledge of complex programming syntax.
-                </p>
+            <CardContent className="space-y-6 py-6">
+              {/* Example Categories Section */}
+              <div className="space-y-4">
+                <div className="flex items-center mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-purple-400">Try these examples</h3>
+                </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-gray-950/50 p-4 rounded-lg border border-gray-800">
-                    <h4 className="font-semibold text-blue-400 mb-2">For beginners</h4>
-                    <p className="text-sm text-gray-400">
-                      Just ask what you want to do with quantum computing in plain English. 
-                      The system will interpret your intent and execute the appropriate quantum commands.
-                    </p>
+                <div className="grid grid-cols-1 gap-6">
+                  {/* Beginner Examples */}
+                  <div className="bg-gradient-to-r from-purple-950/10 to-blue-950/10 p-5 rounded-lg border border-purple-900/20">
+                    <h4 className="text-md font-semibold text-purple-400 mb-3">Beginner Commands</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <Button
+                        variant="ghost"
+                        className="justify-start text-left bg-purple-950/40 hover:bg-purple-900/30 border border-purple-900/30 text-gray-300"
+                        onClick={() => useExampleQuery("Create a simple quantum circuit with 3 qubits")}
+                      >
+                        <span className="truncate">Create a simple quantum circuit with 3 qubits</span>
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        className="justify-start text-left bg-purple-950/40 hover:bg-purple-900/30 border border-purple-900/30 text-gray-300"
+                        onClick={() => useExampleQuery("Explain quantum superposition")}
+                      >
+                        <span className="truncate">Explain quantum superposition</span>
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        className="justify-start text-left bg-purple-950/40 hover:bg-purple-900/30 border border-purple-900/30 text-gray-300"
+                        onClick={() => useExampleQuery("Apply a Hadamard gate to the first qubit")}
+                      >
+                        <span className="truncate">Apply a Hadamard gate to the first qubit</span>
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        className="justify-start text-left bg-purple-950/40 hover:bg-purple-900/30 border border-purple-900/30 text-gray-300"
+                        onClick={() => useExampleQuery("Create a Bell state")}
+                      >
+                        <span className="truncate">Create a Bell state</span>
+                      </Button>
+                    </div>
                   </div>
                   
-                  <div className="bg-gray-950/50 p-4 rounded-lg border border-gray-800">
-                    <h4 className="font-semibold text-blue-400 mb-2">For experts</h4>
-                    <p className="text-sm text-gray-400">
-                      The NLP system preserves advanced quantum concepts and provides accurate translations 
-                      while showing you the exact commands being executed for educational purposes.
-                    </p>
+                  {/* Advanced Examples */}
+                  <div className="bg-gradient-to-r from-blue-950/10 to-purple-950/10 p-5 rounded-lg border border-blue-900/20">
+                    <h4 className="text-md font-semibold text-blue-400 mb-3">Advanced Operations</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <Button
+                        variant="ghost"
+                        className="justify-start text-left bg-blue-950/40 hover:bg-blue-900/30 border border-blue-900/30 text-gray-300"
+                        onClick={() => useExampleQuery("Run Grover's algorithm on 4 qubits")}
+                      >
+                        <span className="truncate">Run Grover's algorithm on 4 qubits</span>
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        className="justify-start text-left bg-blue-950/40 hover:bg-blue-900/30 border border-blue-900/30 text-gray-300"
+                        onClick={() => useExampleQuery("Implement quantum teleportation protocol")}
+                      >
+                        <span className="truncate">Implement quantum teleportation</span>
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        className="justify-start text-left bg-blue-950/40 hover:bg-blue-900/30 border border-blue-900/30 text-gray-300"
+                        onClick={() => useExampleQuery("Create a quantum random number generator")}
+                      >
+                        <span className="truncate">Create a quantum random number generator</span>
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        className="justify-start text-left bg-blue-950/40 hover:bg-blue-900/30 border border-blue-900/30 text-gray-300"
+                        onClick={() => useExampleQuery("Demonstrate quantum entanglement with 2 qubits")}
+                      >
+                        <span className="truncate">Demonstrate quantum entanglement</span>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* How It Works Section */}
+              <div className="space-y-4 mt-8">
+                <div className="flex items-center mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <h3 className="text-lg font-semibold bg-gradient-to-r from-blue-400 to-purple-500 inline-block text-transparent bg-clip-text">How The Quantum NLP Terminal Works</h3>
+                </div>
+                
+                <div className="bg-gradient-to-r from-gray-900 to-gray-950 p-5 rounded-lg border border-gray-800">
+                  <p className="text-gray-300 mb-4">
+                    The Quantum NLP Terminal uses advanced AI to translate your natural language into quantum computing operations. 
+                    It combines multiple AI models to understand your intent and generate appropriate quantum code.
+                  </p>
+                  
+                  <div className="relative">
+                    <div className="absolute left-3.5 top-0 bottom-0 w-px bg-gradient-to-b from-blue-500 via-purple-500 to-blue-500"></div>
+                    
+                    <div className="space-y-6 pl-8">
+                      <div>
+                        <div className="absolute left-1.5 w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">1</div>
+                        <h4 className="font-semibold text-blue-400 mb-1">Natural Language Understanding</h4>
+                        <p className="text-sm text-gray-400">
+                          Your request is analyzed by our multi-model AI system (including OpenAI, Anthropic Claude, and xAI's Grok) 
+                          to understand your goals and technical requirements.
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <div className="absolute left-1.5 w-4 h-4 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs font-bold">2</div>
+                        <h4 className="font-semibold text-purple-400 mb-1">Quantum Code Generation</h4>
+                        <p className="text-sm text-gray-400">
+                          The system generates optimized quantum code for either IBM Qiskit or Microsoft Azure Quantum, 
+                          selecting the appropriate algorithms and operations.
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <div className="absolute left-1.5 w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">3</div>
+                        <h4 className="font-semibold text-blue-400 mb-1">Execution & Visualization</h4>
+                        <p className="text-sm text-gray-400">
+                          The code is executed on our quantum simulator or real quantum hardware, 
+                          and the results are visualized in an easy-to-understand format.
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <div className="absolute left-1.5 w-4 h-4 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs font-bold">4</div>
+                        <h4 className="font-semibold text-purple-400 mb-1">Educational Explanation</h4>
+                        <p className="text-sm text-gray-400">
+                          You receive a clear explanation of what happened, how the quantum operations work, 
+                          and what the results mean in everyday language.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div className="bg-gradient-to-r from-blue-950/20 to-blue-950/5 p-4 rounded-lg border border-blue-900/20">
+                    <div className="flex items-center mb-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      <h4 className="font-semibold text-blue-400">Pro Tips for Beginners</h4>
+                    </div>
+                    <ul className="text-sm text-gray-400 space-y-2 list-disc list-inside pl-1">
+                      <li>Use plain English to describe what you want to accomplish</li>
+                      <li>Ask for explanations when you don't understand a concept</li>
+                      <li>Start with simple circuits before trying algorithms</li>
+                      <li>Use the examples above as starting points for exploring</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-purple-950/20 to-purple-950/5 p-4 rounded-lg border border-purple-900/20">
+                    <div className="flex items-center mb-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      <h4 className="font-semibold text-purple-400">For Quantum Experts</h4>
+                    </div>
+                    <ul className="text-sm text-gray-400 space-y-2 list-disc list-inside pl-1">
+                      <li>Specify precise gate sequences when needed</li>
+                      <li>Request optimizations for specific quantum hardware</li>
+                      <li>Access advanced algorithms like VQE and QAOA</li>
+                      <li>Use technical terminology for more precise results</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Additional Resources Section */}
+              <div className="mt-6 p-4 bg-gray-950/80 rounded-lg border border-gray-800">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    <h4 className="text-sm font-semibold text-gray-300">Available Quantum Services</h4>
+                  </div>
+                  <Badge className="bg-gray-800 text-gray-300 hover:bg-gray-700">Built-in</Badge>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                  <div className="flex items-center space-x-2 bg-gray-900 p-2 rounded border border-gray-800">
+                    <Badge className="bg-blue-900/30 text-blue-300 border-blue-700 hover:bg-blue-900/50">IBM</Badge>
+                    <span className="text-xs text-gray-400">Qiskit Quantum Computing</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2 bg-gray-900 p-2 rounded border border-gray-800">
+                    <Badge className="bg-purple-900/30 text-purple-300 border-purple-700 hover:bg-purple-900/50">Azure</Badge>
+                    <span className="text-xs text-gray-400">Microsoft Quantum Computing</span>
                   </div>
                 </div>
               </div>
@@ -888,71 +1061,173 @@ const QuantumNLPTerminal: React.FC = () => {
         </TabsContent>
         
         <TabsContent value="security" className="h-full">
-          <Card className="border-gray-800 bg-gradient-to-b from-gray-900 to-black h-full">
-            <CardHeader>
+          <Card className="border-gray-800 bg-gradient-to-b from-gray-950 to-black h-full overflow-auto">
+            <CardHeader className="bg-blue-950/20 border-b border-blue-900/30">
               <CardTitle className="flex items-center">
-                <Lock className="h-5 w-5 mr-2 text-blue-400" />
-                Security Information
+                <Shield className="h-5 w-5 mr-2 text-blue-400" />
+                <span className="bg-gradient-to-r from-blue-400 to-indigo-500 inline-block text-transparent bg-clip-text">
+                  Quantum DNA Security System
+                </span>
               </CardTitle>
               <CardDescription>
-                This terminal is protected by DNA-based security systems to ensure authenticity and integrity
+                This terminal is protected by advanced DNA-based security systems to ensure authenticity and integrity
               </CardDescription>
             </CardHeader>
             
             <CardContent>
-              <div className="space-y-4">
-                <div className="bg-gray-950/50 p-4 rounded-lg border border-gray-800">
-                  <h3 className="text-md font-semibold text-blue-400 mb-2">Copyright & Ownership</h3>
-                  <p className="text-sm text-gray-400">
-                    Copyright © {dnaProtection.ownerInfo.name} ({dnaProtection.ownerInfo.birthdate})
-                    <br />
-                    Email: {dnaProtection.ownerInfo.email}
-                  </p>
+              <div className="space-y-6">
+                {/* Copyright & Ownership Card */}
+                <div className="bg-gradient-to-r from-blue-950/10 to-indigo-950/10 p-5 rounded-lg border border-blue-900/20 shadow-md hover:shadow-blue-900/5 transition-all">
+                  <div className="flex items-center mb-3">
+                    <Lock className="h-5 w-5 mr-2 text-blue-400" />
+                    <h3 className="text-md font-semibold text-blue-400">Copyright & Ownership</h3>
+                  </div>
+                  <div className="bg-blue-950/30 p-3 rounded border border-blue-900/30 text-sm">
+                    <p className="text-gray-300 font-semibold mb-1">
+                      Copyright © {dnaProtection.ownerInfo.name}
+                    </p>
+                    <p className="text-gray-400 mb-1">
+                      Birth Date: {dnaProtection.ownerInfo.birthdate}
+                    </p>
+                    <p className="text-gray-400">
+                      Email: {dnaProtection.ownerInfo.email}
+                    </p>
+                    <div className="flex items-center mt-3 text-xs text-gray-500">
+                      <Badge variant="outline" className="border-blue-900 text-blue-400 mr-2">
+                        Verified
+                      </Badge>
+                      <span>Protected with quantum-level cryptography</span>
+                    </div>
+                  </div>
                 </div>
                 
-                <div className="bg-gray-950/50 p-4 rounded-lg border border-gray-800">
-                  <h3 className="text-md font-semibold text-blue-400 mb-2">Security Features</h3>
-                  <ul className="text-sm text-gray-400 space-y-2">
-                    <li className="flex items-start">
-                      <CheckCircle className="h-4 w-4 mr-2 text-green-400 mt-0.5" />
-                      DNA-based watermarking on all content
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-4 w-4 mr-2 text-green-400 mt-0.5" />
-                      Quantum-level encryption of all commands
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-4 w-4 mr-2 text-green-400 mt-0.5" />
-                      Self-repairing code architecture
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-4 w-4 mr-2 text-green-400 mt-0.5" />
-                      Anti-theft protection with automatic device wipes
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-4 w-4 mr-2 text-green-400 mt-0.5" />
-                      Immutable copyright protection
-                    </li>
-                  </ul>
+                {/* Security Features Card */}
+                <div className="bg-gradient-to-r from-blue-950/10 to-indigo-950/10 p-5 rounded-lg border border-blue-900/20 shadow-md hover:shadow-blue-900/5 transition-all">
+                  <div className="flex items-center mb-3">
+                    <Shield className="h-5 w-5 mr-2 text-blue-400" />
+                    <h3 className="text-md font-semibold text-blue-400">Security Features</h3>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="bg-blue-950/30 p-3 rounded border border-blue-900/30 flex items-start">
+                      <div className="bg-blue-900/50 p-1.5 rounded-full mr-3 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-200" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-blue-300">DNA-based Watermarking</p>
+                        <p className="text-xs text-gray-400">Unique molecular-inspired watermarks on all content</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-blue-950/30 p-3 rounded border border-blue-900/30 flex items-start">
+                      <div className="bg-blue-900/50 p-1.5 rounded-full mr-3 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-200" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-blue-300">Quantum Encryption</p>
+                        <p className="text-xs text-gray-400">Quantum-inspired encryption for all commands</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-blue-950/30 p-3 rounded border border-blue-900/30 flex items-start">
+                      <div className="bg-blue-900/50 p-1.5 rounded-full mr-3 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-200" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-blue-300">Self-Repairing Architecture</p>
+                        <p className="text-xs text-gray-400">Automatically fixes corrupted components</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-blue-950/30 p-3 rounded border border-blue-900/30 flex items-start">
+                      <div className="bg-blue-900/50 p-1.5 rounded-full mr-3 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-200" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-blue-300">Anti-Theft Protection</p>
+                        <p className="text-xs text-gray-400">Automatic device wiping for unauthorized access</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-blue-950/30 p-3 rounded border border-blue-900/30 flex items-start">
+                      <div className="bg-blue-900/50 p-1.5 rounded-full mr-3 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-200" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-blue-300">Immutable Copyright</p>
+                        <p className="text-xs text-gray-400">Permanent copyright protection cannot be altered</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-blue-950/30 p-3 rounded border border-blue-900/30 flex items-start">
+                      <div className="bg-blue-900/50 p-1.5 rounded-full mr-3 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-200" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-blue-300">Integrated Security</p>
+                        <p className="text-xs text-gray-400">All components built as one unified system</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
-                <div className="bg-gray-950/50 p-4 rounded-lg border border-gray-800">
-                  <h3 className="text-md font-semibold text-blue-400 mb-2">Component Verification</h3>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-400">Component ID:</span>
-                    <code className="text-xs bg-gray-900 px-2 py-1 rounded">{COMPONENT_ID}</code>
+                {/* Component Verification Card */}
+                <div className="bg-gradient-to-r from-blue-950/10 to-indigo-950/10 p-5 rounded-lg border border-blue-900/20 shadow-md hover:shadow-blue-900/5 transition-all">
+                  <div className="flex items-center mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <h3 className="text-md font-semibold text-blue-400">Component Verification</h3>
                   </div>
-                  <div className="flex items-center justify-between mt-2">
-                    <span className="text-sm text-gray-400">DNA Signature:</span>
-                    <code className="text-xs bg-gray-900 px-2 py-1 rounded">
-                      {componentSignature.substring(0, 16)}...
-                    </code>
-                  </div>
-                  <div className="flex items-center justify-between mt-2">
-                    <span className="text-sm text-gray-400">Security Level:</span>
-                    <Badge variant="default" className="bg-blue-600">
-                      {dnaProtection.securityLevel}
-                    </Badge>
+                  
+                  <div className="bg-blue-950/30 p-4 rounded border border-blue-900/30">
+                    <div className="mb-3">
+                      <div className="text-xs text-gray-500 mb-1">Component ID</div>
+                      <div className="flex items-center">
+                        <code className="text-xs bg-blue-950/50 px-3 py-1.5 rounded font-mono text-blue-300 flex-1 overflow-x-auto">
+                          {COMPONENT_ID}
+                        </code>
+                      </div>
+                    </div>
+                    
+                    <div className="mb-3">
+                      <div className="text-xs text-gray-500 mb-1">DNA Signature</div>
+                      <div className="flex items-center">
+                        <code className="text-xs bg-blue-950/50 px-3 py-1.5 rounded font-mono text-blue-300 flex-1 overflow-x-auto">
+                          {componentSignature.substring(0, 24)}...
+                        </code>
+                      </div>
+                    </div>
+                    
+                    <div className="mb-3">
+                      <div className="text-xs text-gray-500 mb-1">Security Level</div>
+                      <div className="flex items-center space-x-3">
+                        <Badge variant="default" className="bg-gradient-to-r from-blue-600 to-indigo-700">
+                          {dnaProtection.securityLevel}
+                        </Badge>
+                        
+                        <Badge variant="outline" className="text-green-400 border-green-700">
+                          ACTIVE
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4 text-xs text-center border-t border-blue-900/30 pt-3 text-gray-500">
+                      <p>This component is secured and verifiable with the DNA Protection System.</p>
+                      <p>All operations are cryptographically signed and watermarked.</p>
+                    </div>
                   </div>
                 </div>
               </div>
