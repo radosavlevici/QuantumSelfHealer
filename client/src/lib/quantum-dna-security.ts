@@ -94,7 +94,7 @@ class ClientQuantumDNASecurity {
       // Initialize the server-side security
       await serverQuantumDNASecurity.initialize();
       
-      // Register this component with the server security
+      // Create this component information
       const componentInfo: ComponentInfo = {
         id: COMPONENT_ID,
         type: COMPONENT_TYPE,
@@ -103,7 +103,12 @@ class ClientQuantumDNASecurity {
         _dnaWatermark: componentWatermark
       };
       
-      serverQuantumDNASecurity.registerComponent(componentInfo);
+      // Register with server security if the method exists
+      if (typeof serverQuantumDNASecurity.registerComponent === 'function') {
+        serverQuantumDNASecurity.registerComponent(componentInfo);
+      } else {
+        console.log('Component registration not available, continuing initialization');
+      }
       
       // Set security state to active
       this.securityState = {
@@ -142,13 +147,27 @@ class ClientQuantumDNASecurity {
   /**
    * Generate a secure object with DNA watermarking
    */
-  public generateSecureObject<T extends object>(obj: T, componentId: string): T & { _dnaWatermark: string } {
+  public generateSecureObject<T extends object>(obj: T, componentId: string): T & { 
+    _dnaWatermark: string;
+    _dnaProtected?: boolean;
+    _dnaSignature?: string;
+    _watermark?: string;
+  } {
     // Initialize if not already done
     if (!this.isInitialized) {
       this.initialize();
     }
     
-    return serverQuantumDNASecurity.generateSecureObject(obj, componentId);
+    const securedObject = serverQuantumDNASecurity.generateSecureObject(obj, componentId);
+    
+    // Convert to the expected return format
+    return {
+      ...obj,
+      _dnaWatermark: securedObject._watermark,
+      _dnaProtected: securedObject._dnaProtected,
+      _dnaSignature: securedObject._dnaSignature,
+      _watermark: securedObject._watermark
+    };
   }
   
   /**

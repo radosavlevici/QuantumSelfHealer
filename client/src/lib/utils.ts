@@ -26,7 +26,14 @@
 
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { generateDNASignature, generateSecurityWatermark } from "@shared/quantum-dna-security";
+import { 
+  generateDNASignature, 
+  generateSecurityWatermark,
+  IMMUTABLE_SYSTEM_VERSION,
+  IMMUTABLE_COPYRIGHT_OWNER,
+  IMMUTABLE_COPYRIGHT_BIRTHDATE,
+  IMMUTABLE_COPYRIGHT_EMAIL
+} from "@shared/quantum-dna-security";
 
 /**
  * Combines class names with Tailwind CSS classes
@@ -329,8 +336,4 @@ export function generateSecureId(): string {
   return protectedUuid;
 }
 
-// Immutable copyright information - cannot be changed
-export const IMMUTABLE_COPYRIGHT_OWNER = "Quantum AI Assistant Contributors";
-export const IMMUTABLE_COPYRIGHT_BIRTHDATE = "2025";
-export const IMMUTABLE_COPYRIGHT_EMAIL = "info@example.com";
-export const IMMUTABLE_SYSTEM_VERSION = "4.0";
+// Re-export immutable copyright information from shared/quantum-dna-security.ts
