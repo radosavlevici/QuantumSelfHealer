@@ -1,27 +1,75 @@
-MIT License (Royalty-Free)
+CUSTOM LICENSE AGREEMENT
 
-Copyright (c) 2025 Quantum AI Assistant Contributors
+Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
+Email: ervin210@icloud.com
+All Rights Reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+DNA-PROTECTED QUANTUM AI SYSTEM LICENSE
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This software is protected by DNA-based security mechanisms and copyright watermarking.
 
-ROYALTY-FREE PROVISION:
-This software is provided completely royalty-free. No payment, fee, or royalty
-of any kind is required for any use of this software, including commercial use, 
-redistribution, or creation of derivative works. This provision cannot be
-changed or revoked at any time in the future.
+1. OWNERSHIP AND COPYRIGHT
+   This software, its source code, and all related materials ("the Software") are the
+   exclusive intellectual property of Ervin Remus Radosavlevici, David Cornelius Marshall,
+   and Serena Elizabeth Thorne (collectively "the Copyright Holders"). The copyright
+   ownership is immutable, permanent, and enforced through multiple security mechanisms.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+2. LICENSE GRANT
+   Subject to strict compliance with the terms of this License, the Copyright Holders
+   grant you a limited, non-exclusive, non-transferable, and revocable license to use
+   the Software for personal, non-commercial purposes only.
+
+3. RESTRICTIONS
+   You may NOT:
+   a) Modify, alter, reverse engineer, decompile, or disassemble the Software
+   b) Remove or alter any copyright notices, proprietary legends, or DNA watermarks
+   c) Use the Software for any commercial purpose without express written permission
+   d) Create derivative works based on the Software
+   e) Transfer, lease, lend, sell, or sublicense the Software
+   f) Attempt to bypass or disable any security mechanisms in the Software
+
+4. COMMERCIAL USE
+   Any commercial use of the Software requires a separate commercial license agreement
+   with the Copyright Holders, including payment of royalties. Unauthorized commercial
+   use will result in retroactive royalty payments and may trigger legal action.
+
+5. SELF-PROTECTION MECHANISMS
+   This Software contains advanced self-protection mechanisms, including but not limited to:
+   a) DNA-based watermarking embedded at multiple levels
+   b) Automatic copyright verification systems
+   c) Self-repair mechanisms that detect and fix tampering attempts
+   d) Self-defense systems that disable functionality when unauthorized use is detected
+   Attempts to disable or bypass these mechanisms may trigger additional security responses
+   and will constitute a violation of this License Agreement.
+
+6. ROYALTY PAYMENTS
+   Commercial use of the Software without prior written permission is strictly prohibited.
+   Unauthorized past and present commercial use is subject to retroactive royalties as
+   determined by the Copyright Holders.
+
+7. WARRANTY DISCLAIMER
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+   INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+   PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE
+   LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+   TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+   USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+8. TERMINATION
+   This License will terminate automatically if you fail to comply with any of its terms.
+   Upon termination, you must destroy all copies of the Software in your possession.
+
+9. GOVERNING LAW
+   This License shall be governed by and construed in accordance with the laws of
+   the relevant jurisdiction, without giving effect to any principles of conflicts of law.
+
+10. ENTIRE AGREEMENT
+    This License constitutes the entire agreement between you and the Copyright Holders
+    regarding the Software and supersedes all prior or contemporaneous understandings
+    regarding such subject matter.
+
+By using, copying, or possessing the Software, you agree to be bound by the terms of
+this License. If you do not agree, you must not use, copy, or possess the Software.
+
+CONTACT INFORMATION:
+Email: ervin210@icloud.com

@@ -16,7 +16,7 @@
  * Built as one integrated system with DNA-based security from the beginning.
  */
 
-import { quantumDNASecurity } from '@/lib/quantum-dna-security';
+import { quantumDNASecurity } from './quantum-dna-security';
 import { generateSecurityWatermark } from '@shared/quantum-dna-security';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';

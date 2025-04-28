@@ -1,32 +1,21 @@
 /**
- * Quantum AI Assistant
+ * !!! DNA PROTECTED CLIENT CORE - DO NOT COPY !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * Email: ervin210@icloud.com
  * 
- * MIT License (Royalty-Free)
- * Copyright (c) 2025 Quantum AI Assistant Contributors
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * ROYALTY-FREE PROVISION:
- * This software is provided completely royalty-free. No payment, fee, or royalty
- * of any kind is required for any use of this software, including commercial use, 
- * redistribution, or creation of derivative works.
- * 
- * CLIENT SECURITY CORE
- * This file implements client-side security functionality.
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - CLIENT SECURITY CORE
+ * This file implements client-side DNA security functionality.
  * 
  * FEATURES:
- * - Client-side component protection
+ * - Client-side DNA component protection
  * - Security monitoring and reporting
  * - Self-verification mechanisms
- * - License verification
+ * - Copyright verification
+ * 
+ * ANTI-THEFT NOTICE:
+ * This component is part of a unified integrated security system with
+ * DNA-based verification. All components are built together as one
+ * single unit from the beginning.
  */
 
 import {
@@ -37,8 +26,7 @@ import {
   IMMUTABLE_SYSTEM_VERSION,
   generateSecurityWatermark,
   generateDNASignature,
-  verifySecuritySystemIntegrity,
-  validateDNASignature
+  verifySecuritySystemIntegrity
 } from '@shared/quantum-dna-security';
 
 import {
@@ -160,9 +148,3 @@ export function reportSecurityViolation(
   // TODO: Send to server for logging when API endpoints are available
   // This would be implemented later in the app lifecycle
 }
-
-/**
- * Re-export the validateDNASignature function from the shared library
- * for components that import from this file
- */
-export { validateDNASignature };

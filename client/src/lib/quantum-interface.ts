@@ -1,51 +1,39 @@
 /**
- * Quantum AI Assistant
+ * !!! DNA PROTECTED SERVICE - DO NOT COPY !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987)
+ * Email: ervin210@icloud.com
  * 
- * MIT License (Royalty-Free)
- * Copyright (c) 2025 Quantum AI Assistant Contributors
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * ROYALTY-FREE PROVISION:
- * This software is provided completely royalty-free. No payment, fee, or royalty
- * of any kind is required for any use of this software, including commercial use, 
- * redistribution, or creation of derivative works.
- * 
- * QUANTUM INTERFACE
+ * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - QUANTUM INTERFACE
  * Front-end interface for interacting with quantum computing services.
  * 
  * FEATURES:
  * - Secure quantum circuit execution
- * - Digital signatures for quantum operations
+ * - DNA-watermarked quantum operations
  * - Cross-service quantum algorithm execution
  * - Unified quantum backends management
+ * 
+ * ANTI-THEFT NOTICE:
+ * This component is part of a unified integrated security system with
+ * DNA-based verification. All components are built together as one
+ * single unit from the beginning.
  */
 
 import axios from 'axios';
 import { 
+  IMMUTABLE_COPYRIGHT_OWNER,
+  IMMUTABLE_COPYRIGHT_EMAIL,
+  IMMUTABLE_SYSTEM_VERSION,
+  generateDNASignature,
   validateDNASignature
-} from '@shared/quantum-dna-security';
+} from './dna-security-core';
+import { registerProtectedComponent } from './dna-protection-system';
 
-// Create a secure ID for this component
+// Register this component with the DNA protection system
 const componentId = 'quantum-interface-client';
-
-// Generate a security signature for this component
-const generateDNASignature = (id: string, type: string) => {
-  return `dna-sig-${id}-${type}-${Date.now().toString(36)}`;
-};
-
-// Basic security info for the component
-const serviceProtection = {
-  watermark: `watermark-${componentId}-${Date.now().toString(36)}`
-};
+const serviceProtection = registerProtectedComponent(
+  componentId, 
+  'client-service'
+);
 
 // API endpoints
 const IBM_QUANTUM_EXECUTE_ENDPOINT = '/api/quantum/ibm/execute';
@@ -136,14 +124,14 @@ export async function executeIBMQuantumCircuit(
     
     // Return the validated result
     return result;
-  } catch (error: any) {
+  } catch (error) {
     console.error('IBM Quantum execution error:', error);
     
     // Return a protected error result
     return {
       id: `error-${Date.now()}`,
       status: 'FAILED',
-      error: `IBM Quantum execution failed: ${error.message || 'Unknown error'}`,
+      error: `IBM Quantum execution failed: ${error.message}`,
       executedOn: 'error',
       dnaSignature: generateDNASignature(`error-${Date.now()}`, 'quantum-execution'),
       watermark: serviceProtection.watermark
@@ -171,11 +159,11 @@ export async function getIBMQuantumBackends(): Promise<any> {
     });
     
     return response.data;
-  } catch (error: any) {
+  } catch (error) {
     console.error('IBM Quantum backends fetch error:', error);
     return {
       backends: [],
-      error: `Failed to fetch quantum backends: ${error.message || 'Unknown error'}`,
+      error: `Failed to fetch quantum backends: ${error.message}`,
       timestamp: new Date().toISOString()
     };
   }
@@ -201,10 +189,10 @@ export async function createIBMQuantumEncryptionKey(bits: number = 256): Promise
     });
     
     return response.data;
-  } catch (error: any) {
+  } catch (error) {
     console.error('IBM Quantum key generation error:', error);
     return {
-      error: `Quantum key generation failed: ${error.message || 'Unknown error'}`,
+      error: `Quantum key generation failed: ${error.message}`,
       timestamp: new Date().toISOString()
     };
   }
@@ -240,14 +228,14 @@ export async function executeAzureQuantumCircuit(
     
     // Return the validated result
     return result;
-  } catch (error: any) {
+  } catch (error) {
     console.error('Azure Quantum execution error:', error);
     
     // Return a protected error result
     return {
       id: `error-${Date.now()}`,
       status: 'Failed',
-      error: `Azure Quantum execution failed: ${error.message || 'Unknown error'}`,
+      error: `Azure Quantum execution failed: ${error.message}`,
       executedOn: 'error',
       dnaSignature: generateDNASignature(`error-${Date.now()}`, 'quantum-execution'),
       watermark: serviceProtection.watermark
@@ -275,11 +263,11 @@ export async function getAzureQuantumProviders(): Promise<any> {
     });
     
     return response.data;
-  } catch (error: any) {
+  } catch (error) {
     console.error('Azure Quantum providers fetch error:', error);
     return {
       providers: [],
-      error: `Failed to fetch Azure Quantum providers: ${error.message || 'Unknown error'}`,
+      error: `Failed to fetch Azure Quantum providers: ${error.message}`,
       timestamp: new Date().toISOString()
     };
   }
@@ -313,10 +301,10 @@ export async function deployAzureQuantumAlgorithm(
     });
     
     return response.data;
-  } catch (error: any) {
+  } catch (error) {
     console.error('Azure Quantum algorithm deployment error:', error);
     return {
-      error: `Quantum algorithm deployment failed: ${error.message || 'Unknown error'}`,
+      error: `Quantum algorithm deployment failed: ${error.message}`,
       timestamp: new Date().toISOString()
     };
   }
@@ -420,7 +408,7 @@ export async function checkQuantumServicesHealth(): Promise<{
       timestamp: new Date().toISOString(),
       dnaSignature: healthSignature
     };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Quantum services health check error:', error);
     
     // Generate error DNA signature

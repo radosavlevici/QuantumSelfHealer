@@ -1,29 +1,18 @@
 /**
- * Quantum AI Assistant
+ * !!! DNA PROTECTION PROVIDER - SECURITY FOUNDATION !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
+ * Email: ervin210@icloud.com
  * 
- * MIT License (Royalty-Free)
- * Copyright (c) 2025 Quantum AI Assistant Contributors
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * ROYALTY-FREE PROVISION:
- * This software is provided completely royalty-free. No payment, fee, or royalty
- * of any kind is required for any use of this software, including commercial use, 
- * redistribution, or creation of derivative works.
+ * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
+ * This software is subject to royalty payments for commercial use.
+ * Unauthorized past and present commercial use is subject to retroactive royalties.
  * 
  * DNA PROTECTION PROVIDER
  * 
  * This component provides DNA-based security protection for the entire application.
  * It initializes the quantum DNA security system and provides a context for
  * accessing security services throughout the component tree.
+ * Built as one integrated system with DNA-based security from the beginning.
  */
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
@@ -49,18 +38,6 @@ interface DNAProtectionContextType {
   };
   verifyComponent: (componentSignature: string) => boolean;
   generateComponentSignature: (componentId: string, componentName: string) => string;
-  copyrightInfo: {
-    owner: string;
-    birthdate: string;
-    email: string;
-    full: string;
-    version: string;
-  };
-  applyProtection: (componentId: string, componentType: string) => {
-    dnaSignature: string;
-    watermark: string;
-    timestamp: string;
-  };
 }
 
 // Create context with a default value
@@ -123,23 +100,7 @@ export const DNAProtectionProvider: React.FC<DNAProtectionProviderProps> = ({ ch
     // Method to generate a component signature
     generateComponentSignature: (componentId: string, componentName: string): string => {
       return generateDNASignature(componentId, componentName);
-    },
-    
-    // Copyright information for components
-    copyrightInfo: {
-      owner: IMMUTABLE_COPYRIGHT_OWNER,
-      birthdate: IMMUTABLE_COPYRIGHT_BIRTHDATE,
-      email: IMMUTABLE_COPYRIGHT_EMAIL,
-      full: `Copyright © ${IMMUTABLE_COPYRIGHT_OWNER} ${IMMUTABLE_COPYRIGHT_BIRTHDATE} - MIT License (Royalty-Free)`,
-      version: IMMUTABLE_SYSTEM_VERSION
-    },
-    
-    // Apply protection to components
-    applyProtection: (componentId: string, componentType: string) => ({
-      dnaSignature: generateDNASignature(componentId, componentType),
-      watermark: generateSecurityWatermark(componentId),
-      timestamp: new Date().toISOString()
-    })
+    }
   };
   
   return (

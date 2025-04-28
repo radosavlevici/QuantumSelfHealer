@@ -1,29 +1,20 @@
 /**
- * Quantum AI Assistant
+ * !!! CLIENT-SIDE QUANTUM DNA SECURITY SYSTEM - IMMUTABLE COPYRIGHT !!!
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
+ * Email: ervin210@icloud.com
  * 
- * MIT License (Royalty-Free)
- * Copyright (c) 2025 Quantum AI Assistant Contributors
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * ROYALTY-FREE PROVISION:
- * This software is provided completely royalty-free. No payment, fee, or royalty
- * of any kind is required for any use of this software, including commercial use, 
- * redistribution, or creation of derivative works.
+ * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
+ * This software is subject to royalty payments for commercial use.
+ * Unauthorized past and present commercial use is subject to retroactive royalties.
  * 
  * CLIENT-SIDE QUANTUM DNA SECURITY SYSTEM
  * 
  * This is the client-side implementation of the Quantum DNA Security System.
  * It provides front-end components with secure access to the DNA-based
  * watermarking, signature generation, and verification.
+ * 
+ * This component is part of the unified security framework that protects
+ * the entire application as one cohesive unit.
  */
 
 import { 
@@ -133,10 +124,10 @@ class ClientQuantumDNASecurity {
    */
   private logSecurityInitialization(): void {
     console.log('%c QUANTUM DNA PROTECTED APPLICATION INITIALIZING ', 'background: #001a33; color: #00ccff; font-weight: bold;');
-    console.log('%c MIT License (Royalty-Free) - Copyright (c) 2025 Quantum AI Assistant Contributors ', 'background: #001a33; color: #ffffff;');
+    console.log('%c Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, Serena Elizabeth Thorne - Email: ervin210@icloud.com - All Rights Reserved. ', 'background: #001a33; color: #ffffff;');
     console.log(`%c Quantum DNA Security v${IMMUTABLE_SYSTEM_VERSION} `, 'background: #001a33; color: #00ff99;');
-    console.log('%c OPEN SOURCE - ROYALTY FREE ', 'background: #001a33; color: #ff9900; font-weight: bold;');
-    console.log('%c SECURITY SYSTEM ACTIVE ', 'background: #003300; color: #66ff66; font-weight: bold;');
+    console.log('%c ALL COMPONENTS BUILT AS ONE UNIFIED SYSTEM ', 'background: #001a33; color: #ff9900; font-weight: bold;');
+    console.log('%c ANTI-THEFT PROTECTION ACTIVE ', 'background: #330000; color: #ff6666; font-weight: bold;');
   }
   
   /**

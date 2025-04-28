@@ -45,12 +45,11 @@ import {
   IMMUTABLE_SYSTEM_VERSION,
   IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS,
   generateDNASignature,
-  generateSecurityWatermark,
-  verifySecuritySystemIntegrity
+  generateSecurityWatermark
 } from '@shared/quantum-dna-security';
 
 // Import client-side security system
-import { quantumDNASecurity } from '@/lib/quantum-dna-security';
+import { quantumDNASecurity } from './lib/quantum-dna-security';
 
 // Import integration services
 import { adobeCreativeCloudService } from './lib/adobe-creative-cloud';
