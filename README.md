@@ -77,15 +77,12 @@ This software is protected by a comprehensive business licensing framework. All 
 
 ### Primary License Documentation
 - [LICENSE-BUSINESS.txt](./LICENSE-BUSINESS.txt) - Core business license agreement
-- [ADDITIONAL-BUSINESS-LICENSE.md](./ADDITIONAL-BUSINESS-LICENSE.md) - Extended business licensing terms
 - [LICENSED-FEATURES.md](./LICENSED-FEATURES.md) - Detailed feature-specific licensing terms
 - [ROYALTY-STRUCTURE.md](./ROYALTY-STRUCTURE.md) - Commercial use royalty payment structure
 
 ### Business Implementation
 - [BUSINESS-INTEGRATION-GUIDE.md](./BUSINESS-INTEGRATION-GUIDE.md) - Enterprise implementation guidelines
-- [ADVANCED-BUSINESS-INTEGRATION.md](./ADVANCED-BUSINESS-INTEGRATION.md) - Advanced enterprise deployment guide
 - [COPYRIGHT-ENFORCEMENT.md](./COPYRIGHT-ENFORCEMENT.md) - Protection mechanisms and enforcement
-- [ENTERPRISE-SECURITY-SPECIFICATIONS.md](./ENTERPRISE-SECURITY-SPECIFICATIONS.md) - Detailed security framework
 - [VERSION-TRACKING.md](./VERSION-TRACKING.md) - Version compatibility and update requirements
 - [DEVELOPMENT.md](./DEVELOPMENT.md) - Technical integration documentation
 
