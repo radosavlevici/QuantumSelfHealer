@@ -1,6 +1,6 @@
 # QUANTUM AI ASSISTANT - BUSINESS INTEGRATION GUIDE
 
-**Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, Serena Elizabeth Thorne**  
+**Copyright © Ervin Remus Radosavlevici (01/09/1987)**  
 **Email: ervin210@icloud.com**  
 **All Rights Reserved.**
 
@@ -49,7 +49,7 @@ To fully integrate the Quantum AI Assistant, the following accounts/keys are req
 ## INTEGRATION SUPPORT
 
 Business licensees receive:
-- Direct integration support from the license holders
+- Direct integration support from the license holder
 - Documentation for enterprise deployment
 - Security advisories and compliance updates
 

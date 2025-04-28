@@ -1,6 +1,6 @@
 /**
  * !!! QUANTUM DNA SECURITY - CORE PROTECTION SYSTEM !!!
- * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
  * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
@@ -19,8 +19,8 @@ export const IMMUTABLE_COPYRIGHT_OWNER = "Ervin Remus Radosavlevici";
 export const IMMUTABLE_COPYRIGHT_BIRTHDATE = "01/09/1987";
 export const IMMUTABLE_COPYRIGHT_EMAIL = "ervin210@icloud.com";
 export const IMMUTABLE_SYSTEM_VERSION = "4.0";
-export const IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS = "David Cornelius Marshall, Serena Elizabeth Thorne";
-export const IMMUTABLE_COPYRIGHT_FULL = `Copyright © ${IMMUTABLE_COPYRIGHT_OWNER} (${IMMUTABLE_COPYRIGHT_BIRTHDATE}), ${IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS} - Email: ${IMMUTABLE_COPYRIGHT_EMAIL} - All Rights Reserved.`;
+export const IMMUTABLE_ADDITIONAL_COPYRIGHT_HOLDERS = "";
+export const IMMUTABLE_COPYRIGHT_FULL = `Copyright © ${IMMUTABLE_COPYRIGHT_OWNER} (${IMMUTABLE_COPYRIGHT_BIRTHDATE}) - Email: ${IMMUTABLE_COPYRIGHT_EMAIL} - All Rights Reserved.`;
 
 // Interface for component info
 export interface ComponentInfo {

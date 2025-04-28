@@ -41,9 +41,9 @@ All legitimate copies include:
 
 To verify your license, contact: ervin210@icloud.com
 
-## AUTHORIZED LICENSE HOLDERS
+## AUTHORIZED LICENSE HOLDER
 
-Only licenses issued directly by the copyright holders are valid. Licenses can be verified through the built-in DNA verification system.
+Only licenses issued directly by the copyright holder are valid. Licenses can be verified through the built-in DNA verification system.
 
 ## VERSION COMPATIBILITY
 

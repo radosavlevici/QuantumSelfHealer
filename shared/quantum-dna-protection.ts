@@ -1,6 +1,6 @@
 /**
  * !!! QUANTUM DNA PROTECTION SYSTEM - DO NOT COPY !!!
- * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
  * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - PROTECTION CORE

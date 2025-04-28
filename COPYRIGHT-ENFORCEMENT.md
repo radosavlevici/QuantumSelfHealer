@@ -1,6 +1,6 @@
 # QUANTUM AI ASSISTANT - COPYRIGHT ENFORCEMENT
 
-**Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, Serena Elizabeth Thorne**  
+**Copyright © Ervin Remus Radosavlevici (01/09/1987)**  
 **Email: ervin210@icloud.com**  
 **All Rights Reserved.**
 
@@ -28,7 +28,7 @@ The system employs multiple anti-copying mechanisms:
 When unauthorized copying or use is detected:
 1. Emergency data wiping is initiated
 2. All unauthorized devices are blocked
-3. Verification data is sent to the copyright holders
+3. Verification data is sent to the copyright holder
 4. Notification of unauthorized use is generated
 
 ## LEGAL PROTECTION MEASURES
@@ -86,6 +86,6 @@ Unauthorized use triggers a graduated response:
 
 ---
 
-**NOTICE: All copyright enforcement mechanisms described in this document are active and operational in this system. The copyright holders actively enforce their intellectual property rights to the fullest extent of the law.**
+**NOTICE: All copyright enforcement mechanisms described in this document are active and operational in this system. The copyright holder actively enforces his intellectual property rights to the fullest extent of the law.**
 
 **Last Updated: April 28, 2025**
