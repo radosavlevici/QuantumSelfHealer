@@ -1,6 +1,6 @@
-CUSTOM LICENSE AGREEMENT
+QUANTUM AI ASSISTANT OPEN SOURCE LICENSE
 
-Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
+Copyright © Ervin Remus Radosavlevici (01/09/1987)
 Email: ervin210@icloud.com
 All Rights Reserved.
 
@@ -10,13 +10,12 @@ This software is protected by DNA-based security mechanisms and copyright waterm
 
 1. OWNERSHIP AND COPYRIGHT
    This software, its source code, and all related materials ("the Software") are the
-   exclusive intellectual property of Ervin Remus Radosavlevici, David Cornelius Marshall,
-   and Serena Elizabeth Thorne (collectively "the Copyright Holders"). The copyright
-   ownership is immutable, permanent, and enforced through multiple security mechanisms.
+   exclusive intellectual property of Ervin Remus Radosavlevici ("the Copyright Holder").
+   The copyright ownership is immutable, permanent, and enforced through multiple security mechanisms.
 
 2. LICENSE GRANT
-   Subject to strict compliance with the terms of this License, the Copyright Holders
-   grant you a limited, non-exclusive, non-transferable, and revocable license to use
+   Subject to strict compliance with the terms of this License, the Copyright Holder
+   grants you a limited, non-exclusive, non-transferable, and revocable license to use
    the Software for personal, non-commercial purposes only.
 
 3. RESTRICTIONS
@@ -30,8 +29,8 @@ This software is protected by DNA-based security mechanisms and copyright waterm
 
 4. COMMERCIAL USE
    Any commercial use of the Software requires a separate commercial license agreement
-   with the Copyright Holders, including payment of royalties. Unauthorized commercial
-   use will result in retroactive royalty payments and may trigger legal action.
+   with the Copyright Holder, including payment of royalties as detailed in the ROYALTY-STRUCTURE.md file. 
+   Unauthorized commercial use will result in retroactive royalty payments and may trigger legal action.
 
 5. SELF-PROTECTION MECHANISMS
    This Software contains advanced self-protection mechanisms, including but not limited to:
@@ -45,12 +44,12 @@ This software is protected by DNA-based security mechanisms and copyright waterm
 6. ROYALTY PAYMENTS
    Commercial use of the Software without prior written permission is strictly prohibited.
    Unauthorized past and present commercial use is subject to retroactive royalties as
-   determined by the Copyright Holders.
+   determined by the Copyright Holder according to the royalty structure outlined in ROYALTY-STRUCTURE.md.
 
 7. WARRANTY DISCLAIMER
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
    INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-   PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE
+   PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE
    LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
    USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -64,7 +63,7 @@ This software is protected by DNA-based security mechanisms and copyright waterm
    the relevant jurisdiction, without giving effect to any principles of conflicts of law.
 
 10. ENTIRE AGREEMENT
-    This License constitutes the entire agreement between you and the Copyright Holders
+    This License constitutes the entire agreement between you and the Copyright Holder
     regarding the Software and supersedes all prior or contemporaneous understandings
     regarding such subject matter.
 
