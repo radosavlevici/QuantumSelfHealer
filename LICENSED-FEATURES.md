@@ -1,7 +1,7 @@
 # QUANTUM AI ASSISTANT - LICENSED FEATURES
 **ALL COMPONENTS ARE SUBJECT TO THE BUSINESS LICENSE TERMS**
 
-**Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, Serena Elizabeth Thorne**  
+**Copyright © Ervin Remus Radosavlevici (01/09/1987)**  
 **Email: ervin210@icloud.com**  
 **All Rights Reserved.**
 
@@ -35,7 +35,6 @@ All features listed in this document are subject to the terms and conditions spe
 
 ### DNA Protection System
 - **Immutable copyright protection for Ervin Remus Radosavlevici (01/09/1987)** - *Business License Required*
-- **Additional copyright holders: David Cornelius Marshall, Serena Elizabeth Thorne** - *Business License Required*
 - **DNA-based watermarking on all system outputs** - *Business License Required*
 - **Quantum signature verification** - *Business License Required*
 

@@ -1,91 +1,86 @@
-QUANTUM AI ASSISTANT - BUSINESS LICENSE AGREEMENT
+QUANTUM AI ASSISTANT BUSINESS LICENSE AGREEMENT
 
-Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, Serena Elizabeth Thorne
-Email: ervin210@icloud.com - All Rights Reserved.
+Copyright © Ervin Remus Radosavlevici (01/09/1987)
+Email: ervin210@icloud.com
+All Rights Reserved.
 
-IMPORTANT: This Business License Agreement (the "Agreement") is a legal agreement between 
-you (either an individual or a single entity) and the copyright holders listed above 
-(collectively, "Licensor") for the Quantum AI Assistant software (the "Software").
+1. DEFINITIONS
 
-1. GRANT OF LICENSE
+"Software" means the Quantum AI Assistant software system, including all components, features, and documentation as detailed in LICENSED-FEATURES.md.
 
-   Subject to the terms and conditions of this Agreement, Licensor hereby grants 
-   to you a non-exclusive, non-transferable license to use the Software for business 
-   purposes, subject to the following conditions:
+"Copyright Holder" refers to Ervin Remus Radosavlevici (01/09/1987).
 
-   a. You may use the Software only in connection with your business operations.
-   b. You are required to pay royalties for commercial use as specified in the ROYALTIES section.
-   c. You may not distribute, sublicense, or transfer the Software to any third party.
-   d. You may not modify, reverse engineer, decompile, or disassemble the Software.
+"Licensee" means the individual or entity that has been granted a license to use the Software under the terms of this Agreement.
 
-2. ROYALTIES
+"Commercial Use" means any use of the Software for direct or indirect financial gain, including but not limited to integration into products or services offered for sale, subscription, or that generate revenue through advertising.
 
-   All commercial use of the Software is subject to royalty payments according to 
-   the following schedule:
+"Revenue" means gross income directly attributable to the use of the Software.
 
-   a. For businesses with annual revenue under $1,000,000 USD: 5% of revenue directly 
-      attributable to use of the Software.
-   b. For businesses with annual revenue between $1,000,000 and $10,000,000 USD: 
-      3% of revenue directly attributable to use of the Software.
-   c. For businesses with annual revenue over $10,000,000 USD: Custom licensing terms 
-      to be negotiated directly with the Licensor.
+2. GRANT OF LICENSE
 
-   Royalty payments are due quarterly and shall be paid within 30 days of the end 
-   of each calendar quarter.
+Subject to the payment of applicable royalties and compliance with all terms of this Agreement, the Copyright Holder grants to Licensee a non-exclusive, non-transferable license to use the Software for Commercial Use.
 
-3. RETROSPECTIVE ROYALTIES
+3. RESTRICTIONS
 
-   Unauthorized past commercial use is subject to retroactive royalties at double 
-   the rates specified in the ROYALTIES section, plus interest accrued at 1.5% 
-   per month.
+The Licensee shall NOT:
+a) Modify, adapt, alter, translate, or create derivative works from the Software
+b) Reverse engineer, decompile, or disassemble the Software
+c) Remove or alter any copyright, trademark, or proprietary notices within the Software
+d) Transfer, sublicense, lease, lend, rent or otherwise distribute the Software to any third party
+e) Use the Software in violation of applicable laws or regulations
+f) Attempt to bypass or disable the DNA protection systems, device verification, or any security measures
+g) Make unauthorized copies of the Software
 
-4. INTELLECTUAL PROPERTY
+4. ROYALTY PAYMENTS
 
-   All title, ownership rights, and intellectual property rights in and to the 
-   Software shall remain with the Licensor. The Software is protected by copyright 
-   laws and international copyright treaties, as well as other intellectual property 
-   laws and treaties.
+For Commercial Use, Licensee agrees to pay royalties based on Revenue directly attributable to the use of the Software, as detailed in ROYALTY-STRUCTURE.md, summarized as follows:
 
-5. DNA-BASED SECURITY AND ANTI-THEFT PROTECTION
+a) 5% of Revenue for businesses with annual revenue under $1,000,000 USD
+b) 3% of Revenue for businesses with annual revenue between $1,000,000 and $10,000,000 USD
+c) Custom licensing terms for businesses with annual revenue exceeding $10,000,000 USD
 
-   The Software contains proprietary DNA-based security systems, watermarking, and 
-   anti-theft mechanisms. Any attempt to bypass, disable, or remove these security 
-   features constitutes a material breach of this Agreement and may result in immediate 
-   termination of your license and legal action.
+Royalty payments shall be made quarterly within 30 days of the end of each calendar quarter, accompanied by a report detailing the calculation of such royalties.
 
-6. LIMITED WARRANTY
+5. PROPRIETARY RIGHTS
 
-   THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
-   INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
-   PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
-   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION 
-   OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
-   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+The Software is protected by international copyright laws and treaties. The Copyright Holder retains all right, title, and interest in and to the Software, including all intellectual property rights. This license grants Licensee only the right to use the Software in accordance with the terms of this Agreement.
 
-7. TERMINATION
+The Software includes DNA-based watermarking technology that embeds copyright information at multiple levels, which cannot be removed without rendering the Software non-functional.
 
-   Without prejudice to any other rights, Licensor may terminate this Agreement if 
-   you fail to comply with the terms and conditions of this Agreement. Upon termination, 
-   you must destroy all copies of the Software in your possession.
+6. TERM AND TERMINATION
 
-8. GOVERNING LAW
+This Agreement is effective upon Licensee's acceptance and continues until terminated. This Agreement automatically terminates if Licensee breaches any term of this Agreement. Upon termination, Licensee must cease all use of the Software and destroy all copies.
 
-   This Agreement shall be governed by and construed in accordance with the laws of 
-   the jurisdiction in which the primary copyright holder resides, without giving 
-   effect to any choice of law or conflict of law provisions.
+7. UNAUTHORIZED USE CONSEQUENCES
 
-9. CONTACT INFORMATION
+The Software includes security systems that detect unauthorized use. Any unauthorized use, copying, or violation of license terms may result in:
 
-   For licensing inquiries, royalty payments, or to report unauthorized use, please 
-   contact:
+a) Automatic disabling of the Software functionality
+b) Data wiping on unauthorized devices
+c) Generation of evidence for legal proceedings
+d) Retroactive royalty charges at double the standard rates
+e) Legal action for copyright infringement
 
-   Email: ervin210@icloud.com
+8. NO WARRANTY
 
-By using the Software, you acknowledge that you have read this Agreement, understand 
-it, and agree to be bound by its terms and conditions.
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
 
-Ervin Remus Radosavlevici
-David Cornelius Marshall
-Serena Elizabeth Thorne
+9. LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+10. GOVERNING LAW
+
+This Agreement shall be governed by and construed in accordance with the laws of the European Union and applicable international copyright treaties.
+
+11. ENTIRE AGREEMENT
+
+This Agreement, together with the documents referenced herein (LICENSED-FEATURES.md, ROYALTY-STRUCTURE.md, BUSINESS-INTEGRATION-GUIDE.md, COPYRIGHT-ENFORCEMENT.md, and VERSION-TRACKING.md), constitutes the entire agreement between the parties with respect to the use of the Software and supersedes all prior or contemporaneous understandings or agreements.
+
+12. ACKNOWLEDGMENT
+
+BY USING THE SOFTWARE, LICENSEE ACKNOWLEDGES THAT LICENSEE HAS READ THIS AGREEMENT, UNDERSTANDS IT, AND AGREES TO BE BOUND BY ITS TERMS AND CONDITIONS.
+
+For licensing inquiries, contact: ervin210@icloud.com
 
 Last Updated: April 28, 2025

@@ -1,6 +1,6 @@
 # QUANTUM AI ASSISTANT - ROYALTY STRUCTURE
 
-**Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, Serena Elizabeth Thorne**  
+**Copyright © Ervin Remus Radosavlevici (01/09/1987)**  
 **Email: ervin210@icloud.com**  
 **All Rights Reserved.**
 

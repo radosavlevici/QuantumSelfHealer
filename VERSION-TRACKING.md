@@ -1,6 +1,6 @@
 # QUANTUM AI ASSISTANT - VERSION TRACKING
 
-**Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, Serena Elizabeth Thorne**  
+**Copyright © Ervin Remus Radosavlevici (01/09/1987)**  
 **Email: ervin210@icloud.com**  
 **All Rights Reserved.**
 
@@ -8,7 +8,7 @@
 
 | Version | Release Date | License Type | DNA Signature |
 |---------|--------------|--------------|--------------|
-| 4.0.0   | April 28, 2025 | Business License | dna-sig-v4-20250428-ERVIN-DAVID-SERENA |
+| 4.0.0   | April 28, 2025 | Business License | dna-sig-v4-20250428-ERVIN |
 
 ## CHANGE HISTORY
 
