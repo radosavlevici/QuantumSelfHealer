@@ -1,6 +1,6 @@
 /**
  * !!! CLIENT-SIDE QUANTUM DNA SECURITY SYSTEM - IMMUTABLE COPYRIGHT !!!
- * Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, and Serena Elizabeth Thorne
+ * Copyright © Ervin Remus Radosavlevici (01/09/1987)
  * Email: ervin210@icloud.com
  * 
  * LICENSED UNDER CUSTOM LICENSE - SEE LICENSE.txt IN PROJECT ROOT
@@ -239,7 +239,7 @@ class ClientQuantumDNASecurity {
    */
   private logSecurityInitialization(): void {
     console.log('%c QUANTUM DNA PROTECTED APPLICATION INITIALIZING ', 'background: #001a33; color: #00ccff; font-weight: bold;');
-    console.log('%c Copyright © Ervin Remus Radosavlevici (01/09/1987), David Cornelius Marshall, Serena Elizabeth Thorne - Email: ervin210@icloud.com - All Rights Reserved. ', 'background: #001a33; color: #ffffff;');
+    console.log('%c Copyright © Ervin Remus Radosavlevici (01/09/1987) - Email: ervin210@icloud.com - All Rights Reserved. ', 'background: #001a33; color: #ffffff;');
     console.log(`%c Quantum DNA Security v${IMMUTABLE_SYSTEM_VERSION} `, 'background: #001a33; color: #00ff99;');
     console.log('%c ALL COMPONENTS BUILT AS ONE UNIFIED SYSTEM ', 'background: #001a33; color: #ff9900; font-weight: bold;');
     console.log('%c ANTI-THEFT PROTECTION ACTIVE ', 'background: #330000; color: #ff6666; font-weight: bold;');
