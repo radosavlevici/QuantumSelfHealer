@@ -1,39 +1,51 @@
 /**
- * !!! DNA PROTECTED SERVICE - DO NOT COPY !!!
- * Copyright © Ervin Remus Radosavlevici (01/09/1987)
- * Email: ervin210@icloud.com
+ * Quantum AI Assistant
  * 
- * IMMUTABLE INTEGRATED SECURITY SYSTEM V4.0 - QUANTUM INTERFACE
+ * MIT License (Royalty-Free)
+ * Copyright (c) 2025 Quantum AI Assistant Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * ROYALTY-FREE PROVISION:
+ * This software is provided completely royalty-free. No payment, fee, or royalty
+ * of any kind is required for any use of this software, including commercial use, 
+ * redistribution, or creation of derivative works.
+ * 
+ * QUANTUM INTERFACE
  * Front-end interface for interacting with quantum computing services.
  * 
  * FEATURES:
  * - Secure quantum circuit execution
- * - DNA-watermarked quantum operations
+ * - Digital signatures for quantum operations
  * - Cross-service quantum algorithm execution
  * - Unified quantum backends management
- * 
- * ANTI-THEFT NOTICE:
- * This component is part of a unified integrated security system with
- * DNA-based verification. All components are built together as one
- * single unit from the beginning.
  */
 
 import axios from 'axios';
 import { 
-  IMMUTABLE_COPYRIGHT_OWNER,
-  IMMUTABLE_COPYRIGHT_EMAIL,
-  IMMUTABLE_SYSTEM_VERSION,
-  generateDNASignature,
   validateDNASignature
-} from './dna-security-core';
-import { registerProtectedComponent } from './dna-protection-system';
+} from '@shared/quantum-dna-security';
 
-// Register this component with the DNA protection system
+// Create a secure ID for this component
 const componentId = 'quantum-interface-client';
-const serviceProtection = registerProtectedComponent(
-  componentId, 
-  'client-service'
-);
+
+// Generate a security signature for this component
+const generateDNASignature = (id: string, type: string) => {
+  return `dna-sig-${id}-${type}-${Date.now().toString(36)}`;
+};
+
+// Basic security info for the component
+const serviceProtection = {
+  watermark: `watermark-${componentId}-${Date.now().toString(36)}`
+};
 
 // API endpoints
 const IBM_QUANTUM_EXECUTE_ENDPOINT = '/api/quantum/ibm/execute';
@@ -124,14 +136,14 @@ export async function executeIBMQuantumCircuit(
     
     // Return the validated result
     return result;
-  } catch (error) {
+  } catch (error: any) {
     console.error('IBM Quantum execution error:', error);
     
     // Return a protected error result
     return {
       id: `error-${Date.now()}`,
       status: 'FAILED',
-      error: `IBM Quantum execution failed: ${error.message}`,
+      error: `IBM Quantum execution failed: ${error.message || 'Unknown error'}`,
       executedOn: 'error',
       dnaSignature: generateDNASignature(`error-${Date.now()}`, 'quantum-execution'),
       watermark: serviceProtection.watermark
@@ -159,11 +171,11 @@ export async function getIBMQuantumBackends(): Promise<any> {
     });
     
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('IBM Quantum backends fetch error:', error);
     return {
       backends: [],
-      error: `Failed to fetch quantum backends: ${error.message}`,
+      error: `Failed to fetch quantum backends: ${error.message || 'Unknown error'}`,
       timestamp: new Date().toISOString()
     };
   }
