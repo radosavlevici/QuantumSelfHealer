@@ -21,7 +21,7 @@
 
 import { Express, Request, Response } from 'express';
 import { createServer, Server } from 'http';
-import { WebSocketServer } from 'ws';
+import { WebSocketServer, WebSocket } from 'ws';
 
 // Import DNA security system
 import {
