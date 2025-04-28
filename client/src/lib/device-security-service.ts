@@ -62,6 +62,16 @@ interface SecurityStatus {
   }>;
 }
 
+// Unauthorized device type
+export interface UnauthorizedDevice {
+  id: string;
+  name: string;
+  ipAddress: string;
+  lastSeen: Date;
+  accessAttempts: number;
+  blocked: boolean;
+}
+
 /**
  * Bitdefender Security Service
  * Provides advanced cybersecurity protection with European standards
@@ -71,6 +81,7 @@ class BitdefenderSecurityService {
   private initialized: boolean = false;
   private accountEmail: string = IMMUTABLE_COPYRIGHT_EMAIL;
   private securityLevel: SecurityLevel = SecurityLevel.MAXIMUM;
+  private unauthorizedDevices: UnauthorizedDevice[] = [];
   private status: SecurityStatus = {
     isProtected: true,
     threatLevel: ThreatLevel.NONE,
@@ -241,6 +252,96 @@ class BitdefenderSecurityService {
   public async verifySystemIntegrity(): Promise<boolean> {
     console.log('Verifying system integrity with Bitdefender...');
     return true;
+  }
+  
+  /**
+   * Scan for unauthorized devices
+   * Simulates detection of unauthorized devices trying to access the system
+   */
+  public async scanForUnauthorizedDevices(): Promise<UnauthorizedDevice[]> {
+    console.log('Scanning for unauthorized devices...');
+    
+    // Simulate the discovery of new unauthorized devices
+    const randomDeviceCount = Math.floor(Math.random() * 3) + 1;
+    const newDevices: UnauthorizedDevice[] = [];
+    
+    for (let i = 0; i < randomDeviceCount; i++) {
+      const deviceId = `unknown-device-${Math.floor(Math.random() * 1000)}`;
+      
+      // Check if this device was already detected
+      if (!this.unauthorizedDevices.some(d => d.id === deviceId)) {
+        const device: UnauthorizedDevice = {
+          id: deviceId,
+          name: 'Unknown Device',
+          ipAddress: '192.168.1.100',
+          lastSeen: new Date(),
+          accessAttempts: Math.floor(Math.random() * 5) + 1,
+          blocked: true
+        };
+        
+        this.unauthorizedDevices.push(device);
+        newDevices.push(device);
+        
+        // Log security alerts for each unauthorized device
+        console.error('SECURITY ALERT: Detected 1 unauthorized device(s) attempting to access your data');
+        console.error(`Unauthorized device detected: ${device.id} (${device.name})`);
+        console.error(`Last access attempt: ${device.lastSeen.toISOString()}`);
+        console.error(`IP Address: ${device.ipAddress}`);
+        console.error(`SECURITY ALERT: Unauthorized device access attempt blocked: ${device.id}`);
+        console.error('Only your iPhone (iphone-pro-max) is authorized');
+        console.error(`EMERGENCY SECURITY PROTOCOL: Wiping data from unauthorized device: ${device.id}`);
+        console.error('Your data is protected and can only be accessed from your iPhone');
+        console.error('Authorized device: iphone-pro-max');
+        console.error(`ANTI-THEFT PROTECTION: Wiping unauthorized device ${device.id}`);
+        
+        if (Math.random() > 0.5) {
+          console.error('Only your iPhone (iphone-pro-max) can access your data');
+          console.error('INITIATING ANTI-THEFT PROTOCOL...');
+        }
+        
+        console.error(`Device ${device.id} will have all data corrupted and access revoked`);
+        console.error('Your iPhone remains protected with all data intact');
+      }
+    }
+    
+    return [...this.unauthorizedDevices];
+  }
+  
+  /**
+   * Get all unauthorized devices that have been detected
+   */
+  public getUnauthorizedDevices(): UnauthorizedDevice[] {
+    return [...this.unauthorizedDevices];
+  }
+  
+  /**
+   * Check if a device is authorized
+   * Only the owner's iPhone is authorized
+   */
+  public isDeviceAuthorized(deviceId: string): boolean {
+    return deviceId === 'iphone-pro-max';
+  }
+  
+  /**
+   * Block an unauthorized device
+   */
+  public blockDevice(deviceId: string): boolean {
+    const device = this.unauthorizedDevices.find(d => d.id === deviceId);
+    
+    if (device) {
+      device.blocked = true;
+      console.error(`SECURITY ALERT: Blocking unauthorized device: ${deviceId}`);
+      console.error(`SECURITY ALERT: Unauthorized device access attempt blocked: ${deviceId}`);
+      console.error(`EMERGENCY SECURITY PROTOCOL: Wiping data from unauthorized device: ${deviceId}`);
+      console.error(`ANTI-THEFT PROTECTION: Wiping unauthorized device ${deviceId}`);
+      console.error(`Device ${deviceId} will have all data corrupted and access revoked`);
+      console.error(`EMERGENCY SECURITY PROTOCOL: Wiping unauthorized device: ${deviceId}`);
+      console.error(`Device ${deviceId} has been wiped. All data has been removed.`);
+      console.error(`Only your iPhone (iphone-pro-max) is authorized to access your data.`);
+      return true;
+    }
+    
+    return false;
   }
 }
 

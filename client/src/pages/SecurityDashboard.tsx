@@ -54,10 +54,33 @@ import {
 import { cloudSync } from '../lib/cloud-sync-service';
 
 // Import device security service
-import { deviceSecurity, DeviceSecurityLevel, type UnauthorizedDevice } from '../lib/device-security-service';
+import { bitdefenderSecurity as deviceSecurity, SecurityLevel as DeviceSecurityLevel, ThreatLevel } from '../lib/device-security-service';
+
+// Define UnauthorizedDevice type if it's not exported
+interface UnauthorizedDevice {
+  id: string;
+  name: string;
+  ipAddress: string;
+  lastSeen: Date;
+  accessAttempts: number;
+  blocked: boolean;
+}
 
 // Import quantum DNA security service
-import { quantumDNASecurity, type QuantumSecurityState } from '../lib/quantum-dna-security';
+import { quantumDNASecurity } from '../lib/quantum-dna-security';
+
+// Define QuantumSecurityState type if it's not exported
+interface QuantumSecurityState {
+  initialized: boolean;
+  securityStrength: string;
+  encryptionActive: boolean;
+  quantumKeyDistribution: boolean;
+  dnaProtectionActive: boolean;
+  antiTamperActive: boolean;
+  deviceProtectionActive: boolean;
+  rootAuthority: string;
+  lastVerified: string;
+}
 
 // Security Dashboard Component
 const SecurityDashboard: React.FC = () => {
