@@ -684,50 +684,93 @@ const QuantumNLPTerminal: React.FC = () => {
         </div>
         
         <TabsContent value="terminal" className="flex-1 flex flex-col h-full">
-          <Card className="flex-1 border-gray-800 bg-gradient-to-b from-gray-900 to-black">
+          <Card className="flex-1 border-gray-800 bg-gradient-to-b from-gray-950 to-black">
+            <CardHeader className="p-3 border-b border-gray-800 bg-black/50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="flex space-x-1">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  </div>
+                  <span className="text-xs text-gray-400 font-mono">quantum@{dnaProtection.ownerDevice || 'iphone'}: ~/quantum-terminal</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge variant="outline" className="text-xs text-blue-400 border-blue-400">
+                    Secured
+                  </Badge>
+                  <Badge variant="outline" className="text-xs text-green-400 border-green-400">
+                    Connected
+                  </Badge>
+                </div>
+              </div>
+            </CardHeader>
             <CardContent className="p-0 flex flex-col h-full">
               <div 
                 className="flex-1 p-4 font-mono text-sm overflow-auto" 
                 ref={terminalRef}
                 style={{ minHeight: '40vh' }}
               >
+                {/* Terminal welcome message */}
+                <div className="mb-4 text-blue-300">
+                  <div className="text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-500 inline-block text-transparent bg-clip-text mb-1">
+                    Quantum NLP Terminal v{dnaProtection.systemVersion}
+                  </div>
+                  <div className="text-gray-400 text-xs">
+                    © Ervin Remus Radosavlevici, David Cornelius Marshall, and Serena Elizabeth Thorne
+                  </div>
+                  <div className="text-gray-400 text-xs mb-2">
+                    Email: ervin210@icloud.com
+                  </div>
+                  <div className="text-sm text-gray-300 mt-2 mb-1">
+                    Type natural language commands to control quantum operations.
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Available AI providers: {quantumNLPService.availableProviders.length > 0 ? 
+                      quantumNLPService.availableProviders.join(', ') : 
+                      'Using fallback processor (no API keys available)'}
+                  </div>
+                </div>
+
                 {renderHistory()}
                 {isProcessing && (
                   <div className="flex items-center text-blue-400 mt-2">
                     <div className="animate-spin mr-2 h-4 w-4 border-2 border-blue-400 border-t-transparent rounded-full"></div>
-                    Processing your request...
+                    <span className="font-mono">Processing quantum request...</span>
                   </div>
                 )}
               </div>
               
-              <div className="p-2 border-t border-gray-800 bg-gray-900/50">
-                <div className="flex space-x-2">
-                  <Input
-                    ref={inputRef}
-                    type="text"
-                    placeholder="Type your question in natural language (e.g., 'Create a quantum circuit with 3 qubits')"
-                    value={input}
-                    onChange={handleInputChange}
-                    onKeyPress={handleKeyPress}
-                    disabled={isProcessing}
-                    className="flex-1 bg-gray-950 border-gray-700 text-gray-100 focus:border-blue-500"
-                  />
-                  <Button 
-                    onClick={processInput} 
-                    disabled={isProcessing || !input.trim()}
-                    variant="default"
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
+              <div className="p-3 border-t border-gray-800 flex items-center bg-black/60">
+                <div className="mr-2 text-green-500 animate-pulse">
+                  <ChevronRight size={16} />
                 </div>
+                <Input
+                  ref={inputRef}
+                  className="flex-1 bg-transparent border-none text-gray-100 focus-visible:ring-0 focus-visible:ring-offset-0 font-mono"
+                  placeholder="Type your quantum computing request..."
+                  value={input}
+                  onChange={handleInputChange}
+                  onKeyPress={handleKeyPress}
+                  disabled={isProcessing}
+                />
+                <Button 
+                  className="ml-2 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800" 
+                  size="sm" 
+                  onClick={processInput}
+                  disabled={isProcessing || !input.trim()}
+                >
+                  <ArrowRight size={16} />
+                </Button>
               </div>
             </CardContent>
             
             <CardFooter className="p-2 bg-gray-900/30 border-t border-gray-800 flex justify-between">
               <div className="flex items-center text-xs text-gray-400">
+                <Lock className="h-3 w-3 mr-1" />
+                <span className="mr-2">DNA Protected</span>
                 <Database className="h-3 w-3 mr-1" />
-                Quantum NLP Service Connected
+                <span>Quantum NLP Service Ready</span>
               </div>
               
               <div className="flex space-x-2">
